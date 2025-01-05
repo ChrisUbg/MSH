@@ -4,7 +4,7 @@
 Building a Matter-protocol based smart home application running on Raspberry Pi 4, focusing on efficient usage of Cursor IDE and modern development practices.
 
 ## Technology Stack
-- Backend: .NET 9 with Blazor Server
+- Backend: .NET 8 with Blazor Server
 - Matter Integration: Matter SDK (C/C++ with bindings)
 - Database: PostgreSQL with Entity Framework Core
 - UI Framework: Bootstrap 5.x
@@ -21,7 +21,7 @@ Building a Matter-protocol based smart home application running on Raspberry Pi 
   - [x] Configure Cursor extensions for .NET development
   - [x] Set up Git integration in Cursor
 - [ ] 1.3. Configure network and Bluetooth connectivity
-- [ ] 1.4. Install .NET 9 SDK on both development machine and Raspberry Pi
+- [ ] 1.4. Install .NET 8 SDK on both development machine and Raspberry Pi
 
 ### 2. Matter Protocol Foundation
 - [ ] 2.1. Install Matter SDK and dependencies
@@ -31,7 +31,7 @@ Building a Matter-protocol based smart home application running on Raspberry Pi 
 - [ ] 2.5. Use Cursor's AI capabilities for Matter protocol implementation
 
 ### 3. Core Application Architecture
-- [ ] 3.1. Create Blazor Server application using .NET 9
+- [ ] 3.1. Create Blazor Server application using .NET 8
 - [ ] 3.2. Set up PostgreSQL database
   - [ ] Entity Framework Core configuration
   - [ ] Database migration setup

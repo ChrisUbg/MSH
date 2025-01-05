@@ -179,3 +179,87 @@ journalctl -u matter-smart-home.service
 - Keep this document updated with any new configurations
 - Document any issues and their solutions
 - Add specific Matter protocol requirements as they are identified 
+
+# Bluetooth Setup on Raspberry Pi 4
+
+## Overview
+This section outlines the steps to set up Bluetooth on the Raspberry Pi 4 using the GeeekPi nRF52840 USB dongle.
+
+## Steps to Set Up Bluetooth
+
+1. **Update Your System**:
+   Ensure your Raspberry Pi OS is up to date:
+   ```bash
+   sudo apt update
+   sudo apt upgrade
+   ```
+
+2. **Install Bluetooth Utilities**:
+   Install the necessary Bluetooth packages:
+   ```bash
+   sudo apt install bluetooth bluez blueman
+   ```
+
+3. **Plug in the USB Dongle**:
+   Insert the GeeekPi nRF52840 USB dongle into one of the USB ports on your Raspberry Pi.
+
+4. **Check if the Dongle is Recognized**:
+   Verify that the system recognizes the dongle:
+   ```bash
+   lsusb
+   ```
+   Look for an entry corresponding to the nRF52840 dongle.
+
+5. **Start the Bluetooth Service**:
+   Ensure that the Bluetooth service is running:
+   ```bash
+   sudo systemctl start bluetooth
+   sudo systemctl enable bluetooth
+   ```
+
+6. **Use Bluetoothctl to Manage Bluetooth Devices**:
+   - Start the Bluetooth control tool:
+     ```bash
+     bluetoothctl
+     ```
+   - Inside the `bluetoothctl` prompt, run the following commands:
+     ```bash
+     power on          # Turn on the Bluetooth adapter
+     agent on          # Enable the agent for pairing
+     scan on           # Start scanning for devices
+     ```
+
+7. **Pair with a Device**:
+   To pair with a device, use the following command (replace `XX:XX:XX:XX:XX:XX` with the actual MAC address):
+   ```bash
+   pair E8:78:29:C2:F9:D5  # Example for Fairphone 4 5G
+   ```
+
+8. **Connect to the Device**:
+   After pairing, connect to the device:
+   ```bash
+   connect E8:78:29:C2:F9:D5  # Example for Fairphone 4 5G
+   ```
+
+9. **Trust the Device**:
+   To ensure the device automatically connects in the future, trust it:
+   ```bash
+   trust E8:78:29:C2:F9:D5  # Example for Fairphone 4 5G
+   ```
+
+10. **Exit Bluetoothctl**:
+    Once done, exit the Bluetooth control tool:
+    ```bash
+    exit
+    ```
+
+## Verification
+To verify that the Bluetooth device is connected, you can use: 
+
+## Troubleshooting
+- If you encounter issues, check the status of the Bluetooth service:
+  ```bash
+  sudo systemctl status bluetooth
+  ```
+
+This documentation will help in setting up and troubleshooting Bluetooth on the Raspberry Pi 4 using the GeeekPi nRF52840 USB dongle. 
