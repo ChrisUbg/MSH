@@ -15,11 +15,11 @@ Building a Matter-protocol based smart home application running on Raspberry Pi 
 ## Implementation Plan
 
 ### 1. Development Environment Setup
-- [ ] 1.1. Set up Raspberry Pi 4 with Linux OS
-- [ ] 1.2. Configure Cursor IDE for remote development
+- [x] 1.1. Set up Raspberry Pi 4 with Linux OS
+- [x] 1.2. Configure Cursor IDE for remote development
   - [x] Set up SSH configuration
-  - [ ] Configure Cursor extensions for .NET development
-  - [ ] Set up Git integration in Cursor
+  - [x] Configure Cursor extensions for .NET development
+  - [x] Set up Git integration in Cursor
 - [ ] 1.3. Configure network and Bluetooth connectivity
 - [ ] 1.4. Install .NET 9 SDK on both development machine and Raspberry Pi
 
