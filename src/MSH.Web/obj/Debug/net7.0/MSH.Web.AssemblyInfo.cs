@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MSH.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4840e32f0898ad18a201fa66dd43f7c0f75b1f0f")]
 [assembly: System.Reflection.AssemblyProductAttribute("MSH.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MSH.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -20,8 +20,8 @@ Building a Matter-protocol based smart home application running on Raspberry Pi 
   - [x] Set up SSH configuration
   - [x] Configure Cursor extensions for .NET development
   - [x] Set up Git integration in Cursor
-- [ ] 1.3. Configure network and Bluetooth connectivity
-- [ ] 1.4. Install .NET 8 SDK on both development machine and Raspberry Pi
+- [x] 1.3. Configure network and Bluetooth connectivity
+- [x] 1.4. Install .NET 8 SDK on both development machine and Raspberry Pi
 
 ### 2. Matter Protocol Foundation
 - [ ] 2.1. Install Matter SDK and dependencies

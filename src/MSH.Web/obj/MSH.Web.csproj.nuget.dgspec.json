@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Dev\\source\\repos\\MSH\\src\\MSH.Web\\MSH.Web.csproj": {}
+    "c:\\Users\\Dev\\source\\repos\\MSH\\src\\MSH.Web\\MSH.Web.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Dev\\source\\repos\\MSH\\src\\MSH.Web\\MSH.Web.csproj": {
+    "c:\\Users\\Dev\\source\\repos\\MSH\\src\\MSH.Web\\MSH.Web.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Dev\\source\\repos\\MSH\\src\\MSH.Web\\MSH.Web.csproj",
+        "projectUniqueName": "c:\\Users\\Dev\\source\\repos\\MSH\\src\\MSH.Web\\MSH.Web.csproj",
         "projectName": "MSH.Web",
-        "projectPath": "C:\\Users\\Dev\\source\\repos\\MSH\\src\\MSH.Web\\MSH.Web.csproj",
+        "projectPath": "c:\\Users\\Dev\\source\\repos\\MSH\\src\\MSH.Web\\MSH.Web.csproj",
         "packagesPath": "C:\\Users\\Dev\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Dev\\source\\repos\\MSH\\src\\MSH.Web\\obj\\",
+        "outputPath": "c:\\Users\\Dev\\source\\repos\\MSH\\src\\MSH.Web\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
