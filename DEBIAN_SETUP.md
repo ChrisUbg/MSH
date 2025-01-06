@@ -1,5 +1,33 @@
 # Debian System Configuration for Matter Smart Home
 
+### Home Directory Setup and Permissions
+```bash
+# Create necessary files if they don't exist
+sudo touch /home/chregg/.bash_profile
+sudo touch /home/chregg/.bashrc
+
+# Fix home directory ownership and permissions
+sudo chown -R chregg:chregg /home/chregg
+sudo chmod 755 /home/chregg
+
+# Fix shell configuration file permissions
+sudo chmod 644 /home/chregg/.bash_profile
+sudo chmod 644 /home/chregg/.bashrc
+
+# Verify permissions
+ls -la /home/chregg
+ls -la /home/chregg/.bash*
+```
+
+### Basic Shell Configuration
+```bash
+# Add to .bash_profile
+echo 'export DOTNET_ROOT=/usr/share/dotnet' | sudo tee -a /home/chregg/.bash_profile
+echo 'export PATH=$PATH:/usr/share/dotnet' | sudo tee -a /home/chregg/.bash_profile
+
+# Source the profile
+source /home/chregg/.bash_profile
+
 ## System Information
 - **Distribution**: Debian GNU/Linux 12 (bookworm)
 - **Architecture**: ARM64 (Raspberry Pi 4)
@@ -263,3 +291,16 @@ To verify that the Bluetooth device is connected, you can use:
   ```
 
 This documentation will help in setting up and troubleshooting Bluetooth on the Raspberry Pi 4 using the GeeekPi nRF52840 USB dongle. 
+
+## Copying Files to Raspberry Pi
+-PS C:\Users\Dev\source\repos\MSH> 
+scp -r ./publish/* chregg@192.168.0.104:/home/msh 
+
+## Running the Application   
+- dotnet MSH.Web.dll --urls http://0.0.0.0:5001
+
+## Stopping the Application
+- dotnet stop MSH.Web.dll
+
+## Restarting the Application
+- dotnet restart MSH.Web.dll

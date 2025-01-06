@@ -1,0 +1,3 @@
+C:\Users\Dev\source\repos\MSH\publish\MSH.Matter.dll
+C:\Users\Dev\source\repos\MSH\publish\MSH.Matter.deps.json
+C:\Users\Dev\source\repos\MSH\publish\MSH.Matter.pdb

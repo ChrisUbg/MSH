@@ -1,0 +1,3 @@
+C:\Users\Dev\source\repos\MSH\publish\MSH.Infrastructure.dll
+C:\Users\Dev\source\repos\MSH\publish\MSH.Infrastructure.deps.json
+C:\Users\Dev\source\repos\MSH\publish\MSH.Infrastructure.pdb
