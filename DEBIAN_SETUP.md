@@ -304,3 +304,7 @@ scp -r ./publish/* chregg@192.168.0.104:/home/msh
 
 ## Restarting the Application
 - dotnet restart MSH.Web.dll
+
+## /connectedhomeip/scripts/activate.sh
+- source /connectedhomeip/scripts/activate.sh
+

@@ -24,14 +24,14 @@ Building a Matter-protocol based smart home application running on Raspberry Pi 
 - [x] 1.4. Install .NET 8 SDK on both development machine and Raspberry Pi
 
 ### 2. Matter Protocol Foundation
-- [ ] 2.1. Install Matter SDK and dependencies
+- [x] 2.1. Install Matter SDK and dependencies
 - [ ] 2.2. Set up Matter development environment
 - [ ] 2.3. Basic Matter controller implementation
 - [ ] 2.4. Matter commissioning basics
 - [ ] 2.5. Use Cursor's AI capabilities for Matter protocol implementation
 
 ### 3. Core Application Architecture
-- [ ] 3.1. Create Blazor Server application using .NET 8
+- [x] 3.1. Create Blazor Server application using .NET 8
 - [ ] 3.2. Set up PostgreSQL database
   - [ ] Entity Framework Core configuration
   - [ ] Database migration setup
