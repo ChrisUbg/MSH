@@ -1,0 +1,96 @@
+@page "/tests"
+@using MSH.Infrastructure.Data
+@using MSH.Infrastructure.Data.Models
+@using Microsoft.EntityFrameworkCore;
+@inject ApplicationDbContext DbContext
+@inject IWebHostEnvironment env
+
+<h3>Person Management</h3>
+
+<EditForm Model="@newPerson" OnValidSubmit="@AddPerson">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label class="form-label">First Name</label>
+        <InputText @bind-Value="newPerson.FirstName" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Last Name</label>
+        <InputText @bind-Value="newPerson.LastName" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Address</label>
+        <InputSelect @bind-Value="newPerson.AddressId" class="form-control">
+            <option value="">-- Select Address --</option>
+            @foreach (var address in addresses)
+            {
+                <option value="@address.Id">@($"{address.Street}, {address.City}")</option>
+            }
+        </InputSelect>
+    </div>
+    <button type="submit" class="btn btn-primary">Add</button>
+</EditForm>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Address</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var person in people)
+        {
+            <tr>
+                <td>@person.Id</td>
+                <td>@person.FirstName</td>
+                <td>@person.LastName</td>
+                <td>@(person.AddressId != null ? $"{person.Address.Street}, {person.Address.City}" : "N/A")</td>
+                <td>
+                    <button @onclick="@(() => DeletePerson(person.Id))" class="btn btn-danger">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p>Current Environment: @env.EnvironmentName</p>
+
+@code {
+    private List<Person> people = new();
+    private List<Address> addresses = new();
+    private Person newPerson = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        people = await DbContext.Persons.Include(p => p.Address).ToListAsync();
+        addresses = await DbContext.Addresses.ToListAsync();
+        StateHasChanged();
+    }
+
+    private async Task AddPerson()
+    {
+        DbContext.Persons.Add(newPerson);
+        await DbContext.SaveChangesAsync();
+        newPerson = new Person();
+        await LoadData();
+    }
+
+    private async Task DeletePerson(int id)
+    {
+        var person = await DbContext.Persons.FindAsync(id);
+        if (person != null)
+        {
+            DbContext.Persons.Remove(person);
+            await DbContext.SaveChangesAsync();
+            await LoadData();
+        }
+    }
+}

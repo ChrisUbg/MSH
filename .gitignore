@@ -1,1 +1,4 @@
 scripts/activate.sh
+msh-app-prod.tar
+.cursor/rules/language-preferences.mdc
+.vs/
