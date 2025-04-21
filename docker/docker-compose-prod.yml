@@ -1,0 +1,49 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.prod
+    image: msh-app:prod
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      MATTER_SDK_PATH: "/opt/matter-sdk"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    secrets:
+      - source: postgres_password
+        target: postgres_password
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_DB: matter_prod
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    secrets:
+      - source: postgres_password
+        target: postgres_password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+
+volumes:
+  postgres-data:
+
+secrets:
+  postgres_password:
+    external: true
+    name: postgres_password

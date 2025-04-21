@@ -1,0 +1,6 @@
+# For local development (hot reload, debugging)
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+WORKDIR /src
+COPY . .
+RUN dotnet restore
+CMD ["dotnet", "watch", "--project", "src/MSH.Web"]

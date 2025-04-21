@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    secrets:
+      - postgres_password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    deploy:
+      replicas: 1
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_DB: matter_prod
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+    ports:
+      - "5432:5432"
+    networks:
+      - msh-net
+
+  app:
+    image: chrislinux11x/msh-app-prod
+    secrets:
+      - postgres_password  # Nur PostgreSQL
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=matter_prod;Username=postgres;Password_FILE=/run/secrets/postgres_password;Pooling=true;Timeout=30"
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.role == manager]
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - msh-net
+    dns:
+      - 127.0.0.11  # Docker's internal DNS
+    # build:
+    #   context: ./src/MSH.Web
+    #   dockerfile: Dockerfile
+
+secrets:
+  postgres_password:
+    external: true
+  # Matter-PIN-Secret wurde entfernt
+
+volumes:
+  postgres-data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /mnt/postgres-data
+
+networks:
+  msh-net:
+    driver: overlay

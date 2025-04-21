@@ -12,8 +12,11 @@ public class MatterDeviceService
 
     public MatterDeviceService(IConfiguration config)
     {
-        _matterSdkPath = config["Matter:SdkPath"] ?? "/home/chregg/connectedhomeip";
-        _chipToolPath = config["Matter:ChipToolPath"] ?? $"{_matterSdkPath}/examples/chip-tool/out/chip-tool";
+        // _matterSdkPath = config["Matter:SdkPath"] ?? "/home/chregg/connectedhomeip";
+        // _chipToolPath = config["Matter:ChipToolPath"] ?? $"{_matterSdkPath}/examples/chip-tool/out/chip-tool";
+
+            _matterSdkPath = config["Matter:SdkPath"] ?? "/opt/matter-sdk"; // Updated default
+            _chipToolPath = $"{_matterSdkPath}/out/chip-tool"; // Standard Matter location
 
         if (!Directory.Exists(_matterSdkPath))
             throw new DirectoryNotFoundException($"Matter SDK path not found: {_matterSdkPath}");

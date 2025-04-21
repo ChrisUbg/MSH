@@ -9,7 +9,6 @@ public class ApplicationDbContext : DbContext
         : base(options) { }
 
     public DbSet<Person> Persons { get; set; }
-    public DbSet<Country> Countries { get; set; }
     public DbSet<Address> Addresses { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

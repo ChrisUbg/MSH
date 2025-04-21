@@ -1,0 +1,24 @@
+# Stage 1: Build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# Copy project files (use consistent forward slashes)
+COPY src/MSH.Web/*.csproj src/MSH.Web/
+COPY src/MSH.Infrastructure/*.csproj src/MSH.Infrastructure/
+RUN dotnet restore src/MSH.Web
+
+# Copy remaining source
+COPY src/ src/
+RUN dotnet publish src/MSH.Web -c Release -o /app
+
+# Stage 2: Runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+WORKDIR /app
+
+# Matter SDK setup
+# ENV MATTER_ROOT=/opt/matter-sdk
+# COPY --from=matter-sdk /sdk ${MATTER_ROOT}
+
+# Copy build output
+COPY --from=build /app .
+ENTRYPOINT ["dotnet", "MSH.Web.dll"]
