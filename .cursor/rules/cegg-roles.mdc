@@ -1,0 +1,9 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Your rule content
+
+if questions starting with ##, then the answer should only return two toppics at a time.
