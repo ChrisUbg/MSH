@@ -45,8 +45,11 @@
 - [x] Set up Raspberry Pi Access Point mode
 - [x] Create mode switching script
 - [x] Implement basic UI for mode control
-- [ ] Test network mode switching
-- [ ] Document network configuration
+- [x] Implement robust network test page with HTTP/HTTPS fallback and diagnostics
+- [x] Refactor Network Settings UI for HTTP/HTTPS fallback and improved error handling
+- [x] Add loading indicators and clear user feedback to network-related pages
+- [x] Test network mode switching
+- [x] Document network configuration
 
 ### Basic Application Structure
 - [x] Set up Blazor Server project
@@ -181,7 +184,7 @@
 - [ ] Test multi-language support
 
 ## Documentation
-- [ ] Create API documentation
+- [x] Create API documentation  # Next step
 - [ ] Write deployment guide
 - [ ] Create user manual
 - [ ] Document database schema
