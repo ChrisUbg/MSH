@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8082:8080"  # Changed from 8083 to 8082 for web service
+    depends_on:
+      - db
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=db;Database=msh;Username=postgres;Password=postgres
+    networks:
+      - msh-network
+
+  db:
+    image: postgres:16
+    environment:
+      - POSTGRES_DB=msh
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5434:5432"  # Already correct
+    volumes:
+      - msh_postgres_data:/var/lib/postgresql/data
+    networks:
+      - msh-network
+
+  matter-bridge:
+    build: 
+      context: ./Matter
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8080"  # Already correct
+    environment:
+      - MATTER_BRIDGE_HOST=0.0.0.0
+      - MATTER_BRIDGE_PORT=8080
+    networks:
+      - msh-network
+    depends_on:
+      - web
+
+networks:
+  msh-network:
+    driver: bridge
+
+volumes:
+  msh_postgres_data: 

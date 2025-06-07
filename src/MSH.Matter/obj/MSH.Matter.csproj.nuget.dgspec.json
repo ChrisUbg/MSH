@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/chrislx/repo/MSH/src/MSH.Matter/MSH.Matter.csproj": {}
+    "/home/chris/RiderProjects/MSH/src/MSH.Matter/MSH.Matter.csproj": {}
   },
   "projects": {
-    "/home/chrislx/repo/MSH/src/MSH.Matter/MSH.Matter.csproj": {
+    "/home/chris/RiderProjects/MSH/src/MSH.Matter/MSH.Matter.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/chrislx/repo/MSH/src/MSH.Matter/MSH.Matter.csproj",
+        "projectUniqueName": "/home/chris/RiderProjects/MSH/src/MSH.Matter/MSH.Matter.csproj",
         "projectName": "MSH.Matter",
-        "projectPath": "/home/chrislx/repo/MSH/src/MSH.Matter/MSH.Matter.csproj",
-        "packagesPath": "/home/chrislx/.nuget/packages/",
-        "outputPath": "/home/chrislx/repo/MSH/src/MSH.Matter/obj/",
+        "projectPath": "/home/chris/RiderProjects/MSH/src/MSH.Matter/MSH.Matter.csproj",
+        "packagesPath": "/home/chris/.nuget/packages/",
+        "outputPath": "/home/chris/RiderProjects/MSH/src/MSH.Matter/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/chrislx/.nuget/NuGet/NuGet.Config"
+          "/home/chris/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -58,7 +58,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/home/chrislx/.dotnet/sdk/8.0.406/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.410/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

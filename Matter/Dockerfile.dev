@@ -1,0 +1,27 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements first for better caching
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the code
+COPY . .
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV DEBUG=1
+ENV PYTHONPATH=/app
+ENV MATTER_BRIDGE_PORT=8084
+
+# Expose the port
+EXPOSE 8084
+
+# Start the application with auto-reload
+CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8084", "--reload"] 

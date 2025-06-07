@@ -8,19 +8,19 @@
     "net8.0": []
   },
   "packageFolders": {
-    "/home/chrislx/.nuget/packages/": {}
+    "/home/chris/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/chrislx/repo/MSH/src/MSH.Core/MSH.Core.csproj",
+      "projectUniqueName": "/home/chris/RiderProjects/MSH/src/MSH.Core/MSH.Core.csproj",
       "projectName": "MSH.Core",
-      "projectPath": "/home/chrislx/repo/MSH/src/MSH.Core/MSH.Core.csproj",
-      "packagesPath": "/home/chrislx/.nuget/packages/",
-      "outputPath": "/home/chrislx/repo/MSH/src/MSH.Core/obj/",
+      "projectPath": "/home/chris/RiderProjects/MSH/src/MSH.Core/MSH.Core.csproj",
+      "packagesPath": "/home/chris/.nuget/packages/",
+      "outputPath": "/home/chris/RiderProjects/MSH/src/MSH.Core/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/chrislx/.nuget/NuGet/NuGet.Config"
+        "/home/chris/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -64,7 +64,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/home/chrislx/.dotnet/sdk/8.0.406/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.410/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

@@ -5,6 +5,17 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load port configuration
+builder.Configuration.AddJsonFile("appsettings.Ports.json", optional: false);
+
+// Configure DataProtection
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo("/root/.aspnet/DataProtection-Keys"));
+
+// Get port configuration
+var webPort = builder.Configuration.GetValue<int>("Ports:Web:Internal");
+var dbPort = builder.Configuration.GetValue<int>("Ports:Database:Internal");
+
 // Environment-specific configuration
 if (builder.Environment.IsDevelopment())
 {
@@ -12,7 +23,7 @@ if (builder.Environment.IsDevelopment())
     
     // Development database connection
     var devConnectionString = builder.Configuration.GetConnectionString("Development") 
-        ?? "Host=localhost;Port=5432;Database=matter_dev;Username=postgres;Password=devpassword";
+        ?? $"Host=db;Port={dbPort};Database=matter_dev;Username=postgres;Password=devpassword";
     
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(devConnectionString));
@@ -24,13 +35,13 @@ else
         Console.WriteLine("Initializing production database connection...");
         
         var password = File.ReadAllText("/run/secrets/postgres_password").Trim();
-        var connectionString = $"Host=db;Port=5432;Database=matter_prod;Username=postgres;Password={password};Pooling=true;Timeout=30;Include Error Detail=true";
+        var connectionString = $"Host=db;Port={dbPort};Database=matter_prod;Username=postgres;Password={password};Pooling=true;Timeout=30;Include Error Detail=true";
         
         // Test connection without psql
-        Console.WriteLine("Testing raw TCP connection to db:5432...");
+        Console.WriteLine($"Testing raw TCP connection to db:{dbPort}...");
         using (var socket = new System.Net.Sockets.TcpClient())
         {
-            socket.ConnectAsync("db", 5432).Wait();
+            socket.ConnectAsync("db", dbPort).Wait();
             Console.WriteLine("✅ TCP connection successful");
         }
 
@@ -93,8 +104,8 @@ app.MapGet("/network-diag", () => {
     try {
         sb.AppendLine("DB Connection Test:");
         using var socket = new System.Net.Sockets.TcpClient();
-        socket.Connect("db", 5432);
-        sb.AppendLine("✅ Connected to db:5432");
+        socket.Connect("db", dbPort);
+        sb.AppendLine($"✅ Connected to db:{dbPort}");
     } catch (Exception ex) {
         sb.AppendLine($"❌ Connection failed: {ex.Message}");
     }
@@ -117,5 +128,9 @@ if (args.Contains("--migrate"))
     }
     return;
 }
+
+// Configure URLs explicitly
+app.Urls.Clear();
+app.Urls.Add($"http://+:{webPort}");
 
 app.Run();

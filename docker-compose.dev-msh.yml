@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8082
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - WEB_PORT=8082
+      - DB_PORT=5434
+      - MATTER_BRIDGE_PORT=8084
+    ports:
+      - "${WEB_PORT:-8082}:8082"
+    volumes:
+      - ./src:/app
+      - ~/.aspnet/DataProtection-Keys:/root/.aspnet/DataProtection-Keys
+    depends_on:
+      - db
+      - matter-bridge
+
+  db:
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=devpassword
+      - POSTGRES_DB=matter_dev
+    ports:
+      - "${DB_PORT:-5434}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  matter-bridge:
+    build:
+      context: ./Matter
+      dockerfile: Dockerfile.dev
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MATTER_BRIDGE_PORT=8084
+    ports:
+      - "${MATTER_BRIDGE_PORT:-8084}:8084"
+    volumes:
+      - ./Matter:/app
+
+volumes:
+  postgres_data: 

@@ -2129,19 +2129,19 @@
     ]
   },
   "packageFolders": {
-    "/home/chrislx/.nuget/packages/": {}
+    "/home/chris/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/chrislx/repo/MSH/src/MSH.Web/MSH.Web.csproj",
+      "projectUniqueName": "/home/chris/RiderProjects/MSH/src/MSH.Web/MSH.Web.csproj",
       "projectName": "MSH.Web",
-      "projectPath": "/home/chrislx/repo/MSH/src/MSH.Web/MSH.Web.csproj",
-      "packagesPath": "/home/chrislx/.nuget/packages/",
-      "outputPath": "/home/chrislx/repo/MSH/src/MSH.Web/obj/",
+      "projectPath": "/home/chris/RiderProjects/MSH/src/MSH.Web/MSH.Web.csproj",
+      "packagesPath": "/home/chris/.nuget/packages/",
+      "outputPath": "/home/chris/RiderProjects/MSH/src/MSH.Web/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/chrislx/.nuget/NuGet/NuGet.Config"
+        "/home/chris/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -2153,8 +2153,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "/home/chrislx/repo/MSH/src/MSH.Infrastructure/MSH.Infrastructure.csproj": {
-              "projectPath": "/home/chrislx/repo/MSH/src/MSH.Infrastructure/MSH.Infrastructure.csproj"
+            "/home/chris/RiderProjects/MSH/src/MSH.Infrastructure/MSH.Infrastructure.csproj": {
+              "projectPath": "/home/chris/RiderProjects/MSH/src/MSH.Infrastructure/MSH.Infrastructure.csproj"
             }
           }
         }
@@ -2200,7 +2200,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/home/chrislx/.dotnet/sdk/8.0.406/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.410/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

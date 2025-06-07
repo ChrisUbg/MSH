@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/chrislx/repo/MSH/tests/MSH.Tests/MSH.Tests.csproj": {}
+    "/home/chris/RiderProjects/MSH/tests/MSH.Tests/MSH.Tests.csproj": {}
   },
   "projects": {
-    "/home/chrislx/repo/MSH/tests/MSH.Tests/MSH.Tests.csproj": {
+    "/home/chris/RiderProjects/MSH/tests/MSH.Tests/MSH.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/chrislx/repo/MSH/tests/MSH.Tests/MSH.Tests.csproj",
+        "projectUniqueName": "/home/chris/RiderProjects/MSH/tests/MSH.Tests/MSH.Tests.csproj",
         "projectName": "MSH.Tests",
-        "projectPath": "/home/chrislx/repo/MSH/tests/MSH.Tests/MSH.Tests.csproj",
-        "packagesPath": "/home/chrislx/.nuget/packages/",
-        "outputPath": "/home/chrislx/repo/MSH/tests/MSH.Tests/obj/",
+        "projectPath": "/home/chris/RiderProjects/MSH/tests/MSH.Tests/MSH.Tests.csproj",
+        "packagesPath": "/home/chris/.nuget/packages/",
+        "outputPath": "/home/chris/RiderProjects/MSH/tests/MSH.Tests/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/chrislx/.nuget/NuGet/NuGet.Config"
+          "/home/chris/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -76,7 +76,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/home/chrislx/.dotnet/sdk/8.0.406/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.410/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
