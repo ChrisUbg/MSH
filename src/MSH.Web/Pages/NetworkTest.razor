@@ -1,0 +1,208 @@
+@page "/network-test"
+@namespace MSH.Web.Pages
+@inject HttpClient Http
+@inject ILogger<NetworkTest> Logger
+@inject IConfiguration Configuration
+
+<PageTitle>Network Test</PageTitle>
+
+<div class="container mt-4">
+    <h1>Network Configuration Test</h1>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Connection Test</h5>
+            @if (!string.IsNullOrEmpty(pingResult))
+            {
+                <div class="alert @(pingResult == "pong" ? "alert-success" : "alert-danger")" role="alert">
+                    Ping Result: @pingResult
+                </div>
+            }
+            else if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger" role="alert">
+                    @errorMessage
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Current Status</h5>
+            @if (testResult != null)
+            {
+                <div class="table-responsive">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th>Script Exists:</th>
+                                <td>@testResult.ScriptExists</td>
+                            </tr>
+                            <tr>
+                                <th>Script Path:</th>
+                                <td>@testResult.ScriptPath</td>
+                            </tr>
+                            <tr>
+                                <th>Current Mode:</th>
+                                <td>@testResult.CurrentMode</td>
+                            </tr>
+                            <tr>
+                                <th>Script Permissions:</th>
+                                <td>@testResult.ScriptPermissions</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h6 class="mt-4">Network Interfaces:</h6>
+                <pre class="bg-light p-3">@testResult.NetworkInterfaces.RawOutput</pre>
+            }
+            else if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger" role="alert">
+                    @errorMessage
+                </div>
+            }
+            else
+            {
+                <p>Loading...</p>
+            }
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Test Actions</h5>
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary" @onclick="TestPing" disabled="@isLoading">@(isLoading ? "Testing..." : "Test Ping")</button>
+                <button class="btn btn-primary" @onclick="RunTest" disabled="@isLoading">@(isLoading ? "Running..." : "Run Test")</button>
+                <button class="btn btn-secondary" @onclick="RefreshStatus" disabled="@isLoading">Refresh Status</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private TestResult? testResult;
+    private string errorMessage = string.Empty;
+    private string pingResult = string.Empty;
+    private bool isLoading = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await TestPing();
+    }
+
+    private async Task TestPing()
+    {
+        try
+        {
+            isLoading = true;
+            errorMessage = string.Empty;
+            pingResult = string.Empty;
+            Logger.LogInformation("Testing ping endpoint...");
+            
+            // Try both HTTP and HTTPS
+            try
+            {
+                var response = await Http.GetAsync("api/network/ping");
+                if (response.IsSuccessStatusCode)
+                {
+                    pingResult = await response.Content.ReadAsStringAsync();
+                    Logger.LogInformation("Ping test completed successfully: {Result}", pingResult);
+                    return;
+                }
+            }
+            catch
+            {
+                // If HTTPS fails, try HTTP
+                var httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5000") };
+                var response = await httpClient.GetAsync("api/network/ping");
+                if (response.IsSuccessStatusCode)
+                {
+                    pingResult = await response.Content.ReadAsStringAsync();
+                    Logger.LogInformation("Ping test completed successfully via HTTP: {Result}", pingResult);
+                    return;
+                }
+            }
+
+            errorMessage = "Failed to connect to the server";
+            Logger.LogError("Ping test failed: {Error}", errorMessage);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to test ping: {ex.Message}";
+            Logger.LogError(ex, "Error testing ping");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task RunTest()
+    {
+        try
+        {
+            isLoading = true;
+            errorMessage = string.Empty;
+            Logger.LogInformation("Running network test...");
+            
+            // Try both HTTP and HTTPS
+            try
+            {
+                var response = await Http.GetAsync("api/network/test");
+                if (response.IsSuccessStatusCode)
+                {
+                    testResult = await response.Content.ReadFromJsonAsync<TestResult>();
+                    Logger.LogInformation("Network test completed successfully");
+                    return;
+                }
+            }
+            catch
+            {
+                // If HTTPS fails, try HTTP
+                var httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5000") };
+                var response = await httpClient.GetAsync("api/network/test");
+                if (response.IsSuccessStatusCode)
+                {
+                    testResult = await response.Content.ReadFromJsonAsync<TestResult>();
+                    Logger.LogInformation("Network test completed successfully via HTTP");
+                    return;
+                }
+            }
+
+            errorMessage = "Failed to connect to the server";
+            Logger.LogError("Network test failed: {Error}", errorMessage);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to run network test: {ex.Message}";
+            Logger.LogError(ex, "Error running network test");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task RefreshStatus()
+    {
+        await RunTest();
+    }
+
+    private class TestResult
+    {
+        public bool ScriptExists { get; set; }
+        public string ScriptPath { get; set; } = string.Empty;
+        public string CurrentMode { get; set; } = string.Empty;
+        public string ScriptPermissions { get; set; } = string.Empty;
+        public NetworkInterfaces NetworkInterfaces { get; set; } = new();
+    }
+
+    private class NetworkInterfaces
+    {
+        public string RawOutput { get; set; } = string.Empty;
+    }
+} 

@@ -62,6 +62,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvTmV0d29ya1NldHRpbmdzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Pages/NetworkTest.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvTmV0d29ya1Rlc3QucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [/home/chris/RiderProjects/MSH/src/MSH.Web/Shared/NetworkModeButton.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL05ldHdvcmtNb2RlQnV0dG9uLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 

@@ -76,6 +76,9 @@ builder.Services.AddServerSideBlazor().AddHubOptions(options =>
     options.EnableDetailedErrors = builder.Environment.IsDevelopment();
 });
 
+// Add controllers
+builder.Services.AddControllers();
+
 // Ensure this comes AFTER AddServerSideBlazor()
 builder.Services.AddSignalR();
 
@@ -97,7 +100,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddHttpClient();
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.Configuration["BaseUrl"] ?? "https://localhost:8082") });
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:5000") });
 
 var app = builder.Build();
 
@@ -131,6 +134,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
+// Add this line to enable controllers
+app.MapControllers();
+
 // Configure URLs explicitly
 app.Urls.Clear();
 var port = builder.Configuration.GetValue<int>("Ports:Web:Internal");
@@ -145,7 +151,7 @@ app.MapGet("/test", () => {
 
 // Configure Blazor
 app.MapBlazorHub();
-app.MapFallbackToPage("/_Host", "/Pages/_Host");
+app.MapFallbackToPage("/_Host");
 
 app.MapGet("/network-diag", () => {
     var sb = new StringBuilder();

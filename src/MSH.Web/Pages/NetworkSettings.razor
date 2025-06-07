@@ -27,9 +27,13 @@
             }
             
             <div class="d-flex gap-2">
-                <NetworkModeButton Mode="normal" CurrentMode="@currentMode" OnModeSelected="HandleModeSelected" />
-                <NetworkModeButton Mode="commissioning" CurrentMode="@currentMode" OnModeSelected="HandleModeSelected" />
+                <NetworkModeButton Mode="normal" CurrentMode="@currentMode" OnModeSelected="HandleModeSelected" Disabled="@isLoading" />
+                <NetworkModeButton Mode="commissioning" CurrentMode="@currentMode" OnModeSelected="HandleModeSelected" Disabled="@isLoading" />
             </div>
+            @if (isLoading)
+            {
+                <div class="mt-2 text-info">Loading...</div>
+            }
         </div>
     </div>
 </div>
@@ -38,6 +42,7 @@
     private string currentMode = "Loading...";
     private string errorMessage = string.Empty;
     private string successMessage = string.Empty;
+    private bool isLoading = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -46,34 +51,82 @@
 
     private async Task GetCurrentModeAsync()
     {
+        isLoading = true;
         try
         {
             errorMessage = string.Empty;
-            var mode = await Http.GetStringAsync("api/network/mode");
-            currentMode = mode;
+            successMessage = string.Empty;
+            // Try HTTPS first
+            try
+            {
+                var response = await Http.GetAsync("api/network/mode");
+                if (response.IsSuccessStatusCode)
+                {
+                    currentMode = await response.Content.ReadAsStringAsync();
+                    return;
+                }
+            }
+            catch { }
+            // Fallback to HTTP
+            var httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5000") };
+            var httpResponse = await httpClient.GetAsync("api/network/mode");
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                currentMode = await httpResponse.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                var error = await httpResponse.Content.ReadAsStringAsync();
+                errorMessage = $"Failed to get current network mode: {error}";
+            }
         }
         catch (Exception ex)
         {
             Logger.LogError(ex, "Error getting current network mode");
             errorMessage = "Failed to get current network mode. Please try again.";
         }
+        finally
+        {
+            isLoading = false;
+        }
     }
 
     private async Task HandleModeSelected(string mode)
     {
+        isLoading = true;
         try
         {
             errorMessage = string.Empty;
             successMessage = string.Empty;
-            var response = await Http.PostAsync($"api/network/switch/{mode}", null);
-            if (response.IsSuccessStatusCode)
+            // Try HTTPS first
+            try
+            {
+                var response = await Http.PostAsync($"api/network/switch/{mode}", null);
+                if (response.IsSuccessStatusCode)
+                {
+                    currentMode = mode;
+                    successMessage = $"Successfully switched to {mode} mode";
+                    return;
+                }
+                else
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    errorMessage = $"Failed to switch to {mode} mode: {error}";
+                    return;
+                }
+            }
+            catch { }
+            // Fallback to HTTP
+            var httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5000") };
+            var httpResponse = await httpClient.PostAsync($"api/network/switch/{mode}", null);
+            if (httpResponse.IsSuccessStatusCode)
             {
                 currentMode = mode;
                 successMessage = $"Successfully switched to {mode} mode";
             }
             else
             {
-                var error = await response.Content.ReadAsStringAsync();
+                var error = await httpResponse.Content.ReadAsStringAsync();
                 errorMessage = $"Failed to switch to {mode} mode: {error}";
             }
         }
@@ -81,6 +134,10 @@
         {
             Logger.LogError(ex, $"Error switching to {mode} mode");
             errorMessage = $"Failed to switch to {mode} mode. Please try again.";
+        }
+        finally
+        {
+            isLoading = false;
         }
     }
 } 

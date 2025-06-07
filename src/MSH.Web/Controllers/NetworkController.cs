@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.IO;
+using System.Collections.Generic;
 
 namespace MSH.Web.Controllers;
 
@@ -15,6 +16,13 @@ public class NetworkController : ControllerBase
     {
         _logger = logger;
         _networkConfigScript = configuration["Network:ConfigScript"] ?? "/app/network-config.sh";
+    }
+
+    [HttpGet("ping")]
+    public IActionResult Ping()
+    {
+        _logger.LogInformation("Ping endpoint called");
+        return Ok("pong");
     }
 
     [HttpGet("mode")]
@@ -79,6 +87,71 @@ public class NetworkController : ControllerBase
         {
             _logger.LogError(ex, "Error switching network mode");
             return StatusCode(500, "Error switching network mode");
+        }
+    }
+
+    [HttpGet("test")]
+    public IActionResult TestNetworkConfig()
+    {
+        try
+        {
+            var result = new
+            {
+                ScriptExists = System.IO.File.Exists(_networkConfigScript),
+                ScriptPath = _networkConfigScript,
+                CurrentMode = System.IO.File.Exists("/etc/msh/commissioning") ? "commissioning" : "normal",
+                ScriptPermissions = GetScriptPermissions(),
+                NetworkInterfaces = GetNetworkInterfaces()
+            };
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error testing network configuration");
+            return StatusCode(500, $"Error testing network configuration: {ex.Message}");
+        }
+    }
+
+    private string GetScriptPermissions()
+    {
+        try
+        {
+            var fileInfo = new FileInfo(_networkConfigScript);
+            return fileInfo.Exists ? fileInfo.UnixFileMode.ToString() : "File not found";
+        }
+        catch
+        {
+            return "Unable to get permissions";
+        }
+    }
+
+    private object GetNetworkInterfaces()
+    {
+        try
+        {
+            var interfaces = new List<object>();
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "ip",
+                    Arguments = "addr show",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+
+            process.Start();
+            var output = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+
+            return new { RawOutput = output };
+        }
+        catch
+        {
+            return new { Error = "Unable to get network interfaces" };
         }
     }
 } 
