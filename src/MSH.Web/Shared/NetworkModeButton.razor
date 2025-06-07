@@ -1,0 +1,29 @@
+@namespace MSH.Web.Shared
+@using Microsoft.AspNetCore.Components
+
+<button class="btn btn-primary" @onclick="HandleClick" disabled="@(CurrentMode == Mode)">
+    Switch to @GetModeDisplayName()
+</button>
+
+@code {
+    [Parameter]
+    public string Mode { get; set; } = string.Empty;
+
+    [Parameter]
+    public string CurrentMode { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback<string> OnModeSelected { get; set; }
+
+    private async Task HandleClick()
+    {
+        await OnModeSelected.InvokeAsync(Mode);
+    }
+
+    private string GetModeDisplayName() => Mode switch
+    {
+        "normal" => "Normal Mode",
+        "commissioning" => "Commissioning Mode",
+        _ => Mode
+    };
+} 

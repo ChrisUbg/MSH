@@ -1,0 +1,121 @@
+@using MSH.Infrastructure.Entities
+@using Microsoft.AspNetCore.SignalR.Client
+@implements IAsyncDisposable
+@inject NavigationManager NavigationManager
+@inject IEnvironmentalMonitoringService EnvironmentalMonitoringService
+
+<div class="environmental-monitor">
+    <div class="monitor-card">
+        <h3>Indoor Environment</h3>
+        <div class="metric">
+            <span class="label">Temperature:</span>
+            <span class="value @GetTemperatureClass(_indoorTemperature)">@_indoorTemperature.ToString("F1")°C</span>
+        </div>
+        <div class="metric">
+            <span class="label">Humidity:</span>
+            <span class="value @GetHumidityClass(_humidity)">@_humidity.ToString("F1")%</span>
+        </div>
+        <div class="metric">
+            <span class="label">CO₂:</span>
+            <span class="value @GetAirQualityClass(_co2)">@_co2.ToString("F0") ppm</span>
+        </div>
+        <div class="metric">
+            <span class="label">VOC:</span>
+            <span class="value @GetAirQualityClass(_voc)">@_voc.ToString("F0") ppb</span>
+        </div>
+    </div>
+
+    <div class="monitor-card">
+        <h3>Outdoor Environment</h3>
+        <div class="metric">
+            <span class="label">Temperature:</span>
+            <span class="value @GetTemperatureClass(_outdoorTemperature)">@_outdoorTemperature.ToString("F1")°C</span>
+        </div>
+    </div>
+</div>
+
+@code {
+    private HubConnection? _hubConnection;
+    private double _indoorTemperature = 20.0;
+    private double _outdoorTemperature = 15.0;
+    private double _humidity = 45.0;
+    private double _co2 = 400.0;
+    private double _voc = 100.0;
+    private EnvironmentalThresholds _thresholds = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/notificationHub"))
+            .WithAutomaticReconnect()
+            .Build();
+
+        _hubConnection.On<double>("IndoorTemperatureUpdate", HandleIndoorTemperature);
+        _hubConnection.On<double>("OutdoorTemperatureUpdate", HandleOutdoorTemperature);
+        _hubConnection.On<double>("HumidityUpdate", HandleHumidity);
+        _hubConnection.On<double, double>("AirQualityUpdate", HandleAirQuality);
+
+        await _hubConnection.StartAsync();
+        _thresholds = await EnvironmentalMonitoringService.GetThresholdsAsync();
+    }
+
+    private void HandleIndoorTemperature(double temperature)
+    {
+        _indoorTemperature = temperature;
+        StateHasChanged();
+    }
+
+    private void HandleOutdoorTemperature(double temperature)
+    {
+        _outdoorTemperature = temperature;
+        StateHasChanged();
+    }
+
+    private void HandleHumidity(double humidity)
+    {
+        _humidity = humidity;
+        StateHasChanged();
+    }
+
+    private void HandleAirQuality(double co2, double voc)
+    {
+        _co2 = co2;
+        _voc = voc;
+        StateHasChanged();
+    }
+
+    private string GetTemperatureClass(double temperature)
+    {
+        if (temperature < _thresholds.IndoorTemperatureMin)
+            return "warning";
+        if (temperature > _thresholds.IndoorTemperatureMax)
+            return "danger";
+        return "normal";
+    }
+
+    private string GetHumidityClass(double humidity)
+    {
+        if (humidity < _thresholds.HumidityMin)
+            return "warning";
+        if (humidity > _thresholds.HumidityMax)
+            return "danger";
+        return "normal";
+    }
+
+    private string GetAirQualityClass(double value)
+    {
+        if (value > _thresholds.CO2Max)
+            return "danger";
+        if (value > _thresholds.CO2Max * 0.8)
+            return "warning";
+        return "normal";
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_hubConnection is not null)
+        {
+            await _hubConnection.DisposeAsync();
+        }
+    }
+} 

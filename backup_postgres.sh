@@ -1,37 +1,22 @@
 #!/bin/bash
 
-# Konfiguration
-BACKUP_DIR="/home/chregg/msh/postgres-backups"
-DB_NAME="postgres"
-DB_USER="postgres"
-TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-BACKUP_FILE="$BACKUP_DIR/${DB_NAME}_backup_$TIMESTAMP.sql"
-TARGET_PC="Dev@192.168.0.101:/c/backup/storage/"  # Windows-Pfad als Unix-Style
-SSH_KEY="/home/chregg/.ssh/backup_key"
-
-# Funktion für Fehlerbehandlung
+# Error handling
 error_exit() {
-    echo "❌ Fehler: $1" >&2
+    echo "❌ Fehler: $1"
     exit 1
 }
 
-# Backup-Verzeichnis erstellen
-mkdir -p "$BACKUP_DIR" || error_exit "Backup-Verzeichnis konnte nicht erstellt werden."
+# Get PostgreSQL password from Docker secret
+PGPASSWORD=$(docker exec $(docker ps -q -f name=msh_db) cat /run/secrets/postgres_password)
 
-# PostgreSQL-Backup erstellen
+# Create backup
 echo "🔍 Erstelle Datenbank-Backup..."
-docker exec -t matter-dev-db-15 pg_dumpall -U "$DB_USER" > "$BACKUP_FILE" || error_exit "pg_dumpall fehlgeschlagen."
+docker exec $(docker ps -q -f name=msh_db) pg_dump -U postgres matter_prod > ~/msh/postgres_backup_$(date +%Y%m%d_%H%M%S).sql || error_exit "pg_dump fehlgeschlagen."
 
-# Backup komprimieren
-echo "🗜️ Komprimiere Backup..."
-gzip "$BACKUP_FILE" || error_exit "Komprimierung fehlgeschlagen."
+# Copy backup to Samba share (if configured)
+if [ -d "/mnt/backup" ]; then
+    echo "📤 Kopiere Backup auf Samba-Freigabe..."
+    cp ~/msh/postgres_backup_*.sql /mnt/backup/ || error_exit "Kopieren auf Samba-Freigabe fehlgeschlagen."
+fi
 
-# Backup übertragen (mit SSH-Key)
-echo "📤 Übertrage Backup zum PC..."
-scp -i "$SSH_KEY" "${BACKUP_FILE}.gz" "$TARGET_PC" || error_exit "SCP-Übertragung fehlgeschlagen."
-
-# Lokale Backups aufräumen (älter als 7 Tage)
-echo "🧹 Räume alte Backups auf..."
-find "$BACKUP_DIR" -type f -name "*.gz" -mtime +7 -delete
-
-echo "✅ Backup erfolgreich: ${BACKUP_FILE}.gz → ${TARGET_PC}"
+echo "✅ Backup erfolgreich erstellt"

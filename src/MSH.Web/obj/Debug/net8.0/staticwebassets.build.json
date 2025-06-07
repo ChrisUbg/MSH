@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "Axs12GFzHHAG3AMoeSmYTmUFQ+cZYpeadBXOHHXZ4II=",
+  "Hash": "qDr7ABeHlMwiK1d+LCaafT3saf8zgnnKC4K9oM3GnNk=",
   "Source": "MSH.Web",
   "BasePath": "_content/MSH.Web",
   "Mode": "Default",
@@ -10,17 +10,17 @@
     {
       "Name": "MSH.Web/wwwroot",
       "Source": "MSH.Web",
-      "ContentRoot": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/",
+      "ContentRoot": "/app/src/MSH.Web/wwwroot/",
       "BasePath": "_content/MSH.Web",
       "Pattern": "**"
     }
   ],
   "Assets": [
     {
-      "Identity": "/home/chrislx/repo/MSH/src/MSH.Web/obj/Debug/net8.0/scopedcss/bundle/MSH.Web.styles.css",
+      "Identity": "/app/src/MSH.Web/obj/Debug/net8.0/scopedcss/bundle/MSH.Web.styles.css",
       "SourceId": "MSH.Web",
       "SourceType": "Computed",
-      "ContentRoot": "/home/chrislx/repo/MSH/src/MSH.Web/obj/Debug/net8.0/scopedcss/bundle/",
+      "ContentRoot": "/app/src/MSH.Web/obj/Debug/net8.0/scopedcss/bundle/",
       "BasePath": "_content/MSH.Web",
       "RelativePath": "MSH.Web.styles.css",
       "AssetKind": "All",
@@ -33,13 +33,13 @@
       "AssetTraitValue": "ApplicationBundle",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "/home/chrislx/repo/MSH/src/MSH.Web/obj/Debug/net8.0/scopedcss/bundle/MSH.Web.styles.css"
+      "OriginalItemSpec": "/app/src/MSH.Web/obj/Debug/net8.0/scopedcss/bundle/MSH.Web.styles.css"
     },
     {
-      "Identity": "/home/chrislx/repo/MSH/src/MSH.Web/obj/Debug/net8.0/scopedcss/projectbundle/MSH.Web.bundle.scp.css",
+      "Identity": "/app/src/MSH.Web/obj/Debug/net8.0/scopedcss/projectbundle/MSH.Web.bundle.scp.css",
       "SourceId": "MSH.Web",
       "SourceType": "Computed",
-      "ContentRoot": "/home/chrislx/repo/MSH/src/MSH.Web/obj/Debug/net8.0/scopedcss/projectbundle/",
+      "ContentRoot": "/app/src/MSH.Web/obj/Debug/net8.0/scopedcss/projectbundle/",
       "BasePath": "_content/MSH.Web",
       "RelativePath": "MSH.Web.bundle.scp.css",
       "AssetKind": "All",
@@ -52,13 +52,13 @@
       "AssetTraitValue": "ProjectBundle",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "/home/chrislx/repo/MSH/src/MSH.Web/obj/Debug/net8.0/scopedcss/projectbundle/MSH.Web.bundle.scp.css"
+      "OriginalItemSpec": "/app/src/MSH.Web/obj/Debug/net8.0/scopedcss/projectbundle/MSH.Web.bundle.scp.css"
     },
     {
-      "Identity": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/css/bootstrap/bootstrap.min.css",
+      "Identity": "/app/src/MSH.Web/wwwroot/css/bootstrap/bootstrap.min.css",
       "SourceId": "MSH.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/",
+      "ContentRoot": "/app/src/MSH.Web/wwwroot/",
       "BasePath": "_content/MSH.Web",
       "RelativePath": "css/bootstrap/bootstrap.min.css",
       "AssetKind": "All",
@@ -74,10 +74,10 @@
       "OriginalItemSpec": "wwwroot/css/bootstrap/bootstrap.min.css"
     },
     {
-      "Identity": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/css/bootstrap/bootstrap.min.css.map",
+      "Identity": "/app/src/MSH.Web/wwwroot/css/bootstrap/bootstrap.min.css.map",
       "SourceId": "MSH.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/",
+      "ContentRoot": "/app/src/MSH.Web/wwwroot/",
       "BasePath": "_content/MSH.Web",
       "RelativePath": "css/bootstrap/bootstrap.min.css.map",
       "AssetKind": "All",
@@ -93,10 +93,67 @@
       "OriginalItemSpec": "wwwroot/css/bootstrap/bootstrap.min.css.map"
     },
     {
-      "Identity": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/css/open-iconic/FONT-LICENSE",
+      "Identity": "/app/src/MSH.Web/wwwroot/css/environmental-monitor.css",
       "SourceId": "MSH.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/",
+      "ContentRoot": "/app/src/MSH.Web/wwwroot/",
+      "BasePath": "_content/MSH.Web",
+      "RelativePath": "css/environmental-monitor.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/css/environmental-monitor.css"
+    },
+    {
+      "Identity": "/app/src/MSH.Web/wwwroot/css/environmental-settings.css",
+      "SourceId": "MSH.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "/app/src/MSH.Web/wwwroot/",
+      "BasePath": "_content/MSH.Web",
+      "RelativePath": "css/environmental-settings.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/css/environmental-settings.css"
+    },
+    {
+      "Identity": "/app/src/MSH.Web/wwwroot/css/notifications.css",
+      "SourceId": "MSH.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "/app/src/MSH.Web/wwwroot/",
+      "BasePath": "_content/MSH.Web",
+      "RelativePath": "css/notifications.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/css/notifications.css"
+    },
+    {
+      "Identity": "/app/src/MSH.Web/wwwroot/css/open-iconic/FONT-LICENSE",
+      "SourceId": "MSH.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "/app/src/MSH.Web/wwwroot/",
       "BasePath": "_content/MSH.Web",
       "RelativePath": "css/open-iconic/FONT-LICENSE",
       "AssetKind": "All",
@@ -112,10 +169,10 @@
       "OriginalItemSpec": "wwwroot/css/open-iconic/FONT-LICENSE"
     },
     {
-      "Identity": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/css/open-iconic/font/css/open-iconic-bootstrap.min.css",
+      "Identity": "/app/src/MSH.Web/wwwroot/css/open-iconic/font/css/open-iconic-bootstrap.min.css",
       "SourceId": "MSH.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/",
+      "ContentRoot": "/app/src/MSH.Web/wwwroot/",
       "BasePath": "_content/MSH.Web",
       "RelativePath": "css/open-iconic/font/css/open-iconic-bootstrap.min.css",
       "AssetKind": "All",
@@ -131,10 +188,10 @@
       "OriginalItemSpec": "wwwroot/css/open-iconic/font/css/open-iconic-bootstrap.min.css"
     },
     {
-      "Identity": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/css/open-iconic/font/fonts/open-iconic.eot",
+      "Identity": "/app/src/MSH.Web/wwwroot/css/open-iconic/font/fonts/open-iconic.eot",
       "SourceId": "MSH.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/",
+      "ContentRoot": "/app/src/MSH.Web/wwwroot/",
       "BasePath": "_content/MSH.Web",
       "RelativePath": "css/open-iconic/font/fonts/open-iconic.eot",
       "AssetKind": "All",
@@ -150,10 +207,10 @@
       "OriginalItemSpec": "wwwroot/css/open-iconic/font/fonts/open-iconic.eot"
     },
     {
-      "Identity": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/css/open-iconic/font/fonts/open-iconic.otf",
+      "Identity": "/app/src/MSH.Web/wwwroot/css/open-iconic/font/fonts/open-iconic.otf",
       "SourceId": "MSH.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/",
+      "ContentRoot": "/app/src/MSH.Web/wwwroot/",
       "BasePath": "_content/MSH.Web",
       "RelativePath": "css/open-iconic/font/fonts/open-iconic.otf",
       "AssetKind": "All",
@@ -169,10 +226,10 @@
       "OriginalItemSpec": "wwwroot/css/open-iconic/font/fonts/open-iconic.otf"
     },
     {
-      "Identity": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/css/open-iconic/font/fonts/open-iconic.svg",
+      "Identity": "/app/src/MSH.Web/wwwroot/css/open-iconic/font/fonts/open-iconic.svg",
       "SourceId": "MSH.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/",
+      "ContentRoot": "/app/src/MSH.Web/wwwroot/",
       "BasePath": "_content/MSH.Web",
       "RelativePath": "css/open-iconic/font/fonts/open-iconic.svg",
       "AssetKind": "All",
@@ -188,10 +245,10 @@
       "OriginalItemSpec": "wwwroot/css/open-iconic/font/fonts/open-iconic.svg"
     },
     {
-      "Identity": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/css/open-iconic/font/fonts/open-iconic.ttf",
+      "Identity": "/app/src/MSH.Web/wwwroot/css/open-iconic/font/fonts/open-iconic.ttf",
       "SourceId": "MSH.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/",
+      "ContentRoot": "/app/src/MSH.Web/wwwroot/",
       "BasePath": "_content/MSH.Web",
       "RelativePath": "css/open-iconic/font/fonts/open-iconic.ttf",
       "AssetKind": "All",
@@ -207,10 +264,10 @@
       "OriginalItemSpec": "wwwroot/css/open-iconic/font/fonts/open-iconic.ttf"
     },
     {
-      "Identity": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/css/open-iconic/font/fonts/open-iconic.woff",
+      "Identity": "/app/src/MSH.Web/wwwroot/css/open-iconic/font/fonts/open-iconic.woff",
       "SourceId": "MSH.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/",
+      "ContentRoot": "/app/src/MSH.Web/wwwroot/",
       "BasePath": "_content/MSH.Web",
       "RelativePath": "css/open-iconic/font/fonts/open-iconic.woff",
       "AssetKind": "All",
@@ -226,10 +283,10 @@
       "OriginalItemSpec": "wwwroot/css/open-iconic/font/fonts/open-iconic.woff"
     },
     {
-      "Identity": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/css/open-iconic/ICON-LICENSE",
+      "Identity": "/app/src/MSH.Web/wwwroot/css/open-iconic/ICON-LICENSE",
       "SourceId": "MSH.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/",
+      "ContentRoot": "/app/src/MSH.Web/wwwroot/",
       "BasePath": "_content/MSH.Web",
       "RelativePath": "css/open-iconic/ICON-LICENSE",
       "AssetKind": "All",
@@ -245,10 +302,10 @@
       "OriginalItemSpec": "wwwroot/css/open-iconic/ICON-LICENSE"
     },
     {
-      "Identity": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/css/open-iconic/README.md",
+      "Identity": "/app/src/MSH.Web/wwwroot/css/open-iconic/README.md",
       "SourceId": "MSH.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/",
+      "ContentRoot": "/app/src/MSH.Web/wwwroot/",
       "BasePath": "_content/MSH.Web",
       "RelativePath": "css/open-iconic/README.md",
       "AssetKind": "All",
@@ -264,10 +321,10 @@
       "OriginalItemSpec": "wwwroot/css/open-iconic/README.md"
     },
     {
-      "Identity": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/css/site.css",
+      "Identity": "/app/src/MSH.Web/wwwroot/css/site.css",
       "SourceId": "MSH.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/",
+      "ContentRoot": "/app/src/MSH.Web/wwwroot/",
       "BasePath": "_content/MSH.Web",
       "RelativePath": "css/site.css",
       "AssetKind": "All",
@@ -283,10 +340,10 @@
       "OriginalItemSpec": "wwwroot/css/site.css"
     },
     {
-      "Identity": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/favicon.png",
+      "Identity": "/app/src/MSH.Web/wwwroot/favicon.png",
       "SourceId": "MSH.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "/home/chrislx/repo/MSH/src/MSH.Web/wwwroot/",
+      "ContentRoot": "/app/src/MSH.Web/wwwroot/",
       "BasePath": "_content/MSH.Web",
       "RelativePath": "favicon.png",
       "AssetKind": "All",
@@ -300,6 +357,44 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/favicon.png"
+    },
+    {
+      "Identity": "/app/src/MSH.Web/wwwroot/index.html",
+      "SourceId": "MSH.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "/app/src/MSH.Web/wwwroot/",
+      "BasePath": "_content/MSH.Web",
+      "RelativePath": "index.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/index.html"
+    },
+    {
+      "Identity": "/app/src/MSH.Web/wwwroot/js/chartInterop.js",
+      "SourceId": "MSH.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "/app/src/MSH.Web/wwwroot/",
+      "BasePath": "_content/MSH.Web",
+      "RelativePath": "js/chartInterop.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/js/chartInterop.js"
     }
   ]
 }

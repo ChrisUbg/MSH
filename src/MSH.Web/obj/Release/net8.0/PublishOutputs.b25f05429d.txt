@@ -1,7 +1,0 @@
-C:\Users\Dev\source\repos\MSH\publish\MSH.Web.exe
-C:\Users\Dev\source\repos\MSH\publish\appsettings.Development.json
-C:\Users\Dev\source\repos\MSH\publish\appsettings.json
-C:\Users\Dev\source\repos\MSH\publish\MSH.Web.dll
-C:\Users\Dev\source\repos\MSH\publish\MSH.Web.deps.json
-C:\Users\Dev\source\repos\MSH\publish\MSH.Web.runtimeconfig.json
-C:\Users\Dev\source\repos\MSH\publish\MSH.Web.pdb

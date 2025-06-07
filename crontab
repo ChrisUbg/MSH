@@ -1,0 +1,5 @@
+# Daily backup at 7 PM
+0 19 * * * cd ~/msh && ./backup_postgres.sh >> backup.log 2>&1
+
+# Cleanup old backups (older than 7 days) at 8 PM
+0 20 * * * find /home/chregg/msh/postgres-backups -type f -name "*.gz" -mtime +7 -delete 

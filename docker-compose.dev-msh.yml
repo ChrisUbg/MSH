@@ -7,19 +7,26 @@ services:
       dockerfile: Dockerfile.dev
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:8082
+      - ASPNETCORE_URLS=http://0.0.0.0:5000
       - DOTNET_USE_POLLING_FILE_WATCHER=1
-      - WEB_PORT=8082
+      - WEB_PORT=5000
       - DB_PORT=5434
       - MATTER_BRIDGE_PORT=8084
     ports:
-      - "${WEB_PORT:-8082}:8082"
+      - "5000:5000"
     volumes:
-      - ./src:/app
+      - .:/app
       - ~/.aspnet/DataProtection-Keys:/root/.aspnet/DataProtection-Keys
     depends_on:
       - db
       - matter-bridge
+    networks:
+      - msh_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/test"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   db:
     image: postgres:16
@@ -28,9 +35,11 @@ services:
       - POSTGRES_PASSWORD=devpassword
       - POSTGRES_DB=matter_dev
     ports:
-      - "${DB_PORT:-5434}:5432"
+      - "5434:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - msh_network
 
   matter-bridge:
     build:
@@ -40,9 +49,15 @@ services:
       - PYTHONUNBUFFERED=1
       - MATTER_BRIDGE_PORT=8084
     ports:
-      - "${MATTER_BRIDGE_PORT:-8084}:8084"
+      - "8084:8084"
     volumes:
       - ./Matter:/app
+    networks:
+      - msh_network
+
+networks:
+  msh_network:
+    driver: bridge
 
 volumes:
   postgres_data: 

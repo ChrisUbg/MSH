@@ -22,8 +22,32 @@ build_property._RazorSourceGeneratorDebug =
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[/home/chris/RiderProjects/MSH/src/MSH.Web/Pages/Counter.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQ291bnRlci5yYXpvcg==
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Components/App.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9BcHAucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Components/EnvironmentalMonitor.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9FbnZpcm9ubWVudGFsTW9uaXRvci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Components/EnvironmentalTrends.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9FbnZpcm9ubWVudGFsVHJlbmRzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Components/NotificationComponent.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9Ob3RpZmljYXRpb25Db21wb25lbnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Components/Routes.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9Sb3V0ZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Pages/EnvironmentalSettings.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRW52aXJvbm1lbnRhbFNldHRpbmdzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Pages/Error.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRXJyb3IucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/home/chris/RiderProjects/MSH/src/MSH.Web/Pages/FetchData.razor]
@@ -34,8 +58,12 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvSW5kZXgucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/home/chris/RiderProjects/MSH/src/MSH.Web/Pages/Testpage.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXMvVGVzdHBhZ2UucmF6b3I=
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Pages/NetworkSettings.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvTmV0d29ya1NldHRpbmdzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Shared/NetworkModeButton.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL05ldHdvcmtNb2RlQnV0dG9uLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [/home/chris/RiderProjects/MSH/src/MSH.Web/Shared/SurveyPrompt.razor]

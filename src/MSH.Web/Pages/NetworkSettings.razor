@@ -1,0 +1,86 @@
+@page "/network-settings"
+@inject HttpClient Http
+@inject ILogger<NetworkSettings> Logger
+
+<PageTitle>Network Settings</PageTitle>
+
+<div class="container mt-4">
+    <h1>Network Settings</h1>
+    
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Network Mode</h5>
+            <p class="card-text">Current Mode: <strong>@currentMode</strong></p>
+            
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger" role="alert">
+                    @errorMessage
+                </div>
+            }
+            
+            @if (!string.IsNullOrEmpty(successMessage))
+            {
+                <div class="alert alert-success" role="alert">
+                    @successMessage
+                </div>
+            }
+            
+            <div class="d-flex gap-2">
+                <NetworkModeButton Mode="normal" CurrentMode="@currentMode" OnModeSelected="HandleModeSelected" />
+                <NetworkModeButton Mode="commissioning" CurrentMode="@currentMode" OnModeSelected="HandleModeSelected" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string currentMode = "Loading...";
+    private string errorMessage = string.Empty;
+    private string successMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCurrentModeAsync();
+    }
+
+    private async Task GetCurrentModeAsync()
+    {
+        try
+        {
+            errorMessage = string.Empty;
+            var mode = await Http.GetStringAsync("api/network/mode");
+            currentMode = mode;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error getting current network mode");
+            errorMessage = "Failed to get current network mode. Please try again.";
+        }
+    }
+
+    private async Task HandleModeSelected(string mode)
+    {
+        try
+        {
+            errorMessage = string.Empty;
+            successMessage = string.Empty;
+            var response = await Http.PostAsync($"api/network/switch/{mode}", null);
+            if (response.IsSuccessStatusCode)
+            {
+                currentMode = mode;
+                successMessage = $"Successfully switched to {mode} mode";
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                errorMessage = $"Failed to switch to {mode} mode: {error}";
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, $"Error switching to {mode} mode");
+            errorMessage = $"Failed to switch to {mode} mode. Please try again.";
+        }
+    }
+} 

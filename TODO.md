@@ -27,10 +27,10 @@
   - [x] Centralize port configuration in appsettings.Ports.json
 
 ### Database Setup
-- [ ] Design initial database schema
-- [ ] Create PostgreSQL migration scripts
-- [ ] Set up database backup procedures
-- [ ] Implement data access layer
+- [x] Design initial database schema
+- [x] Create PostgreSQL migration scripts
+- [x] Set up database backup procedures
+- [x] Implement data access layer
 - [x] Create database initialization scripts
   - [x] Configure PostgreSQL container
   - [x] Set up volume persistence
@@ -44,20 +44,27 @@
 - [x] Configure Raspberry Pi WiFi client mode (A1 network)
 - [x] Set up Raspberry Pi Access Point mode
 - [x] Create mode switching script
-- [ ] Implement basic UI for mode control
+- [x] Implement basic UI for mode control
 - [ ] Test network mode switching
 - [ ] Document network configuration
 
 ### Basic Application Structure
-- [ ] Set up Blazor Server project
-- [ ] Create basic project structure
-  - [ ] Application layer
-  - [ ] Domain layer
-  - [ ] Infrastructure layer
-  - [ ] Web layer
+- [x] Set up Blazor Server project
+- [x] Create basic project structure
+  - [x] Application layer
+  - [x] Domain layer
+  - [x] Infrastructure layer
+    - [x] Implement backup service
+    - [x] Implement notification service
+    - [x] Implement current user service
+    - [ ] Implement device management service
+    - [x] Implement environmental monitoring service
+    - [ ] Implement rule engine service
+    - [ ] Implement user management service
+  - [x] Web layer
 - [ ] Implement basic authentication
-- [ ] Set up logging infrastructure
-- [ ] Create basic UI layout
+- [x] Set up logging infrastructure
+- [x] Create basic UI layout
 
 ### Matter Protocol Bridge
 - [x] Set up Python environment
@@ -110,11 +117,18 @@
 
 ## Phase 3: Monitoring & Statistics
 ### Environmental Monitoring
-- [ ] Implement temperature monitoring
-- [ ] Add humidity monitoring
-- [ ] Create weather data integration
-- [ ] Set up monitoring dashboards
-- [ ] Implement alert system
+- [x] Create EnvironmentalSettings entity
+- [x] Implement temperature monitoring
+- [x] Implement humidity monitoring
+- [x] Implement air quality monitoring
+- [x] Add threshold configuration
+- [x] Create warning system
+- [x] Implement trend visualization
+- [x] Add data persistence
+- [ ] Add data export functionality
+- [ ] Implement historical data analysis
+- [ ] Add custom alert rules
+- [ ] Create environmental reports
 
 ### Device Status Tracking
 - [ ] Create device status history
@@ -183,16 +197,89 @@
 ## Deployment
 - [ ] Create deployment scripts
 - [ ] Set up CI/CD pipeline
-- [ ] Implement backup procedures
-- [ ] Create rollback procedures
-- [ ] Document deployment process
+- [x] Implement backup procedures
 
-## Notes
-- All tasks should follow the development rules defined in BASIC_RULES.md
-- Process flows should reference the diagram-blueprint-instructions.md
-- Database backups should follow data-backup-process-blueprint.drawio
-- Network configuration should follow HYBRID_APPROACH.md
-- Port configurations should be checked against Haustagebuch to prevent conflicts
-- Deployment should follow similar pattern as Haustagebuch
-- Database structure should be similar to Haustagebuch where applicable
-- Use same backup and migration strategies as Haustagebuch 
+---
+
+**Note:**
+- Circular dependencies in service registration and DbContext usage have been resolved.
+- Application now starts end-to-end, loads main/index/counter pages, and environmental monitoring is functional.
+- Network settings page is implemented with mode switching functionality.
+- Basic UI layout and navigation are working across different browsers.
+
+## Core Infrastructure
+- [x] Set up Entity Framework Core with PostgreSQL
+- [ ] Implement user authentication and authorization
+- [x] Create base entities and DbContext
+- [x] Implement soft delete functionality
+- [x] Add user tracking for entities
+- [x] Set up dependency injection
+- [x] Configure logging
+
+## Device Management
+- [x] Create Device entity
+- [x] Create DeviceGroup entity
+- [x] Create DeviceState entity
+- [x] Create DeviceEvent entity
+- [ ] Implement device registration
+- [ ] Add device state tracking
+- [ ] Create device event logging
+- [ ] Implement device grouping
+
+## Rules and Automation
+- [x] Create Rule entity
+- [x] Create RuleTrigger entity
+- [ ] Implement rule evaluation engine
+- [ ] Add time-based triggers
+- [ ] Add condition-based triggers
+- [ ] Implement action execution
+- [ ] Add rule scheduling
+
+## User Management
+- [x] Create User entity
+- [x] Create UserDevicePermission entity
+- [ ] Implement user registration
+- [ ] Add user authentication
+- [ ] Implement permission system
+- [x] Create user settings
+- [x] Add user preferences
+
+## Notifications
+- [x] Implement real-time notifications
+- [x] Add email notifications
+- [x] Create notification preferences
+- [x] Implement notification history
+- [ ] Add push notifications
+- [ ] Create notification templates
+- [ ] Implement notification grouping
+
+## UI/UX
+- [x] Create responsive layout
+- [x] Implement dark/light theme
+- [x] Add device dashboard
+- [x] Create settings pages
+- [x] Implement environmental monitoring UI
+- [ ] Add data visualization
+- [ ] Create mobile app
+- [ ] Implement progressive web app features
+
+## Testing
+- [ ] Write unit tests
+- [ ] Add integration tests
+- [ ] Implement end-to-end tests
+- [ ] Create performance tests
+- [ ] Add security tests
+
+## Documentation
+- [ ] Create API documentation
+- [ ] Write user guide
+- [ ] Add developer documentation
+- [ ] Create deployment guide
+- [ ] Add troubleshooting guide
+
+## Deployment
+- [ ] Set up CI/CD pipeline
+- [ ] Configure production environment
+- [x] Implement backup strategy
+- [ ] Add monitoring and alerting
+- [ ] Create deployment scripts 

@@ -1,9 +1,49 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Home - MSH</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1>Welcome to MSH</h1>
+            <p class="lead">Your Matter Smart Home Management System</p>
+        </div>
+    </div>
 
-Welcome to your new app.
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Environmental Monitoring</h5>
+                    <p class="card-text">Monitor and control your home's environmental conditions.</p>
+                    <a href="environmentalsettings" class="btn btn-primary">Go to Settings</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Matter Bridge</h5>
+                    <p class="card-text">Connect and manage your Matter-compatible devices.</p>
+                    <a href="matterbridge" class="btn btn-primary">Manage Devices</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">System Status</h5>
+                    <p class="card-text">View system status and diagnostics.</p>
+                    <a href="network-diag" class="btn btn-primary">View Status</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@code {
+    protected override void OnInitialized()
+    {
+        Console.WriteLine("Index page initialized");
+    }
+}

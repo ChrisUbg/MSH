@@ -1,5 +1,10 @@
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using MSH.Infrastructure.Data;
+using MSH.Infrastructure.Services;
+using MSH.Web.Hubs;
+using MSH.Web.Services;
 using Npgsql;
 using System.Text;
 
@@ -10,6 +15,7 @@ builder.Configuration.AddJsonFile("appsettings.Ports.json", optional: false);
 
 // Configure DataProtection
 builder.Services.AddDataProtection()
+    .SetApplicationName("MSH")
     .PersistKeysToFileSystem(new DirectoryInfo("/root/.aspnet/DataProtection-Keys"));
 
 // Get port configuration
@@ -54,12 +60,6 @@ else
                     errorCodesToAdd: null
                 );
             }));
-
-        // Verify EF Core can connect
-        using var scope = builder.Services.BuildServiceProvider().CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        db.Database.OpenConnection();
-        Console.WriteLine("✅ Database connection successful");
     }
     catch (Exception ex)
     {
@@ -79,6 +79,26 @@ builder.Services.AddServerSideBlazor().AddHubOptions(options =>
 // Ensure this comes AFTER AddServerSideBlazor()
 builder.Services.AddSignalR();
 
+// Add HttpContextAccessor for CurrentUserService
+builder.Services.AddHttpContextAccessor();
+
+// Add environmental monitoring services
+builder.Services.AddScoped<MSH.Infrastructure.Services.IUserLookupService, MSH.Infrastructure.Services.UserLookupService>();
+builder.Services.AddScoped<MSH.Infrastructure.Services.ICurrentUserService, MSH.Web.Services.CurrentUserService>();
+builder.Services.AddScoped<MSH.Infrastructure.Services.INotificationService, MSH.Web.Services.NotificationService>();
+builder.Services.AddScoped<MSH.Infrastructure.Services.IEmailService, MSH.Infrastructure.Services.EmailService>();
+builder.Services.AddScoped<MSH.Infrastructure.Services.IEnvironmentalMonitoringService, MSH.Infrastructure.Services.EnvironmentalMonitoringService>();
+builder.Services.AddSingleton<MSH.Infrastructure.Services.IBackupService, MSH.Infrastructure.Services.PostgresBackupService>();
+
+// Register hosted services
+builder.Services.AddHostedService<MSH.Web.Services.BackupBackgroundService>();
+
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
+
+builder.Services.AddHttpClient();
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.Configuration["BaseUrl"] ?? "https://localhost:8082") });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
@@ -92,12 +112,40 @@ else
     app.UseHsts();
 }
 
+// Add basic middleware
+app.Use(async (context, next) =>
+{
+    try
+    {
+        Console.WriteLine($"Processing request: {context.Request.Path}");
+        await next();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error processing request: {ex}");
+        throw;
+    }
+});
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
+// Configure URLs explicitly
+app.Urls.Clear();
+var port = builder.Configuration.GetValue<int>("Ports:Web:Internal");
+Console.WriteLine($"Configuring application to listen on port {port}");
+app.Urls.Add($"http://0.0.0.0:{port}");
+
+// Add basic endpoint for testing
+app.MapGet("/test", () => {
+    Console.WriteLine("Test endpoint called");
+    return "Hello World!";
+});
+
+// Configure Blazor
 app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
+app.MapFallbackToPage("/_Host", "/Pages/_Host");
 
 app.MapGet("/network-diag", () => {
     var sb = new StringBuilder();
@@ -129,8 +177,7 @@ if (args.Contains("--migrate"))
     return;
 }
 
-// Configure URLs explicitly
-app.Urls.Clear();
-app.Urls.Add($"http://+:{webPort}");
+// Add SignalR hub
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.Run();

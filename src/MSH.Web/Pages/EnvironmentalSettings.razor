@@ -1,0 +1,122 @@
+@page "/environmentalsettings"
+@using MSH.Infrastructure.Services
+@inject IEnvironmentalMonitoringService EnvironmentalMonitoringService
+@inject ILogger<EnvironmentalSettings> Logger
+
+<div class="settings-container">
+    <h2>Environmental Monitoring Settings</h2>
+
+    <div class="settings-card">
+        <h3>Temperature Thresholds</h3>
+        <div class="form-group">
+            <label>Indoor Temperature Range (°C)</label>
+            <div class="range-inputs">
+                <input type="number" @bind="_thresholds.IndoorTemperatureMin" @bind:event="oninput" step="0.1" />
+                <span>to</span>
+                <input type="number" @bind="_thresholds.IndoorTemperatureMax" @bind:event="oninput" step="0.1" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Outdoor Temperature Range (°C)</label>
+            <div class="range-inputs">
+                <input type="number" @bind="_thresholds.OutdoorTemperatureMin" @bind:event="oninput" step="0.1" />
+                <span>to</span>
+                <input type="number" @bind="_thresholds.OutdoorTemperatureMax" @bind:event="oninput" step="0.1" />
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-card">
+        <h3>Humidity Thresholds</h3>
+        <div class="form-group">
+            <label>Humidity Range (%)</label>
+            <div class="range-inputs">
+                <input type="number" @bind="_thresholds.HumidityMin" @bind:event="oninput" step="1" />
+                <span>to</span>
+                <input type="number" @bind="_thresholds.HumidityMax" @bind:event="oninput" step="1" />
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-card">
+        <h3>Air Quality Thresholds</h3>
+        <div class="form-group">
+            <label>Maximum CO₂ Level (ppm)</label>
+            <input type="number" @bind="_thresholds.CO2Max" @bind:event="oninput" step="10" />
+        </div>
+        <div class="form-group">
+            <label>Maximum VOC Level (ppb)</label>
+            <input type="number" @bind="_thresholds.VOCMax" @bind:event="oninput" step="10" />
+        </div>
+    </div>
+
+    <div class="settings-card">
+        <h3>Warning Levels</h3>
+        <div class="form-group">
+            <label>Temperature Warning (°C)</label>
+            <input type="number" @bind="_temperatureWarning" @bind:event="oninput" step="0.1" />
+        </div>
+        <div class="form-group">
+            <label>Humidity Warning (%)</label>
+            <input type="number" @bind="_humidityWarning" @bind:event="oninput" step="1" />
+        </div>
+    </div>
+
+    <div class="button-group">
+        <button class="btn btn-primary" @onclick="SaveSettings">Save Settings</button>
+        <button class="btn btn-secondary" @onclick="ResetSettings">Reset to Defaults</button>
+    </div>
+
+    @if (!string.IsNullOrEmpty(_message))
+    {
+        <div class="alert @(_isError ? "alert-danger" : "alert-success")">
+            @_message
+        </div>
+    }
+</div>
+
+@code {
+    private EnvironmentalThresholds _thresholds = new();
+    private double _temperatureWarning = 15.0;
+    private double _humidityWarning = 40.0;
+    private string _message = "";
+    private bool _isError = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _thresholds = await EnvironmentalMonitoringService.GetThresholdsAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error loading environmental settings");
+            _message = "Error loading settings. Using defaults.";
+            _isError = true;
+        }
+    }
+
+    private async Task SaveSettings()
+    {
+        try
+        {
+            await EnvironmentalMonitoringService.SetThresholdsAsync(_thresholds);
+            _message = "Settings saved successfully!";
+            _isError = false;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error saving environmental settings");
+            _message = "Error saving settings.";
+            _isError = true;
+        }
+    }
+
+    private async Task ResetSettings()
+    {
+        _thresholds = new EnvironmentalThresholds();
+        _temperatureWarning = 15.0;
+        _humidityWarning = 40.0;
+        await SaveSettings();
+    }
+} 

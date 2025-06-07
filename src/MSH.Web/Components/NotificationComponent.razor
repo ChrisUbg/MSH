@@ -1,0 +1,123 @@
+@using Microsoft.AspNetCore.SignalR.Client
+@implements IAsyncDisposable
+@inject NavigationManager NavigationManager
+
+<div class="notification-container">
+    @foreach (var notification in _notifications)
+    {
+        <div class="notification @notification.Type @notification.Severity" @onclick="() => RemoveNotification(notification)">
+            <div class="notification-header">
+                <h4>@notification.Title</h4>
+                <button class="close-button" @onclick:stopPropagation="true" @onclick="() => RemoveNotification(notification)">×</button>
+            </div>
+            <div class="notification-body">
+                @notification.Message
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private HubConnection? _hubConnection;
+    private List<NotificationModel> _notifications = new();
+    private const int MaxNotifications = 5;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/notificationHub"))
+            .WithAutomaticReconnect()
+            .Build();
+
+        _hubConnection.On<NotificationModel>("ReceiveNotification", HandleNotification);
+        _hubConnection.On<NotificationModel>("ReceiveAlert", HandleAlert);
+        _hubConnection.On<DeviceStatusModel>("DeviceStatusUpdate", HandleDeviceStatus);
+        _hubConnection.On<EnvironmentalAlertModel>("EnvironmentalAlert", HandleEnvironmentalAlert);
+
+        await _hubConnection.StartAsync();
+        await _hubConnection.InvokeAsync("JoinUserGroup", "current-user-id"); // Replace with actual user ID
+    }
+
+    private void HandleNotification(NotificationModel notification)
+    {
+        AddNotification(notification);
+    }
+
+    private void HandleAlert(NotificationModel alert)
+    {
+        AddNotification(alert);
+    }
+
+    private void HandleDeviceStatus(DeviceStatusModel status)
+    {
+        var notification = new NotificationModel
+        {
+            Title = "Device Status Update",
+            Message = $"Device {status.DeviceId}: {status.Status}",
+            Type = "device-status"
+        };
+        AddNotification(notification);
+    }
+
+    private void HandleEnvironmentalAlert(EnvironmentalAlertModel alert)
+    {
+        var notification = new NotificationModel
+        {
+            Title = $"{alert.Metric} Alert",
+            Message = alert.Message,
+            Type = "environmental",
+            Severity = alert.Severity
+        };
+        AddNotification(notification);
+    }
+
+    private void AddNotification(NotificationModel notification)
+    {
+        _notifications.Insert(0, notification);
+        if (_notifications.Count > MaxNotifications)
+        {
+            _notifications.RemoveAt(_notifications.Count - 1);
+        }
+        StateHasChanged();
+    }
+
+    private void RemoveNotification(NotificationModel notification)
+    {
+        _notifications.Remove(notification);
+        StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_hubConnection is not null)
+        {
+            await _hubConnection.InvokeAsync("LeaveUserGroup", "current-user-id"); // Replace with actual user ID
+            await _hubConnection.DisposeAsync();
+        }
+    }
+}
+
+@code {
+    public class NotificationModel
+    {
+        public string Title { get; set; } = "";
+        public string Message { get; set; } = "";
+        public string Type { get; set; } = "info";
+        public string Severity { get; set; } = "info";
+    }
+
+    public class DeviceStatusModel
+    {
+        public int DeviceId { get; set; }
+        public string Status { get; set; } = "";
+    }
+
+    public class EnvironmentalAlertModel
+    {
+        public string Metric { get; set; } = "";
+        public double Value { get; set; }
+        public double Threshold { get; set; }
+        public string Severity { get; set; } = "";
+        public string Message { get; set; } = "";
+    }
+} 

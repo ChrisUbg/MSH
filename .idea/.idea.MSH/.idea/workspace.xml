@@ -7,24 +7,34 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c31a682e-fd01-496c-bcbe-be73f320a679" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.MSH/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MSH/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TODO.md" beforeDir="false" afterPath="$PROJECT_DIR$/TODO.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backup_postgres.sh" beforeDir="false" afterPath="$PROJECT_DIR$/backup_postgres.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Core/obj/Debug/net8.0/MSH.Core.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Core/obj/Debug/net8.0/MSH.Core.AssemblyInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Core/obj/Debug/net8.0/MSH.Core.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Core/obj/Debug/net8.0/MSH.Core.AssemblyInfoInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Core/obj/Debug/net8.0/MSH.Core.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Core/obj/Debug/net8.0/MSH.Core.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Core/obj/Debug/net8.0/MSH.Core.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Core/obj/Debug/net8.0/MSH.Core.assets.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Core/obj/MSH.Core.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Core/obj/MSH.Core.csproj.nuget.dgspec.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Core/obj/MSH.Core.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Core/obj/MSH.Core.csproj.nuget.g.props" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Core/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Core/obj/project.assets.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Core/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Core/obj/project.nuget.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Core/obj/project.packagespec.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Core/obj/project.packagespec.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Core/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Core/obj/rider.project.model.nuget.info" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Core/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Core/obj/rider.project.restore.info" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/Data/ApplicationDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/Data/ApplicationDbContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/MSH.Infrastructure.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/MSH.Infrastructure.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/Migrations/ApplicationDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/Migrations/ApplicationDbContextModelSnapshot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/bin/Debug/net8.0/MSH.Infrastructure.deps.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/bin/Debug/net8.0/MSH.Infrastructure.deps.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/bin/Debug/net8.0/MSH.Infrastructure.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/bin/Debug/net8.0/MSH.Infrastructure.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/bin/Debug/net8.0/MSH.Infrastructure.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/bin/Debug/net8.0/MSH.Infrastructure.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.AssemblyInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.AssemblyInfoInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.assets.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.csproj.AssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.csproj.CoreCompileInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.csproj.FileListAbsolute.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.sourcelink.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/ref/MSH.Infrastructure.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/ref/MSH.Infrastructure.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/refint/MSH.Infrastructure.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/refint/MSH.Infrastructure.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/MSH.Infrastructure.csproj.EntityFrameworkCore.targets" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/MSH.Infrastructure.csproj.EntityFrameworkCore.targets" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/MSH.Infrastructure.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/MSH.Infrastructure.csproj.nuget.dgspec.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/MSH.Infrastructure.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/MSH.Infrastructure.csproj.nuget.g.props" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/MSH.Infrastructure.csproj.nuget.g.targets" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/MSH.Infrastructure.csproj.nuget.g.targets" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/project.assets.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/project.nuget.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/project.packagespec.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/project.packagespec.json" afterDir="false" />
@@ -32,22 +42,26 @@
       <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/rider.project.restore.info" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Matter/obj/Debug/net8.0/MSH.Matter.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Matter/obj/Debug/net8.0/MSH.Matter.AssemblyInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Matter/obj/Debug/net8.0/MSH.Matter.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Matter/obj/Debug/net8.0/MSH.Matter.AssemblyInfoInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Matter/obj/Debug/net8.0/MSH.Matter.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Matter/obj/Debug/net8.0/MSH.Matter.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Matter/obj/Debug/net8.0/MSH.Matter.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Matter/obj/Debug/net8.0/MSH.Matter.assets.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Matter/obj/MSH.Matter.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Matter/obj/MSH.Matter.csproj.nuget.dgspec.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Matter/obj/MSH.Matter.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Matter/obj/MSH.Matter.csproj.nuget.g.props" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Matter/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Matter/obj/project.assets.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Matter/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Matter/obj/project.nuget.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Matter/obj/project.packagespec.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Matter/obj/project.packagespec.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Matter/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Matter/obj/rider.project.model.nuget.info" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Matter/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Matter/obj/rider.project.restore.info" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Web/MSH.Web.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/MSH.Web.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Web/Pages/Testpage.razor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Web/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Web/Shared/MainLayout.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/Shared/MainLayout.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Web/Shared/NavMenu.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/Shared/NavMenu.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Web/_Imports.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/_Imports.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Web/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/appsettings.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.AssemblyInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.AssemblyInfoInputs.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.assets.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.csproj.AssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.csproj.CoreCompileInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.csproj.FileListAbsolute.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.sourcelink.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/MSH.Web.csproj.EntityFrameworkCore.targets" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/MSH.Web.csproj.EntityFrameworkCore.targets" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/MSH.Web.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/MSH.Web.csproj.nuget.dgspec.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/MSH.Web.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/MSH.Web.csproj.nuget.g.props" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/MSH.Web.csproj.nuget.g.targets" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/MSH.Web.csproj.nuget.g.targets" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/project.assets.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/project.nuget.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/project.packagespec.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/project.packagespec.json" afterDir="false" />
@@ -55,14 +69,6 @@
       <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/rider.project.restore.info" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.AssemblyInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.AssemblyInfoInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.assets.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.csproj.AssemblyReference.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/MSH.Tests.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/MSH.Tests.csproj.nuget.dgspec.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/MSH.Tests.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/MSH.Tests.csproj.nuget.g.props" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/project.assets.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/project.nuget.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/project.packagespec.json" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/project.packagespec.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/rider.project.model.nuget.info" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/rider.project.restore.info" afterDir="false" />
     </list>
@@ -74,21 +80,21 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "ChrisUbg"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;ChrisUbg&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/ChrisUbg/MSH.git",
-    "accountId": "3b3529a0-843f-446e-881a-3a4b2a5e2a0c"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/ChrisUbg/MSH.git&quot;,
+    &quot;accountId&quot;: &quot;3b3529a0-843f-446e-881a-3a4b2a5e2a0c&quot;
   }
-}]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 1
-}]]></component>
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
   <component name="ProjectId" id="2yAnDUcmjnSaB5siQmojNej7bv8" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -96,9 +102,14 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Docker.MSH.Web/Dockerfile.executor": "Debug",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
@@ -146,7 +157,10 @@
       <method v="2" />
     </configuration>
     <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
-      <deployment type="dockerfile" />
+      <deployment type="dockerfile">
+        <settings />
+      </deployment>
+      <EXTENSION ID="com.jetbrains.rider.docker.debug" isFastModeEnabled="true" isSslEnabled="false" />
       <method v="2" />
     </configuration>
   </component>
@@ -158,6 +172,7 @@
       <option name="presentableId" value="Default" />
       <updated>1749286126911</updated>
       <workItem from="1749286129925" duration="17000" />
+      <workItem from="1749313155605" duration="328000" />
     </task>
     <servers />
   </component>

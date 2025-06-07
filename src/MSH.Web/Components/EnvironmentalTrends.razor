@@ -1,0 +1,124 @@
+@using Microsoft.AspNetCore.SignalR.Client
+@using MSH.Infrastructure.Entities
+@implements IAsyncDisposable
+@inject NavigationManager NavigationManager
+@inject IEnvironmentalMonitoringService EnvironmentalMonitoringService
+
+<div class="trends-container">
+    <div class="trend-card">
+        <h3>Temperature Trend</h3>
+        <div class="chart-container">
+            <canvas id="temperatureChart"></canvas>
+        </div>
+    </div>
+
+    <div class="trend-card">
+        <h3>Humidity Trend</h3>
+        <div class="chart-container">
+            <canvas id="humidityChart"></canvas>
+        </div>
+    </div>
+
+    <div class="trend-card">
+        <h3>Air Quality Trend</h3>
+        <div class="chart-container">
+            <canvas id="airQualityChart"></canvas>
+        </div>
+    </div>
+</div>
+
+@code {
+    private HubConnection? _hubConnection;
+    private List<EnvironmentalDataPoint> _dataPoints = new();
+    private const int MaxDataPoints = 24; // Show last 24 data points
+    private EnvironmentalThresholds _thresholds = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/notificationHub"))
+            .WithAutomaticReconnect()
+            .Build();
+
+        _hubConnection.On<EnvironmentalDataPoint>("EnvironmentalDataUpdate", HandleDataUpdate);
+
+        await _hubConnection.StartAsync();
+        _thresholds = await EnvironmentalMonitoringService.GetThresholdsAsync();
+    }
+
+    private void HandleDataUpdate(EnvironmentalDataPoint dataPoint)
+    {
+        _dataPoints.Add(dataPoint);
+        if (_dataPoints.Count > MaxDataPoints)
+        {
+            _dataPoints.RemoveAt(0);
+        }
+        UpdateCharts();
+    }
+
+    private void UpdateCharts()
+    {
+        // Temperature Chart
+        var temperatureCtx = GetChartContext("temperatureChart");
+        if (temperatureCtx != null)
+        {
+            var temperatureData = _dataPoints.Select(p => p.IndoorTemperature).ToList();
+            var timestamps = _dataPoints.Select(p => p.Timestamp.ToString("HH:mm")).ToList();
+            UpdateLineChart(temperatureCtx, "Temperature (°C)", temperatureData, timestamps, 
+                _thresholds.IndoorTemperatureMin, _thresholds.IndoorTemperatureMax);
+        }
+
+        // Humidity Chart
+        var humidityCtx = GetChartContext("humidityChart");
+        if (humidityCtx != null)
+        {
+            var humidityData = _dataPoints.Select(p => p.Humidity).ToList();
+            var timestamps = _dataPoints.Select(p => p.Timestamp.ToString("HH:mm")).ToList();
+            UpdateLineChart(humidityCtx, "Humidity (%)", humidityData, timestamps,
+                _thresholds.HumidityMin, _thresholds.HumidityMax);
+        }
+
+        // Air Quality Chart
+        var airQualityCtx = GetChartContext("airQualityChart");
+        if (airQualityCtx != null)
+        {
+            var co2Data = _dataPoints.Select(p => p.CO2).ToList();
+            var vocData = _dataPoints.Select(p => p.VOC).ToList();
+            var timestamps = _dataPoints.Select(p => p.Timestamp.ToString("HH:mm")).ToList();
+            UpdateMultiLineChart(airQualityCtx, "Air Quality", 
+                new[] { "CO₂ (ppm)", "VOC (ppb)" },
+                new[] { co2Data, vocData },
+                timestamps,
+                new[] { _thresholds.CO2Max, _thresholds.VOCMax });
+        }
+    }
+
+    private object? GetChartContext(string canvasId)
+    {
+        // This would be implemented using JavaScript interop
+        // For now, we'll return null
+        return null;
+    }
+
+    private void UpdateLineChart(object ctx, string label, List<double> data, List<string> labels,
+        double minThreshold, double maxThreshold)
+    {
+        // This would be implemented using JavaScript interop with Chart.js
+        // For now, it's a placeholder
+    }
+
+    private void UpdateMultiLineChart(object ctx, string label, string[] dataLabels,
+        List<double>[] dataSets, List<string> labels, double[] thresholds)
+    {
+        // This would be implemented using JavaScript interop with Chart.js
+        // For now, it's a placeholder
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_hubConnection is not null)
+        {
+            await _hubConnection.DisposeAsync();
+        }
+    }
+} 
