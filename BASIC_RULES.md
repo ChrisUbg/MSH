@@ -8,6 +8,7 @@
 - The main goal is to develop and implement a smart home software, using the matter protocol. It should be based on open source libraries and frameworks. Where possible, Blazor Server, Bootstrap, C# as backend. For the matter part preferable Phyton if C# is not possible. Even the main goal is using the new matter protocol, the software should be designed beeing agnostic of this protocoll or certain db. Even though Blazor as a Frontend is preferred. The frontend should be framework agnostic too. 
 
 - The TODO.md is the backlog.  Which is to work on.
+- Standard apperiacne of cards: The style and the size of the cards should be the same. Best would we to calculate the max size of the all the cards. And then use this as the values for height and width.
 
 - For later
 -- relaying on the Haustagebuch.sln. E.g. port using for preventing conflicts.

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MSH.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+325cbebc8d4d0e17a25462b0febdb007d76ed480")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+acbe802bdbb11038d07d6840b52742a67fc1162b")]
 [assembly: System.Reflection.AssemblyProductAttribute("MSH.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MSH.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MSH.Web.Data;
 using MSH.Web.Services;
 using MSH.Web.Hubs;
+using MSH.Infrastructure.Services;
 using Npgsql;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
@@ -92,6 +93,9 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IEnvironmentalMonitoringService, EnvironmentalMonitoringService>();
 builder.Services.AddSingleton<IBackupService, PostgresBackupService>();
+
+// Add device simulator service
+builder.Services.AddSingleton<IDeviceSimulatorService, DeviceSimulatorService>();
 
 // Register hosted services
 builder.Services.AddHostedService<BackupBackgroundService>();

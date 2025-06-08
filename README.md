@@ -8,3 +8,6 @@ Welcome to the Smart Home project! This system provides device management, envir
 - [API Documentation](API.md): REST API endpoints for network and device management.
 
 ... (rest of your README) 
+
+##
+docker-compose -f docker-compose.dev-msh.yml up --build

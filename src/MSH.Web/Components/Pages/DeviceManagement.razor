@@ -1,0 +1,170 @@
+@page "/devices"
+@using MSH.Infrastructure.Services
+@using MSH.Infrastructure.Models
+@using MSH.Web.Components.Shared
+@inject IDeviceSimulatorService DeviceService
+@implements IDisposable
+
+<PageTitle>Device Management</PageTitle>
+
+<div class="container">
+    <h1>Device Management</h1>
+
+    <div class="row mb-4">
+        <div class="col">
+            <button class="btn btn-primary" @onclick="() => showAddDeviceModal = true">
+                <i class="oi oi-plus"></i> Add Device
+            </button>
+        </div>
+    </div>
+
+    @if (devices == null)
+    {
+        <div class="alert alert-info">Loading devices...</div>
+    }
+    else if (!devices.Any())
+    {
+        <div class="alert alert-warning">No devices found. Add your first device!</div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var device in devices)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <DeviceCard 
+                        Device="@device"
+                        DeviceState="@(deviceStates.GetValueOrDefault(device.DeviceId))"
+                        OnDeleteRequested="RemoveDevice"
+                        OnToggleRequested="() => ToggleDevice(device.DeviceId)"
+                        OnBrightnessChangeRequested="(value) => UpdateBrightness(device.DeviceId, value)"
+                        OnColorChangeRequested="(value) => UpdateColor(device.DeviceId, value)" />
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@if (showAddDeviceModal)
+{
+    <div class="modal fade show" style="display: block;" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Device</h5>
+                    <button type="button" class="btn-close" @onclick="() => showAddDeviceModal = false"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Device Name</label>
+                        <input type="text" class="form-control" @bind="newDevice.Name" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Device Type</label>
+                        <select class="form-select" @bind="newDevice.Type">
+                            <option value="Light">Light</option>
+                            <option value="TemperatureSensor">Temperature Sensor</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="() => showAddDeviceModal = false">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="AddDevice">Add Device</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    private IEnumerable<Device> devices;
+    private Dictionary<string, Dictionary<string, object>> deviceStates = new();
+    private bool showAddDeviceModal;
+    private Device newDevice = new();
+    private System.Timers.Timer refreshTimer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDevices();
+        
+        // Set up refresh timer
+        refreshTimer = new System.Timers.Timer(5000); // 5 seconds
+        refreshTimer.Elapsed += async (s, e) => await RefreshDeviceStates();
+        refreshTimer.Start();
+    }
+
+    private async Task LoadDevices()
+    {
+        devices = await DeviceService.GetSimulatedDevicesAsync();
+        await RefreshDeviceStates();
+    }
+
+    private async Task RefreshDeviceStates()
+    {
+        if (devices != null)
+        {
+            foreach (var device in devices)
+            {
+                var state = await DeviceService.GetDeviceStateAsync(device.DeviceId);
+                if (state != null)
+                {
+                    deviceStates[device.DeviceId] = state;
+                }
+            }
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task AddDevice()
+    {
+        newDevice.DeviceId = $"{newDevice.Type.ToLower()}-{Guid.NewGuid().ToString("N").Substring(0, 8)}";
+        var success = await DeviceService.AddSimulatedDeviceAsync(newDevice);
+        if (success)
+        {
+            showAddDeviceModal = false;
+            newDevice = new Device();
+            await LoadDevices();
+        }
+    }
+
+    private async Task RemoveDevice(string deviceId)
+    {
+        var success = await DeviceService.RemoveSimulatedDeviceAsync(deviceId);
+        if (success)
+        {
+            await LoadDevices();
+        }
+    }
+
+    private async Task ToggleDevice(string deviceId)
+    {
+        await DeviceService.ToggleDeviceAsync(deviceId);
+        await RefreshDeviceStates();
+    }
+
+    private async Task UpdateBrightness(string deviceId, object value)
+    {
+        var newState = new Dictionary<string, object>
+        {
+            ["brightness"] = int.Parse(value.ToString())
+        };
+        await DeviceService.UpdateDeviceStateAsync(deviceId, newState);
+        await RefreshDeviceStates();
+    }
+
+    private async Task UpdateColor(string deviceId, object value)
+    {
+        var newState = new Dictionary<string, object>
+        {
+            ["color"] = value.ToString()
+        };
+        await DeviceService.UpdateDeviceStateAsync(deviceId, newState);
+        await RefreshDeviceStates();
+    }
+
+    public void Dispose()
+    {
+        refreshTimer?.Dispose();
+    }
+} 

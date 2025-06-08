@@ -1,0 +1,100 @@
+@using MSH.Infrastructure.Models
+
+<div class="card device-card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">@Device.Name</h5>
+        @if (ShowDeleteButton)
+        {
+            <button class="btn btn-sm btn-outline-danger" @onclick="OnDelete">
+                <i class="oi oi-trash"></i>
+            </button>
+        }
+    </div>
+    <div class="card-body">
+        <p class="card-text">
+            <strong>Type:</strong> @Device.Type<br />
+            <strong>ID:</strong> @Device.DeviceId
+        </p>
+        
+        @if (DeviceState != null)
+        {
+            <div class="device-state">
+                @if (Device.Type == "Light")
+                {
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" 
+                               checked="@((bool)DeviceState["isOn"])"
+                               @onchange="(e) => OnToggle()" />
+                        <label class="form-check-label">Power</label>
+                    </div>
+                    <div class="mt-2">
+                        <label>Brightness: @DeviceState["brightness"]%</label>
+                        <input type="range" class="form-range" min="0" max="100" 
+                               value="@((int)DeviceState["brightness"])"
+                               @onchange="(e) => OnBrightnessChange(e.Value)" />
+                    </div>
+                    <div class="mt-2">
+                        <label>Color: </label>
+                        <input type="color" class="form-control form-control-color" 
+                               value="@((string)DeviceState["color"])"
+                               @onchange="(e) => OnColorChange(e.Value)" />
+                    </div>
+                }
+                else if (Device.Type == "TemperatureSensor")
+                {
+                    <div class="sensor-readings">
+                        <p>Temperature: @DeviceState["temperature"]°C</p>
+                        <p>Humidity: @DeviceState["humidity"]%</p>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning">Loading device state...</div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public required Device Device { get; set; }
+
+    [Parameter]
+    public Dictionary<string, object>? DeviceState { get; set; }
+
+    [Parameter]
+    public bool ShowDeleteButton { get; set; } = true;
+
+    [Parameter]
+    public EventCallback<string> OnDeleteRequested { get; set; }
+
+    [Parameter]
+    public EventCallback OnToggleRequested { get; set; }
+
+    [Parameter]
+    public EventCallback<object> OnBrightnessChangeRequested { get; set; }
+
+    [Parameter]
+    public EventCallback<object> OnColorChangeRequested { get; set; }
+
+    private async Task OnDelete()
+    {
+        await OnDeleteRequested.InvokeAsync(Device.DeviceId);
+    }
+
+    private async Task OnToggle()
+    {
+        await OnToggleRequested.InvokeAsync();
+    }
+
+    private async Task OnBrightnessChange(object value)
+    {
+        await OnBrightnessChangeRequested.InvokeAsync(value);
+    }
+
+    private async Task OnColorChange(object value)
+    {
+        await OnColorChangeRequested.InvokeAsync(value);
+    }
+} 
