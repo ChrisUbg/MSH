@@ -8,4 +8,6 @@ public class Device
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? LastUpdated { get; set; }
     public bool IsActive { get; set; } = true;
+    public int? RoomId { get; set; }
+    public Room? Room { get; set; }
 } 

@@ -64,6 +64,18 @@ public class DeviceSimulatorService : IDeviceSimulatorService, IHostedService
         return null;
     }
 
+    // public Task<IEnumerable<Device>> GetDevicesAsync()
+    // {
+    //    // throw new NotImplementedException();
+    //    return GetSimulatedDevicesAsync();
+    // }
+
+    public Task<Device> GetDeviceAsync(string deviceId)
+    {
+        // throw new NotImplementedException();
+        return GetSimulatedDeviceAsync(deviceId);
+    }
+
     public async Task<bool> UpdateDeviceStateAsync(string deviceId, Dictionary<string, object> newState)
     {
         if (_devices.TryGetValue(deviceId, out var device))

@@ -30,7 +30,8 @@ if (builder.Environment.IsDevelopment())
     builder.Configuration.AddJsonFile("appsettings.Development.json", optional: true);
     
     // Development database connection
-    var devConnectionString = builder.Configuration.GetConnectionString("Development") 
+    var envConnectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+    var devConnectionString = envConnectionString ?? builder.Configuration.GetConnectionString("Development") 
         ?? $"Host=db;Port={dbPort};Database=matter_dev;Username=postgres;Password=devpassword";
     Console.WriteLine($"Using connection string: {devConnectionString}");
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -41,10 +42,17 @@ else
     try 
     {
         Console.WriteLine("Initializing production database connection...");
-        
-        var password = File.ReadAllText("/run/secrets/postgres_password").Trim();
-        var connectionString = $"Host=db;Port={dbPort};Database=matter_prod;Username=postgres;Password={password};Pooling=true;Timeout=30;Include Error Detail=true";
-        
+        var envConnectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+        string connectionString;
+        if (!string.IsNullOrEmpty(envConnectionString))
+        {
+            connectionString = envConnectionString;
+        }
+        else
+        {
+            var password = File.ReadAllText("/run/secrets/postgres_password").Trim();
+            connectionString = $"Host=db;Port={dbPort};Database=matter_prod;Username=postgres;Password={password};Pooling=true;Timeout=30;Include Error Detail=true";
+        }
         // Test connection without psql
         Console.WriteLine($"Testing raw TCP connection to db:{dbPort}...");
         using (var socket = new System.Net.Sockets.TcpClient())
@@ -52,7 +60,6 @@ else
             socket.ConnectAsync("db", dbPort).Wait();
             Console.WriteLine("✅ TCP connection successful");
         }
-
         builder.Services.AddDbContext<ApplicationDbContext>(options => 
             options.UseNpgsql(connectionString, npgsqlOptions => 
             {
@@ -95,7 +102,8 @@ builder.Services.AddScoped<IEnvironmentalMonitoringService, EnvironmentalMonitor
 builder.Services.AddSingleton<IBackupService, PostgresBackupService>();
 
 // Add device simulator service
-builder.Services.AddSingleton<IDeviceSimulatorService, DeviceSimulatorService>();
+// builder.Services.AddSingleton<IDeviceSimulatorService, DeviceSimulatorService>();
+builder.Services.AddScoped<IDeviceService, DeviceService>();
 
 // Register hosted services
 builder.Services.AddHostedService<BackupBackgroundService>();
@@ -113,6 +121,9 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddScoped<IRoomService, RoomService>();
+builder.Services.AddScoped<IDeviceService, DeviceService>();
 
 var app = builder.Build();
 

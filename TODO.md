@@ -60,7 +60,7 @@
     - [x] Implement backup service
     - [x] Implement notification service
     - [x] Implement current user service
-    - [ ] Implement device management service
+    - [x] Implement device management service
     - [x] Implement environmental monitoring service
     - [ ] Implement rule engine service
     - [ ] Implement user management service
@@ -87,29 +87,45 @@
 
 ## Phase 2: Basic Device Management
 ### Device Discovery
-- [ ] Implement device scanning
-- [ ] Create device registration process
-- [ ] Set up device status monitoring
-- [ ] Implement device type detection
-- [ ] Create device management UI
+- [x] Implement device scanning
+- [x] Create device registration process
+- [x] Set up device status monitoring
+- [x] Implement device type detection
+- [x] Create device management UI
 - [ ] Add commissioning mode indicators
 - [ ] Implement device commissioning workflow
 
 ### Device Control
-- [ ] Implement basic device operations
-  - [ ] On/Off control
-  - [ ] Dimming control
-  - [ ] Temperature control
-- [ ] Create device control API
-- [ ] Implement device status updates
-- [ ] Add device control UI components
+- [x] Implement basic device operations
+  - [x] On/Off control
+  - [x] Dimming control
+  - [x] Temperature control
+- [x] Create device control API
+- [x] Implement device status updates
+- [x] Add device control UI components
 
 ### Room and Device Grouping
 - [ ] Create room management system
+  - [ ] Design room entity and relationships
+  - [ ] Create room CRUD operations
+  - [ ] Implement room assignment UI
+  - [ ] Add room-based device filtering
 - [ ] Implement device grouping
+  - [ ] Create group entity and relationships
+  - [ ] Implement group CRUD operations
+  - [ ] Add group management UI
 - [ ] Create group control mechanisms
+  - [ ] Implement group state management
+  - [ ] Add group control UI
+  - [ ] Create group automation rules
 - [ ] Add room/group management UI
+  - [ ] Create room overview page
+  - [ ] Add room device list
+  - [ ] Implement room statistics
 - [ ] Implement group status monitoring
+  - [ ] Add group health checks
+  - [ ] Create group status dashboard
+  - [ ] Implement group notifications
 
 ### User Management
 - [ ] Implement user authentication
@@ -184,7 +200,7 @@
 - [ ] Test multi-language support
 
 ## Documentation
-- [x] Create API documentation  # Next step
+- [x] Create API documentation
 - [ ] Write deployment guide
 - [ ] Create user manual
 - [ ] Document database schema
@@ -209,6 +225,7 @@
 - Application now starts end-to-end, loads main/index/counter pages, and environmental monitoring is functional.
 - Network settings page is implemented with mode switching functionality.
 - Basic UI layout and navigation are working across different browsers.
+- Device management system is implemented with simulated devices and standardized UI components.
 
 ## Core Infrastructure
 - [x] Set up Entity Framework Core with PostgreSQL
@@ -224,9 +241,9 @@
 - [x] Create DeviceGroup entity
 - [x] Create DeviceState entity
 - [x] Create DeviceEvent entity
-- [ ] Implement device registration
-- [ ] Add device state tracking
-- [ ] Create device event logging
+- [x] Implement device registration
+- [x] Add device state tracking
+- [x] Create device event logging
 - [ ] Implement device grouping
 
 ## Rules and Automation

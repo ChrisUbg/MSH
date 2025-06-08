@@ -15,7 +15,8 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<Applicatio
             .AddJsonFile("appsettings.Development.json", optional: true)
             .Build();
 
-        var connectionString = config.GetConnectionString("Development");
+        var envConnectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+        var connectionString = envConnectionString ?? config.GetConnectionString("Development");
         Console.WriteLine($"[Factory] Raw connection string: {connectionString}");
         Console.WriteLine($"[Factory] Current directory: {Directory.GetCurrentDirectory()}");
         Console.WriteLine($"[Factory] Config files found: {string.Join(", ", Directory.GetFiles(Directory.GetCurrentDirectory(), "appsettings*.json"))}");

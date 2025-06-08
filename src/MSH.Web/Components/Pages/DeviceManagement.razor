@@ -1,9 +1,8 @@
 @page "/devices"
-@using MSH.Infrastructure.Services
-@using MSH.Infrastructure.Models
-@using MSH.Web.Components.Shared
-@inject IDeviceSimulatorService DeviceService
-@implements IDisposable
+@using MSH.Infrastructure.Entities
+@inject IDeviceService DeviceService
+@inject IRoomService RoomService
+@inject NavigationManager NavigationManager
 
 <PageTitle>Device Management</PageTitle>
 
@@ -32,13 +31,18 @@
             @foreach (var device in devices)
             {
                 <div class="col-md-6 col-lg-4 mb-4">
-                    <DeviceCard 
-                        Device="@device"
-                        DeviceState="@(deviceStates.GetValueOrDefault(device.DeviceId))"
-                        OnDeleteRequested="RemoveDevice"
-                        OnToggleRequested="() => ToggleDevice(device.DeviceId)"
-                        OnBrightnessChangeRequested="(value) => UpdateBrightness(device.DeviceId, value)"
-                        OnColorChangeRequested="(value) => UpdateColor(device.DeviceId, value)" />
+                    <div class="card device-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">@device.Name</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <strong>Type:</strong> @device.DeviceType.Name<br />
+                                <strong>ID:</strong> @device.Id<br />
+                                <strong>Room:</strong> @device.Room.Name    
+                            </p>
+                        </div>
+                    </div>
                 </div>
             }
         </div>
@@ -61,9 +65,22 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Device Type</label>
-                        <select class="form-select" @bind="newDevice.Type">
-                            <option value="Light">Light</option>
-                            <option value="TemperatureSensor">Temperature Sensor</option>
+                        <select class="form-select" @bind="newDevice.DeviceTypeId">
+                            <option value="">-- Select a type --</option>
+                            @foreach (var type in deviceTypes)
+                            {
+                                <option value="@type.Id">@type.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Room</label>
+                        <select class="form-select" @bind="newDevice.RoomId">
+                            <option value="">-- Select a room --</option>
+                            @foreach (var room in rooms)
+                            {
+                                <option value="@room.Id">@room.Name</option>
+                            }
                         </select>
                     </div>
                 </div>
@@ -78,93 +95,39 @@
 }
 
 @code {
-    private IEnumerable<Device> devices;
-    private Dictionary<string, Dictionary<string, object>> deviceStates = new();
-    private bool showAddDeviceModal;
+    private List<Device> devices = new();
+    private List<Room> rooms = new();
+    private List<DeviceType> deviceTypes = new();
     private Device newDevice = new();
-    private System.Timers.Timer refreshTimer;
+    private bool showAddDeviceModal;
 
     protected override async Task OnInitializedAsync()
     {
         await LoadDevices();
-        
-        // Set up refresh timer
-        refreshTimer = new System.Timers.Timer(5000); // 5 seconds
-        refreshTimer.Elapsed += async (s, e) => await RefreshDeviceStates();
-        refreshTimer.Start();
+        deviceTypes = await DeviceService.GetDeviceTypesAsync();
+        rooms = await RoomService.GetRoomsAsync();
     }
 
     private async Task LoadDevices()
     {
-        devices = await DeviceService.GetSimulatedDevicesAsync();
-        await RefreshDeviceStates();
-    }
-
-    private async Task RefreshDeviceStates()
-    {
-        if (devices != null)
-        {
-            foreach (var device in devices)
-            {
-                var state = await DeviceService.GetDeviceStateAsync(device.DeviceId);
-                if (state != null)
-                {
-                    deviceStates[device.DeviceId] = state;
-                }
-            }
-            await InvokeAsync(StateHasChanged);
-        }
+        devices = (await DeviceService.GetDevicesAsync()).ToList();
     }
 
     private async Task AddDevice()
     {
-        newDevice.DeviceId = $"{newDevice.Type.ToLower()}-{Guid.NewGuid().ToString("N").Substring(0, 8)}";
-        var success = await DeviceService.AddSimulatedDeviceAsync(newDevice);
-        if (success)
-        {
-            showAddDeviceModal = false;
-            newDevice = new Device();
-            await LoadDevices();
-        }
-    }
-
-    private async Task RemoveDevice(string deviceId)
-    {
-        var success = await DeviceService.RemoveSimulatedDeviceAsync(deviceId);
-        if (success)
-        {
-            await LoadDevices();
-        }
-    }
-
-    private async Task ToggleDevice(string deviceId)
-    {
-        await DeviceService.ToggleDeviceAsync(deviceId);
-        await RefreshDeviceStates();
-    }
-
-    private async Task UpdateBrightness(string deviceId, object value)
-    {
-        var newState = new Dictionary<string, object>
-        {
-            ["brightness"] = int.Parse(value.ToString())
-        };
-        await DeviceService.UpdateDeviceStateAsync(deviceId, newState);
-        await RefreshDeviceStates();
-    }
-
-    private async Task UpdateColor(string deviceId, object value)
-    {
-        var newState = new Dictionary<string, object>
-        {
-            ["color"] = value.ToString()
-        };
-        await DeviceService.UpdateDeviceStateAsync(deviceId, newState);
-        await RefreshDeviceStates();
-    }
-
-    public void Dispose()
-    {
-        refreshTimer?.Dispose();
+        // Set required fields
+        newDevice.MatterDeviceId = Guid.NewGuid().ToString();
+        newDevice.Status = "online";
+        newDevice.LastSeen = DateTime.UtcNow;
+        newDevice.Configuration = null; // or JsonDocument.Parse("{}") if required
+        newDevice.CreatedAt = DateTime.UtcNow;
+        newDevice.UpdatedAt = DateTime.UtcNow;
+        newDevice.IsDeleted = false;
+        newDevice.CreatedById = 1; // Replace with current user if available
+        newDevice.UpdatedById = 1;
+        await DeviceService.AddDeviceAsync(newDevice);
+        showAddDeviceModal = false;
+        newDevice = new Device();
+        await LoadDevices();
     }
 } 
