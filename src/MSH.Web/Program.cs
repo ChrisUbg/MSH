@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using MSH.Infrastructure.Data;
-using MSH.Infrastructure.Services;
-using MSH.Web.Hubs;
+using MSH.Web.Data;
 using MSH.Web.Services;
+using MSH.Web.Hubs;
 using Npgsql;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,7 +31,7 @@ if (builder.Environment.IsDevelopment())
     // Development database connection
     var devConnectionString = builder.Configuration.GetConnectionString("Development") 
         ?? $"Host=db;Port={dbPort};Database=matter_dev;Username=postgres;Password=devpassword";
-    
+    Console.WriteLine($"Using connection string: {devConnectionString}");
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(devConnectionString));
 }
@@ -86,21 +87,28 @@ builder.Services.AddSignalR();
 builder.Services.AddHttpContextAccessor();
 
 // Add environmental monitoring services
-builder.Services.AddScoped<MSH.Infrastructure.Services.IUserLookupService, MSH.Infrastructure.Services.UserLookupService>();
-builder.Services.AddScoped<MSH.Infrastructure.Services.ICurrentUserService, MSH.Web.Services.CurrentUserService>();
-builder.Services.AddScoped<MSH.Infrastructure.Services.INotificationService, MSH.Web.Services.NotificationService>();
-builder.Services.AddScoped<MSH.Infrastructure.Services.IEmailService, MSH.Infrastructure.Services.EmailService>();
-builder.Services.AddScoped<MSH.Infrastructure.Services.IEnvironmentalMonitoringService, MSH.Infrastructure.Services.EnvironmentalMonitoringService>();
-builder.Services.AddSingleton<MSH.Infrastructure.Services.IBackupService, MSH.Infrastructure.Services.PostgresBackupService>();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IEnvironmentalMonitoringService, EnvironmentalMonitoringService>();
+builder.Services.AddSingleton<IBackupService, PostgresBackupService>();
 
 // Register hosted services
-builder.Services.AddHostedService<MSH.Web.Services.BackupBackgroundService>();
+builder.Services.AddHostedService<BackupBackgroundService>();
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddHttpClient();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:5000") });
+
+// Register Identity
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;
+})
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 
 var app = builder.Build();
 
@@ -133,6 +141,10 @@ app.Use(async (context, next) =>
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
+// Add authentication/authorization middleware
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Add this line to enable controllers
 app.MapControllers();

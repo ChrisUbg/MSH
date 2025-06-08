@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using MSH.Infrastructure.Entities;
 
-namespace MSH.Infrastructure.Services;
+namespace MSH.Web.Services;
 
 public interface IUserSettingsService
 {

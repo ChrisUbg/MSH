@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace MSH.Infrastructure.Services;
+namespace MSH.Web.Services;
 
 public interface IEnvironmentalMonitoringService
 {

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace MSH.Infrastructure.Services;
+namespace MSH.Web.Services;
 
 public class PostgresBackupService : IBackupService
 {

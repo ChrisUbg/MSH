@@ -4,12 +4,13 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using MSH.Infrastructure.Entities;
 using MSH.Infrastructure.Services;
 
-namespace MSH.Infrastructure.Data;
+namespace MSH.Web.Data;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : IdentityDbContext
 {
     private readonly IUserLookupService? _userLookupService;
 
