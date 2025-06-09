@@ -18,6 +18,7 @@ services:
     volumes:
       - .:/app
       - ~/.aspnet/DataProtection-Keys:/root/.aspnet/DataProtection-Keys
+      - /opt/matter-sdk:/matter
     depends_on:
       - db
       - matter-bridge

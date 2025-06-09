@@ -1,3 +1,0 @@
-C:\Users\Dev\source\repos\MSH\publish\MSH.Core.dll
-C:\Users\Dev\source\repos\MSH\publish\MSH.Core.deps.json
-C:\Users\Dev\source\repos\MSH\publish\MSH.Core.pdb

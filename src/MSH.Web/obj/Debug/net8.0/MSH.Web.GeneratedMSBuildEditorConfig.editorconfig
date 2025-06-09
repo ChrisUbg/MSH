@@ -9,107 +9,111 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = MSH.Web
 build_property.RootNamespace = MSH.Web
-build_property.ProjectDir = /app/src/MSH.Web/
+build_property.ProjectDir = /home/chris/RiderProjects/MSH/src/MSH.Web/
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = /app/src/MSH.Web
+build_property.MSBuildProjectDirectory = /home/chris/RiderProjects/MSH/src/MSH.Web
 build_property._RazorSourceGeneratorDebug = 
 
-[/app/src/MSH.Web/App.razor]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/App.razor]
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[/app/src/MSH.Web/Components/App.razor]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Components/App.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9BcHAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/app/src/MSH.Web/Components/EnvironmentalMonitor.razor]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Components/EnvironmentalMonitor.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9FbnZpcm9ubWVudGFsTW9uaXRvci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/app/src/MSH.Web/Components/EnvironmentalTrends.razor]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Components/EnvironmentalTrends.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9FbnZpcm9ubWVudGFsVHJlbmRzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[/app/src/MSH.Web/Components/Layout/MainLayout.razor]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Components/GroupHealthStatusCard.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9Hcm91cEhlYWx0aFN0YXR1c0NhcmQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Components/Layout/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9MYXlvdXQvTWFpbkxheW91dC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/app/src/MSH.Web/Components/NotificationComponent.razor]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Components/NotificationComponent.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9Ob3RpZmljYXRpb25Db21wb25lbnQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/app/src/MSH.Web/Components/Pages/DeviceGroupManagement.razor]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Components/Pages/DeviceGroupManagement.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9EZXZpY2VHcm91cE1hbmFnZW1lbnQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/app/src/MSH.Web/Components/Pages/DeviceManagement.razor]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Components/Pages/DeviceManagement.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9EZXZpY2VNYW5hZ2VtZW50LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[/app/src/MSH.Web/Components/Pages/RoomManagement.razor]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Components/Pages/RoomManagement.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Sb29tTWFuYWdlbWVudC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/app/src/MSH.Web/Components/Routes.razor]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Components/Routes.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9Sb3V0ZXMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/app/src/MSH.Web/Pages/EnvironmentalSettings.razor]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Pages/EnvironmentalSettings.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRW52aXJvbm1lbnRhbFNldHRpbmdzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[/app/src/MSH.Web/Pages/Error.razor]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Pages/Error.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRXJyb3IucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/app/src/MSH.Web/Pages/FetchData.razor]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Pages/FetchData.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRmV0Y2hEYXRhLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[/app/src/MSH.Web/Pages/Index.razor]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Pages/Index.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvSW5kZXgucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/app/src/MSH.Web/Pages/NetworkSettings.razor]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Pages/NetworkSettings.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvTmV0d29ya1NldHRpbmdzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[/app/src/MSH.Web/Pages/NetworkTest.razor]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Pages/NetworkTest.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvTmV0d29ya1Rlc3QucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/app/src/MSH.Web/Shared/NetworkModeButton.razor]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Shared/NetworkModeButton.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL05ldHdvcmtNb2RlQnV0dG9uLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[/app/src/MSH.Web/Shared/SurveyPrompt.razor]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Shared/SurveyPrompt.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL1N1cnZleVByb21wdC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/app/src/MSH.Web/_Imports.razor]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/_Imports.razor]
 build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/app/src/MSH.Web/Components/Shared/DeviceCard.razor]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Components/Shared/DeviceCard.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9TaGFyZWQvRGV2aWNlQ2FyZC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-2kw5woxzuf
 
-[/app/src/MSH.Web/Shared/MainLayout.razor]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Shared/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL01haW5MYXlvdXQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-uzfao4p3ru
 
-[/app/src/MSH.Web/Shared/NavMenu.razor]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Shared/NavMenu.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL05hdk1lbnUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-e29uxkju41
 
-[/app/src/MSH.Web/Pages/Error.cshtml]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/app/src/MSH.Web/Pages/_Host.cshtml]
+[/home/chris/RiderProjects/MSH/src/MSH.Web/Pages/_Host.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvX0hvc3QuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 

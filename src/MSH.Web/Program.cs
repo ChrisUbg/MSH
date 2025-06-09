@@ -127,6 +127,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<IDeviceService, DeviceService>();
 builder.Services.AddScoped<IDeviceGroupService, DeviceGroupService>();
+builder.Services.AddScoped<MatterDeviceService>();
 
 var app = builder.Build();
 

@@ -1,0 +1,97 @@
+@using MSH.Web.Services
+@inject IDeviceGroupService DeviceGroupService
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Group Health Status</h5>
+        <button class="btn btn-sm btn-outline-secondary" @onclick="RefreshStatus">
+            <i class="oi oi-reload"></i>
+        </button>
+    </div>
+    <div class="card-body">
+        @if (healthStatus == null)
+        {
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="d-flex align-items-center mb-3">
+                <div class="me-3">
+                    @if (healthStatus.IsHealthy)
+                    {
+                        <i class="oi oi-check text-success" style="font-size: 2rem;"></i>
+                    }
+                    else
+                    {
+                        <i class="oi oi-warning text-danger" style="font-size: 2rem;"></i>
+                    }
+                </div>
+                <div>
+                    <h6 class="mb-0">@healthStatus.GroupName</h6>
+                    <small class="text-muted">Last updated: @healthStatus.LastUpdated.ToLocalTime().ToString("g")</small>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6 class="card-title">Device Status</h6>
+                            <div class="progress mb-2">
+                                @{
+                                    var percentage = healthStatus.TotalDevices > 0 
+                                        ? (healthStatus.OnlineDevices * 100.0 / healthStatus.TotalDevices) 
+                                        : 0;
+                                }
+                                <div class="progress-bar @(healthStatus.IsHealthy ? "bg-success" : "bg-warning")" 
+                                     role="progressbar" 
+                                     style="width: @percentage%">
+                                    @healthStatus.OnlineDevices / @healthStatus.TotalDevices
+                                </div>
+                            </div>
+                            <small class="text-muted">Online Devices</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6 class="card-title">Health Status</h6>
+                            <p class="mb-0">
+                                @if (healthStatus.IsHealthy)
+                                {
+                                    <span class="text-success">All devices are online and functioning properly.</span>
+                                }
+                                else
+                                {
+                                    <span class="text-danger">@healthStatus.Error</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int GroupId { get; set; }
+
+    private GroupHealthStatus? healthStatus;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshStatus();
+    }
+
+    public async Task RefreshStatus()
+    {
+        healthStatus = await DeviceGroupService.GetGroupHealthStatusAsync(GroupId);
+    }
+} 

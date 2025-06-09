@@ -12,16 +12,17 @@ public class MatterDeviceService
 
     public MatterDeviceService(IConfiguration config)
     {
-        // _matterSdkPath = config["Matter:SdkPath"] ?? "/home/chregg/connectedhomeip";
-        // _chipToolPath = config["Matter:ChipToolPath"] ?? $"{_matterSdkPath}/examples/chip-tool/out/chip-tool";
+        _matterSdkPath = config["Matter:SdkPath"] ?? "/matter";
+        _chipToolPath = config["Matter:ChipToolPath"] ?? "/usr/local/bin/chip-tool";
 
-            _matterSdkPath = config["Matter:SdkPath"] ?? "/opt/matter-sdk"; // Updated default
-            _chipToolPath = $"{_matterSdkPath}/out/chip-tool"; // Standard Matter location
-
-        if (!Directory.Exists(_matterSdkPath))
-            throw new DirectoryNotFoundException($"Matter SDK path not found: {_matterSdkPath}");
-        if (!File.Exists(_chipToolPath))
-            throw new FileNotFoundException($"chip-tool not found: {_chipToolPath}");
+        // In Docker, we don't need to check for the SDK path as it's mounted
+        if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") != "true")
+        {
+            if (!Directory.Exists(_matterSdkPath))
+                throw new DirectoryNotFoundException($"Matter SDK path not found: {_matterSdkPath}");
+            if (!File.Exists(_chipToolPath))
+                throw new FileNotFoundException($"chip-tool not found: {_chipToolPath}");
+        }
 
         Pin = "20202021"; // Default value
     }

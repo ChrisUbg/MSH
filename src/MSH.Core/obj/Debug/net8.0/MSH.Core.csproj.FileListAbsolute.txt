@@ -1,15 +1,3 @@
-C:/Users/Dev/source/repos/MSH/src/MSH.Core/bin/Debug/net8.0/MSH.Core.deps.json
-C:/Users/Dev/source/repos/MSH/src/MSH.Core/bin/Debug/net8.0/MSH.Core.dll
-C:/Users/Dev/source/repos/MSH/src/MSH.Core/bin/Debug/net8.0/MSH.Core.pdb
-C:/Users/Dev/source/repos/MSH/src/MSH.Core/obj/Debug/net8.0/MSH.Core.GeneratedMSBuildEditorConfig.editorconfig
-C:/Users/Dev/source/repos/MSH/src/MSH.Core/obj/Debug/net8.0/MSH.Core.AssemblyInfoInputs.cache
-C:/Users/Dev/source/repos/MSH/src/MSH.Core/obj/Debug/net8.0/MSH.Core.AssemblyInfo.cs
-C:/Users/Dev/source/repos/MSH/src/MSH.Core/obj/Debug/net8.0/MSH.Core.csproj.CoreCompileInputs.cache
-C:/Users/Dev/source/repos/MSH/src/MSH.Core/obj/Debug/net8.0/MSH.Core.sourcelink.json
-C:/Users/Dev/source/repos/MSH/src/MSH.Core/obj/Debug/net8.0/MSH.Core.dll
-C:/Users/Dev/source/repos/MSH/src/MSH.Core/obj/Debug/net8.0/refint/MSH.Core.dll
-C:/Users/Dev/source/repos/MSH/src/MSH.Core/obj/Debug/net8.0/MSH.Core.pdb
-C:/Users/Dev/source/repos/MSH/src/MSH.Core/obj/Debug/net8.0/ref/MSH.Core.dll
 /home/chris/RiderProjects/MSH/src/MSH.Core/bin/Debug/net8.0/MSH.Core.deps.json
 /home/chris/RiderProjects/MSH/src/MSH.Core/bin/Debug/net8.0/MSH.Core.dll
 /home/chris/RiderProjects/MSH/src/MSH.Core/bin/Debug/net8.0/MSH.Core.pdb

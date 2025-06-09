@@ -1,4 +1,4 @@
-﻿namespace MSH.Tests;
+namespace MSH.Tests;
 
 public class UnitTest1
 {

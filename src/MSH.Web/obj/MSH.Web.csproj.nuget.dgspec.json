@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/app/src/MSH.Web/MSH.Web.csproj": {}
+    "/home/chris/RiderProjects/MSH/src/MSH.Web/MSH.Web.csproj": {}
   },
   "projects": {
-    "/app/src/MSH.Infrastructure/MSH.Infrastructure.csproj": {
+    "/home/chris/RiderProjects/MSH/src/MSH.Infrastructure/MSH.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/app/src/MSH.Infrastructure/MSH.Infrastructure.csproj",
+        "projectUniqueName": "/home/chris/RiderProjects/MSH/src/MSH.Infrastructure/MSH.Infrastructure.csproj",
         "projectName": "MSH.Infrastructure",
-        "projectPath": "/app/src/MSH.Infrastructure/MSH.Infrastructure.csproj",
-        "packagesPath": "/root/.nuget/packages/",
-        "outputPath": "/app/src/MSH.Infrastructure/obj/",
+        "projectPath": "/home/chris/RiderProjects/MSH/src/MSH.Infrastructure/MSH.Infrastructure.csproj",
+        "packagesPath": "/home/chris/.nuget/packages/",
+        "outputPath": "/home/chris/RiderProjects/MSH/src/MSH.Infrastructure/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/root/.nuget/NuGet/NuGet.Config"
+          "/home/chris/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -61,6 +61,12 @@
               "target": "Package",
               "version": "[8.0.15, )"
             },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.15, )"
+            },
             "Microsoft.Extensions.Configuration": {
               "target": "Package",
               "version": "[8.0.0, )"
@@ -98,17 +104,17 @@
         }
       }
     },
-    "/app/src/MSH.Web/MSH.Web.csproj": {
+    "/home/chris/RiderProjects/MSH/src/MSH.Web/MSH.Web.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/app/src/MSH.Web/MSH.Web.csproj",
+        "projectUniqueName": "/home/chris/RiderProjects/MSH/src/MSH.Web/MSH.Web.csproj",
         "projectName": "MSH.Web",
-        "projectPath": "/app/src/MSH.Web/MSH.Web.csproj",
-        "packagesPath": "/root/.nuget/packages/",
-        "outputPath": "/app/src/MSH.Web/obj/",
+        "projectPath": "/home/chris/RiderProjects/MSH/src/MSH.Web/MSH.Web.csproj",
+        "packagesPath": "/home/chris/.nuget/packages/",
+        "outputPath": "/home/chris/RiderProjects/MSH/src/MSH.Web/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/root/.nuget/NuGet/NuGet.Config"
+          "/home/chris/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -120,8 +126,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "/app/src/MSH.Infrastructure/MSH.Infrastructure.csproj": {
-                "projectPath": "/app/src/MSH.Infrastructure/MSH.Infrastructure.csproj"
+              "/home/chris/RiderProjects/MSH/src/MSH.Infrastructure/MSH.Infrastructure.csproj": {
+                "projectPath": "/home/chris/RiderProjects/MSH/src/MSH.Infrastructure/MSH.Infrastructure.csproj"
               }
             }
           }
@@ -158,6 +164,16 @@
               "version": "[8.0.15, )"
             },
             "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.15, )"
+            },
+            "Microsoft.EntityFrameworkCore.Relational": {
+              "target": "Package",
+              "version": "[8.0.15, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",

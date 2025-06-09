@@ -13,6 +13,7 @@ public class Device : BaseEntity
     public string? MatterDeviceId { get; set; }
     public string Status { get; set; } = "offline";
     public DateTime? LastSeen { get; set; }
+    public DateTime? LastStateChange { get; set; }
     public JsonDocument? Configuration { get; set; }
     
     // Navigation properties

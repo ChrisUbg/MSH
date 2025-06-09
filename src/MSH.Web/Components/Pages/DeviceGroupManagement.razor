@@ -18,52 +18,56 @@ else if (!deviceGroups.Any())
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Devices</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var group in deviceGroups)
-            {
-                <tr>
-                    <td>@group.Name</td>
-                    <td>@group.Description</td>
-                    <td>
-                        @if (group.Devices.Any())
-                        {
-                            <ul class="list-unstyled mb-0">
-                                @foreach (var device in group.Devices)
-                                {
-                                    <li>
-                                        <strong>@device.Name</strong>
-                                        (@device.DeviceType?.Name)
-                                        @if (device.Room != null)
-                                        {
-                                            <span>- @device.Room.Name</span>
-                                        }
-                                    </li>
-                                }
-                            </ul>
-                        }
-                        else
-                        {
-                            <span>No devices</span>
-                        }
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-secondary" @onclick="() => ShowEditGroupModal(group)">Edit</button>
-                        <button class="btn btn-sm btn-info" @onclick="() => ShowAssignDevicesModal(group)">Assign Devices</button>
-                        <button class="btn btn-sm btn-danger" @onclick="() => ConfirmDeleteGroup(group.Id)">Delete</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="row mt-4">
+        @foreach (var group in deviceGroups)
+        {
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">@group.Name</h5>
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-secondary" @onclick="() => ShowEditGroupModal(group)">Edit</button>
+                            <button class="btn btn-sm btn-info" @onclick="() => ShowAssignDevicesModal(group)">Assign Devices</button>
+                            <button class="btn btn-sm btn-danger" @onclick="() => ConfirmDeleteGroup(group.Id)">Delete</button>
+                            @if (group.Devices.Any(d => d.DeviceType?.Name == "Light"))
+                            {
+                                <button class="btn btn-sm btn-primary" @onclick="() => ShowGroupControlModal(group)">Control</button>
+                            }
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">@group.Description</p>
+                        
+                        <GroupHealthStatusCard GroupId="@group.Id" />
+                        
+                        <div class="mt-3">
+                            <h6>Devices</h6>
+                            @if (group.Devices.Any())
+                            {
+                                <ul class="list-unstyled mb-0">
+                                    @foreach (var device in group.Devices)
+                                    {
+                                        <li>
+                                            <strong>@device.Name</strong>
+                                            (@device.DeviceType?.Name)
+                                            @if (device.Room != null)
+                                            {
+                                                <span>- @device.Room.Name</span>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <span>No devices</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 }
 
 <!-- Add/Edit Group Modal -->
@@ -161,6 +165,46 @@ else
     </div>
 }
 
+<!-- Group Control Modal -->
+@if (showGroupControlModal)
+{
+    <div class="modal fade show" style="display: block;" tabindex="-1" @onclick:stopPropagation="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Control Group: @selectedGroup?.Name</h5>
+                    <button type="button" class="btn-close" @onclick="HideGroupControlModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" 
+                                   checked="@groupState.ContainsKey("isOn") && (bool)groupState["isOn"]"
+                                   @onchange="(e) => OnGroupToggle(e)" />
+                            <label class="form-check-label">Power</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label>Brightness: @(groupState.ContainsKey("brightness") ? groupState["brightness"] : 0)%</label>
+                        <input type="range" class="form-range" min="0" max="100" 
+                               value="@(groupState.ContainsKey("brightness") ? groupState["brightness"] : 0)"
+                               @onchange="(e) => OnGroupBrightnessChange(e.Value)" />
+                    </div>
+                    <div class="mb-3">
+                        <label>Color: </label>
+                        <input type="color" class="form-control form-control-color" 
+                               value="@(groupState.ContainsKey("color") ? groupState["color"] : "#ffffff")"
+                               @onchange="(e) => OnGroupColorChange(e.Value)" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="HideGroupControlModal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     private List<DeviceGroup>? deviceGroups;
     private List<Device>? availableDevices;
@@ -171,6 +215,8 @@ else
     private bool showDeleteConfirm;
     private int groupIdToDelete;
     private HashSet<int> selectedDeviceIds = new();
+    private bool showGroupControlModal;
+    private Dictionary<string, object> groupState = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -281,5 +327,46 @@ else
         await DeviceGroupService.DeleteDeviceGroupAsync(groupIdToDelete);
         showDeleteConfirm = false;
         await LoadDeviceGroups();
+    }
+
+    private async Task ShowGroupControlModal(DeviceGroup group)
+    {
+        selectedGroup = group;
+        groupState = await DeviceGroupService.GetGroupStateAsync(group.Id);
+        showGroupControlModal = true;
+    }
+
+    private void HideGroupControlModal()
+    {
+        showGroupControlModal = false;
+        selectedGroup = null;
+        groupState.Clear();
+    }
+
+    private async Task OnGroupToggle(ChangeEventArgs e)
+    {
+        if (selectedGroup != null && e.Value is bool isOn)
+        {
+            await DeviceGroupService.SetGroupStateAsync(selectedGroup.Id, isOn ? "on" : "off");
+            groupState["isOn"] = isOn;
+        }
+    }
+
+    private async Task OnGroupBrightnessChange(object? value)
+    {
+        if (selectedGroup != null && value is int brightness)
+        {
+            await DeviceGroupService.SetGroupBrightnessAsync(selectedGroup.Id, brightness);
+            groupState["brightness"] = brightness;
+        }
+    }
+
+    private async Task OnGroupColorChange(object? value)
+    {
+        if (selectedGroup != null && value is string color)
+        {
+            await DeviceGroupService.SetGroupColorAsync(selectedGroup.Id, color);
+            groupState["color"] = color;
+        }
     }
 } 
