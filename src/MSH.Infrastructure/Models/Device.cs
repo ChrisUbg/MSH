@@ -1,8 +1,8 @@
 namespace MSH.Infrastructure.Models;
 
-public class Device
+public class mDevice
 {
-    public string DeviceId { get; set; }
+    public Guid DeviceId { get; set; }
     public string Name { get; set; }
     public string Type { get; set; }
     public string Configuration { get; set; }
@@ -12,12 +12,12 @@ public class Device
     public DateTime? LastUpdated { get; set; }
     public DateTime? LastStateChange { get; set; }
     public bool IsActive { get; set; } = true;
-    public int? RoomId { get; set; }
-    public Room? Room { get; set; }
+    public Guid? RoomId { get; set; }
+    public mRoom? Room { get; set; }
 
-    public Device()
+    public mDevice()
     {
-        DeviceId = string.Empty;
+        DeviceId = Guid.Empty;
         Name = string.Empty;
         Type = string.Empty;
         Configuration = string.Empty;

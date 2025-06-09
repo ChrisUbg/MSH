@@ -26,7 +26,7 @@ public class GroupStateManager : IGroupStateManager
         _matterService = matterService;
     }
 
-    public async Task<bool> SynchronizeGroupStateAsync(int groupId)
+    public async Task<bool> SynchronizeGroupStateAsync(Guid groupId)
     {
         try
         {
@@ -77,7 +77,7 @@ public class GroupStateManager : IGroupStateManager
         }
     }
 
-    public async Task<bool> ValidateGroupStateAsync(int groupId, Dictionary<string, object> state)
+    public async Task<bool> ValidateGroupStateAsync(Guid groupId, Dictionary<string, object> state)
     {
         try
         {
@@ -128,7 +128,7 @@ public class GroupStateManager : IGroupStateManager
         }
     }
 
-    public async Task<bool> PersistGroupStateAsync(int groupId, Dictionary<string, object> state)
+    public async Task<bool> PersistGroupStateAsync(Guid groupId, Dictionary<string, object> state)
     {
         try
         {
@@ -162,7 +162,7 @@ public class GroupStateManager : IGroupStateManager
         }
     }
 
-    public async Task NotifyStateChangeAsync(int groupId, Dictionary<string, object> oldState, Dictionary<string, object> newState)
+    public async Task NotifyStateChangeAsync(Guid groupId, Dictionary<string, object> oldState, Dictionary<string, object> newState)
     {
         try
         {
@@ -202,7 +202,7 @@ public class GroupStateManager : IGroupStateManager
         }
     }
 
-    public async Task<Dictionary<string, object>> GetGroupStateHistoryAsync(int groupId, int limit = 10)
+    public async Task<Dictionary<string, object>> GetGroupStateHistoryAsync(Guid groupId, int limit = 10)
     {
         try
         {

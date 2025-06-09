@@ -1,11 +1,13 @@
 using System;
-using System.Threading;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MSH.Infrastructure.Data;
 using MSH.Infrastructure.Entities;
-using MSH.Web.Data;
+using MSH.Infrastructure.Models;
+using MSH.Infrastructure.Services;
+using System.Text.Json;
 
 namespace MSH.Web.Services;
 
@@ -31,58 +33,51 @@ public class EnvironmentalMonitoringService : IEnvironmentalMonitoringService
 
     private async Task<EnvironmentalSettings> GetOrCreateSettingsAsync()
     {
-        await _semaphore.WaitAsync();
-        try
+        var userId = await _currentUserService.GetCurrentUserIdAsync();
+        if (!userId.HasValue)
         {
-            var userId = _currentUserService.UserId;
-            int effectiveUserId = userId ?? 0; // Use 0 for anonymous/shared settings
+            throw new InvalidOperationException("User is not authenticated");
+        }
 
-            var settings = await _context.EnvironmentalSettings
-                .FirstOrDefaultAsync(s => s.UserId == effectiveUserId && !s.IsDeleted);
+        var settings = await _context.EnvironmentalSettings
+            .FirstOrDefaultAsync(s => s.UserId == userId.Value);
 
-            if (settings == null)
+        if (settings == null)
+        {
+            settings = new EnvironmentalSettings
             {
-                settings = new EnvironmentalSettings { UserId = effectiveUserId };
-                _context.EnvironmentalSettings.Add(settings);
-                await _context.SaveChangesAsync();
-            }
+                UserId = userId.Value,
+                IndoorTemperatureMin = 18.0,
+                IndoorTemperatureMax = 24.0,
+                OutdoorTemperatureMin = 0.0,
+                OutdoorTemperatureMax = 35.0,
+                HumidityMin = 30.0,
+                HumidityMax = 60.0,
+                CO2Max = 1000.0,
+                VOCMax = 500.0,
+                TemperatureWarning = 15.0,
+                HumidityWarning = 40.0,
+                LastUpdated = DateTime.UtcNow
+            };
 
-            return settings;
+            _context.EnvironmentalSettings.Add(settings);
+            await _context.SaveChangesAsync();
         }
-        finally
-        {
-            _semaphore.Release();
-        }
+
+        return settings;
     }
 
     public async Task ProcessIndoorTemperatureAsync(double temperature)
     {
-        _logger.LogInformation("Processing indoor temperature: {Temperature}°C", temperature);
         await _semaphore.WaitAsync();
         try
         {
             var settings = await GetOrCreateSettingsAsync();
-
-            if (temperature >= 20.0)
+            
+            if (temperature < settings.IndoorTemperatureMin || temperature > settings.IndoorTemperatureMax)
             {
-                await _notificationService.SendEnvironmentalAlertAsync(
-                    userId: settings.UserId,
-                    parameter: "Indoor Temperature",
-                    currentValue: temperature,
-                    threshold: 20.0
-                );
-                _logger.LogWarning("Indoor temperature critical: {Temperature}°C >= 20°C", temperature);
-            }
-            else if (temperature >= settings.TemperatureWarning)
-            {
-                await _notificationService.SendEnvironmentalAlertAsync(
-                    userId: settings.UserId,
-                    parameter: "Indoor Temperature",
-                    currentValue: temperature,
-                    threshold: settings.TemperatureWarning
-                );
-                _logger.LogWarning("Indoor temperature warning: {Temperature}°C >= {Warning}°C",
-                    temperature, settings.TemperatureWarning);
+                var message = $"Indoor temperature {temperature}°C is outside the acceptable range ({settings.IndoorTemperatureMin}°C - {settings.IndoorTemperatureMax}°C)";
+                await _notificationService.SendAlertToUserAsync(settings.UserId, "Temperature Alert", message, "warning");
             }
         }
         finally
@@ -93,32 +88,15 @@ public class EnvironmentalMonitoringService : IEnvironmentalMonitoringService
 
     public async Task ProcessOutdoorTemperatureAsync(double temperature)
     {
-        _logger.LogInformation("Processing outdoor temperature: {Temperature}°C", temperature);
         await _semaphore.WaitAsync();
         try
         {
             var settings = await GetOrCreateSettingsAsync();
-
-            if (temperature >= 20.0)
+            
+            if (temperature < settings.OutdoorTemperatureMin || temperature > settings.OutdoorTemperatureMax)
             {
-                await _notificationService.SendEnvironmentalAlertAsync(
-                    userId: settings.UserId,
-                    parameter: "Outdoor Temperature",
-                    currentValue: temperature,
-                    threshold: 20.0
-                );
-                _logger.LogWarning("Outdoor temperature critical: {Temperature}°C >= 20°C", temperature);
-            }
-            else if (temperature >= settings.TemperatureWarning)
-            {
-                await _notificationService.SendEnvironmentalAlertAsync(
-                    userId: settings.UserId,
-                    parameter: "Outdoor Temperature",
-                    currentValue: temperature,
-                    threshold: settings.TemperatureWarning
-                );
-                _logger.LogWarning("Outdoor temperature warning: {Temperature}°C >= {Warning}°C",
-                    temperature, settings.TemperatureWarning);
+                var message = $"Outdoor temperature {temperature}°C is outside the acceptable range ({settings.OutdoorTemperatureMin}°C - {settings.OutdoorTemperatureMax}°C)";
+                await _notificationService.SendAlertToUserAsync(settings.UserId, "Temperature Alert", message, "warning");
             }
         }
         finally
@@ -129,32 +107,15 @@ public class EnvironmentalMonitoringService : IEnvironmentalMonitoringService
 
     public async Task ProcessHumidityAsync(double humidity)
     {
-        _logger.LogInformation("Processing humidity: {Humidity}%", humidity);
         await _semaphore.WaitAsync();
         try
         {
             var settings = await GetOrCreateSettingsAsync();
-
-            if (humidity >= 45.0)
+            
+            if (humidity < settings.HumidityMin || humidity > settings.HumidityMax)
             {
-                await _notificationService.SendEnvironmentalAlertAsync(
-                    userId: settings.UserId,
-                    parameter: "Humidity",
-                    currentValue: humidity,
-                    threshold: 45.0
-                );
-                _logger.LogWarning("Humidity critical: {Humidity}% >= 45%", humidity);
-            }
-            else if (humidity >= settings.HumidityWarning)
-            {
-                await _notificationService.SendEnvironmentalAlertAsync(
-                    userId: settings.UserId,
-                    parameter: "Humidity",
-                    currentValue: humidity,
-                    threshold: settings.HumidityWarning
-                );
-                _logger.LogWarning("Humidity warning: {Humidity}% >= {Warning}%",
-                    humidity, settings.HumidityWarning);
+                var message = $"Humidity {humidity}% is outside the acceptable range ({settings.HumidityMin}% - {settings.HumidityMax}%)";
+                await _notificationService.SendAlertToUserAsync(settings.UserId, "Humidity Alert", message, "warning");
             }
         }
         finally
@@ -165,34 +126,21 @@ public class EnvironmentalMonitoringService : IEnvironmentalMonitoringService
 
     public async Task ProcessAirQualityAsync(double co2, double voc)
     {
-        _logger.LogInformation("Processing air quality - CO2: {CO2}ppm, VOC: {VOC}ppb", co2, voc);
         await _semaphore.WaitAsync();
         try
         {
             var settings = await GetOrCreateSettingsAsync();
-
+            
             if (co2 > settings.CO2Max)
             {
-                await _notificationService.SendEnvironmentalAlertAsync(
-                    userId: settings.UserId,
-                    parameter: "CO2 Level",
-                    currentValue: co2,
-                    threshold: settings.CO2Max
-                );
-                _logger.LogWarning("CO2 level above threshold: {CO2}ppm > {Threshold}ppm",
-                    co2, settings.CO2Max);
+                var message = $"CO2 level {co2}ppm exceeds the maximum threshold of {settings.CO2Max}ppm";
+                await _notificationService.SendAlertToUserAsync(settings.UserId, "Air Quality Alert", message, "warning");
             }
 
             if (voc > settings.VOCMax)
             {
-                await _notificationService.SendEnvironmentalAlertAsync(
-                    userId: settings.UserId,
-                    parameter: "VOC Level",
-                    currentValue: voc,
-                    threshold: settings.VOCMax
-                );
-                _logger.LogWarning("VOC level above threshold: {VOC}ppb > {Threshold}ppb",
-                    voc, settings.VOCMax);
+                var message = $"VOC level {voc}ppb exceeds the maximum threshold of {settings.VOCMax}ppb";
+                await _notificationService.SendAlertToUserAsync(settings.UserId, "Air Quality Alert", message, "warning");
             }
         }
         finally
@@ -219,7 +167,6 @@ public class EnvironmentalMonitoringService : IEnvironmentalMonitoringService
             settings.LastUpdated = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
-            _logger.LogInformation("Environmental thresholds updated");
         }
         finally
         {
@@ -251,23 +198,24 @@ public class EnvironmentalMonitoringService : IEnvironmentalMonitoringService
         }
     }
 
-    public async Task SetWarningLevelsAsync(double temperatureWarning, double humidityWarning)
+    public async Task<IEnumerable<DeviceEvent>> GetDeviceEventsAsync(Guid deviceId, DateTime startTime, DateTime endTime)
     {
-        await _semaphore.WaitAsync();
-        try
+        return await _context.DeviceEvents
+            .Where(e => e.DeviceId == deviceId && e.CreatedAt >= startTime && e.CreatedAt <= endTime)
+            .OrderByDescending(e => e.CreatedAt)
+            .ToListAsync();
+    }
+
+    private async Task LogDeviceEventAsync(Guid deviceId, string eventType, Dictionary<string, object> eventData)
+    {
+        var deviceEvent = new DeviceEvent
         {
-            var settings = await GetOrCreateSettingsAsync();
-            settings.TemperatureWarning = temperatureWarning;
-            settings.HumidityWarning = humidityWarning;
-            settings.LastUpdated = DateTime.UtcNow;
-            
-            await _context.SaveChangesAsync();
-            _logger.LogInformation("Warning levels updated - Temperature: {Temp}°C, Humidity: {Humidity}%",
-                temperatureWarning, humidityWarning);
-        }
-        finally
-        {
-            _semaphore.Release();
-        }
+            DeviceId = deviceId,
+            EventType = eventType,
+            EventData = JsonSerializer.SerializeToDocument(eventData)
+        };
+
+        _context.DeviceEvents.Add(deviceEvent);
+        await _context.SaveChangesAsync();
     }
 } 

@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using MSH.Infrastructure.Models;
+using Microsoft.EntityFrameworkCore;
+using MSH.Infrastructure.Data;
+using MSH.Infrastructure.Entities;
 
 namespace MSH.Infrastructure.Services;
 
@@ -14,61 +17,50 @@ public class DeviceSimulatorService : IDeviceSimulatorService, IHostedService
     private readonly ILogger<DeviceSimulatorService> _logger;
     private readonly Dictionary<string, SimulatedDevice> _devices;
     private Timer _simulationTimer = null!;
+    private readonly ApplicationDbContext _context;
+    private readonly Random _random = new Random();
 
-    public DeviceSimulatorService(ILogger<DeviceSimulatorService> logger)
+    public DeviceSimulatorService(ILogger<DeviceSimulatorService> logger, ApplicationDbContext context)
     {
         _logger = logger;
         _devices = new Dictionary<string, SimulatedDevice>();
+        _context = context;
         InitializeDefaultDevices();
     }
 
     private void InitializeDefaultDevices()
     {
         // Add some default simulated devices
+        // NOTE: DeviceTypeId should be set to a valid DeviceType Guid for simulation
         AddSimulatedDeviceAsync(new Device
         {
-            DeviceId = "light-1",
+            MatterDeviceId = "light-1",
             Name = "Living Room Light",
-            Type = "Light"
+            // DeviceTypeId = <set a valid Guid here>
         }).Wait();
 
         AddSimulatedDeviceAsync(new Device
         {
-            DeviceId = "temp-1",
+            MatterDeviceId = "temp-1",
             Name = "Living Room Temperature Sensor",
-            Type = "TemperatureSensor"
+            // DeviceTypeId = <set a valid Guid here>
         }).Wait();
     }
 
     public async Task<IEnumerable<Device>> GetSimulatedDevicesAsync()
     {
-        return await Task.FromResult(_devices.Values.Select(d => new Device
-        {
-            DeviceId = d.DeviceId,
-            Name = d.Name,
-            Type = d.Type
-        }));
+        return await _context.Devices
+            .Where(d => d.DeviceType.IsSimulated)
+            .Include(d => d.DeviceType)
+            .ToListAsync();
     }
 
     public async Task<Device?> GetSimulatedDeviceAsync(string deviceId)
     {
-        if (_devices.TryGetValue(deviceId, out var device))
-        {
-            return await Task.FromResult(new Device
-            {
-                DeviceId = device.DeviceId,
-                Name = device.Name,
-                Type = device.Type
-            });
-        }
-        return null;
+        return await _context.Devices
+            .Include(d => d.DeviceType)
+            .FirstOrDefaultAsync(d => d.MatterDeviceId == deviceId && d.DeviceType.IsSimulated);
     }
-
-    // public Task<IEnumerable<Device>> GetDevicesAsync()
-    // {
-    //    // throw new NotImplementedException();
-    //    return GetSimulatedDevicesAsync();
-    // }
 
     public Task<Device?> GetDeviceAsync(string deviceId)
     {
@@ -77,52 +69,86 @@ public class DeviceSimulatorService : IDeviceSimulatorService, IHostedService
 
     public async Task<bool> UpdateDeviceStateAsync(string deviceId, Dictionary<string, object> newState)
     {
-        if (_devices.TryGetValue(deviceId, out var device))
+        var device = await GetSimulatedDeviceAsync(deviceId);
+        if (device == null) return false;
+
+        var state = new DeviceState
         {
-            return await device.UpdateStateAsync(newState);
-        }
-        return false;
+            DeviceId = device.Id,
+            StateType = "power",
+            StateValue = JsonDocument.Parse(JsonSerializer.Serialize(newState)),
+            RecordedAt = DateTime.UtcNow
+        };
+
+        _context.DeviceStates.Add(state);
+        await _context.SaveChangesAsync();
+        return true;
     }
 
     public async Task<bool> ToggleDeviceAsync(string deviceId)
     {
-        if (_devices.TryGetValue(deviceId, out var device))
+        var device = await GetSimulatedDeviceAsync(deviceId);
+        if (device == null) return false;
+
+        var state = new DeviceState
         {
-            return await device.ToggleAsync();
-        }
-        return false;
+            DeviceId = device.Id,
+            StateType = "power",
+            StateValue = JsonDocument.Parse(_random.Next(2) == 1 ? "true" : "false"),
+            RecordedAt = DateTime.UtcNow
+        };
+
+        _context.DeviceStates.Add(state);
+        await _context.SaveChangesAsync();
+        return true;
     }
 
     public async Task<Dictionary<string, object>?> GetDeviceStateAsync(string deviceId)
     {
-        if (_devices.TryGetValue(deviceId, out var device))
-        {
-            return await device.GetStateAsync();
-        }
-        return null;
+        var device = await GetSimulatedDeviceAsync(deviceId);
+        if (device == null) return null;
+
+        var state = await _context.DeviceStates
+            .Where(s => s.DeviceId == device.Id)
+            .OrderByDescending(s => s.RecordedAt)
+            .FirstOrDefaultAsync();
+
+        if (state == null) return null;
+
+        return JsonSerializer.Deserialize<Dictionary<string, object>>(state.StateValue.RootElement.GetRawText());
     }
 
     public async Task<bool> AddSimulatedDeviceAsync(Device device)
     {
-        if (_devices.ContainsKey(device.DeviceId))
+        try
         {
-            return await Task.FromResult(false);
+            _context.Devices.Add(device);
+            await _context.SaveChangesAsync();
+            return true;
         }
-
-        SimulatedDevice simulatedDevice = device.Type switch
+        catch (Exception ex)
         {
-            "Light" => new SimulatedLight(device.DeviceId, device.Name),
-            "TemperatureSensor" => new SimulatedTemperatureSensor(device.DeviceId, device.Name),
-            _ => throw new ArgumentException($"Unsupported device type: {device.Type}")
-        };
-
-        _devices.Add(device.DeviceId, simulatedDevice);
-        return await Task.FromResult(true);
+            _logger.LogError(ex, "Error adding simulated device");
+            return false;
+        }
     }
 
     public async Task<bool> RemoveSimulatedDeviceAsync(string deviceId)
     {
-        return await Task.FromResult(_devices.Remove(deviceId));
+        var device = await GetSimulatedDeviceAsync(deviceId);
+        if (device == null) return false;
+
+        try
+        {
+            _context.Devices.Remove(device);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error removing simulated device");
+            return false;
+        }
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -157,5 +183,30 @@ public class DeviceSimulatorService : IDeviceSimulatorService, IHostedService
                 _logger.LogError(ex, $"Error simulating device {device.DeviceId}");
             }
         }
+    }
+
+    public async Task UpdateSimulatedDeviceStateAsync(string deviceId)
+    {
+        var device = await GetSimulatedDeviceAsync(deviceId);
+        if (device == null) return;
+
+        var state = new DeviceState
+        {
+            DeviceId = device.Id,
+            StateType = "power",
+            StateValue = JsonDocument.Parse(_random.Next(2) == 1 ? "true" : "false"),
+            RecordedAt = DateTime.UtcNow
+        };
+
+        _context.DeviceStates.Add(state);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<Device>> GetSimulatedDevicesByTypeAsync(string deviceType)
+    {
+        return await _context.Devices
+            .Where(d => d.DeviceType.Name == deviceType && d.DeviceType.IsSimulated)
+            .Include(d => d.DeviceType)
+            .ToListAsync();
     }
 } 

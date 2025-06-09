@@ -1,0 +1,171 @@
+@page "/device-details/{DeviceId:guid}"
+@using Microsoft.AspNetCore.SignalR
+@using MSH.Infrastructure.Entities
+@using MSH.Infrastructure.Models
+@using MSH.Web.Services
+@using MSH.Web.Hubs
+@inject IDeviceService DeviceService
+@inject NavigationManager NavigationManager
+@inject IHubContext<DeviceHub> HubContext
+
+<PageTitle>Device Details</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h1>Device Details</h1>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-secondary" @onclick="@(() => NavigationManager.NavigateTo("/devices"))">
+                <i class="fas fa-arrow-left"></i> Back to Devices
+            </button>
+        </div>
+    </div>
+
+    @if (device == null)
+    {
+        <div class="alert alert-info">
+            Loading device details...
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Device Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" @bind="device.Name" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Type</label>
+                            <input type="text" class="form-control" value="@device.DeviceType?.Name" readonly />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+                            <div>
+                                <span class="badge @(device.IsOnline ? "bg-success" : "bg-danger")">
+                                    @(device.IsOnline ? "Online" : "Offline")
+                                </span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Room</label>
+                            <input type="text" class="form-control" value="@device.Room?.Name" readonly />
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-primary" @onclick="SaveDevice">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Device State</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (currentState == null)
+                        {
+                            <p>No state information available.</p>
+                        }
+                        else
+                        {
+                            <div class="mb-3">
+                                <label class="form-label">State Type</label>
+                                <input type="text" class="form-control" value="@currentState.StateType" readonly />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">State Value</label>
+                                <input type="text" class="form-control" value="@currentState.StateValue" readonly />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Last Updated</label>
+                                <input type="text" class="form-control" value="@currentState.RecordedAt.ToString("g")" readonly />
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Recent Events</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (history == null || !history.Any())
+                        {
+                            <p>No recent events.</p>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Timestamp</th>
+                                            <th>Property</th>
+                                            <th>Old Value</th>
+                                            <th>New Value</th>
+                                            <th>Source</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var entry in history)
+                                        {
+                                            <tr>
+                                                <td>@entry.Timestamp.ToString("g")</td>
+                                                <td>@entry.PropertyName</td>
+                                                <td>@entry.OldValue</td>
+                                                <td>@entry.NewValue</td>
+                                                <td>@entry.Source</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Guid DeviceId { get; set; }
+
+    private Device? device;
+    private DeviceState? currentState;
+    private IEnumerable<mDeviceHistory>? history;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDeviceDetails();
+    }
+
+    private async Task LoadDeviceDetails()
+    {
+        device = await DeviceService.GetDeviceByIdAsync(DeviceId);
+        if (device != null)
+        {
+            history = await DeviceService.GetDeviceHistoryAsync(DeviceId);
+        }
+    }
+
+    private async Task SaveDevice()
+    {
+        if (device != null)
+        {
+            await DeviceService.UpdateDeviceAsync(device);
+            await LoadDeviceDetails();
+        }
+    }
+} 

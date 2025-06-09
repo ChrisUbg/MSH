@@ -4,7 +4,7 @@ namespace MSH.Web.Services
 {
     public class GroupHealthStatus
     {
-        public int GroupId { get; set; }
+        public Guid GroupId { get; set; }
         public string GroupName { get; set; } = string.Empty;
         public bool IsHealthy { get; set; }
         public string? Error { get; set; }

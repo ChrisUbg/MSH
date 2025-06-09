@@ -1,8 +1,11 @@
 @page "/device-groups"
 @using MSH.Infrastructure.Entities
 @using MSH.Web.Services
+@using MSH.Infrastructure.Data
+@using Microsoft.EntityFrameworkCore
 @inject IDeviceGroupService DeviceGroupService
 @inject IDeviceService DeviceService
+@inject ApplicationDbContext _context
 
 <h1>Device Group Management</h1>
 
@@ -27,11 +30,11 @@ else
                         <h5 class="mb-0">@group.Name</h5>
                         <div class="btn-group">
                             <button class="btn btn-sm btn-secondary" @onclick="() => ShowEditGroupModal(group)">Edit</button>
-                            <button class="btn btn-sm btn-info" @onclick="() => ShowAssignDevicesModal(group)">Assign Devices</button>
+                            <button class="btn btn-sm btn-info" @onclick="async () => await ShowAssignDevicesModal(group)">Assign Devices</button>
                             <button class="btn btn-sm btn-danger" @onclick="() => ConfirmDeleteGroup(group.Id)">Delete</button>
                             @if (group.Devices.Any(d => d.DeviceType?.Name == "Light"))
                             {
-                                <button class="btn btn-sm btn-primary" @onclick="() => ShowGroupControlModal(group)">Control</button>
+                                <button class="btn btn-sm btn-primary" @onclick="async () => await ShowGroupControlModal(group)">Control</button>
                             }
                         </div>
                     </div>
@@ -77,7 +80,7 @@ else
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">@((editingGroup?.Id ?? 0) == 0 ? "Add Device Group" : "Edit Device Group")</h5>
+                    <h5 class="modal-title">@((editingGroup?.Id == Guid.Empty) ? "Add Device Group" : "Edit Device Group")</h5>
                     <button type="button" class="btn-close" @onclick="HideGroupModal"></button>
                 </div>
                 <div class="modal-body">
@@ -206,15 +209,15 @@ else
 }
 
 @code {
-    private List<DeviceGroup>? deviceGroups;
-    private List<Device>? availableDevices;
-    private DeviceGroup? selectedGroup;
-    private DeviceGroup editingGroup = new();
+    private List<DeviceGroup> deviceGroups = new List<DeviceGroup>();
+    private List<Device> availableDevices = new List<Device>();
+    private DeviceGroup selectedGroup = new DeviceGroup { Id = Guid.NewGuid() };
+    private HashSet<Guid> selectedDeviceIds = new();
+    private DeviceGroup editingGroup = new() { Id = Guid.Empty };
     private bool showGroupModal;
     private bool showAssignDevicesModal;
     private bool showDeleteConfirm;
-    private int groupIdToDelete;
-    private HashSet<int> selectedDeviceIds = new();
+    private Guid groupIdToDelete;
     private bool showGroupControlModal;
     private Dictionary<string, object> groupState = new();
 
@@ -225,7 +228,7 @@ else
 
     private async Task LoadDeviceGroups()
     {
-        deviceGroups = await DeviceGroupService.GetDeviceGroupsAsync();
+        deviceGroups = (await DeviceGroupService.GetDeviceGroupsAsync()).ToList();
     }
 
     private async Task LoadAvailableDevices()
@@ -258,60 +261,67 @@ else
 
     private async Task SaveGroup()
     {
-        editingGroup.CreatedById = 1;
-        editingGroup.UpdatedById = 1;
-        if (editingGroup.Id == 0)
+        // Get the admin user's ID
+        var adminUser = await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.UserName == "admin");
+        if (adminUser != null)
         {
-            await DeviceGroupService.AddDeviceGroupAsync(editingGroup);
+            if (editingGroup.Id == Guid.Empty)
+            {
+                editingGroup.CreatedById = adminUser.Id;
+                editingGroup.UpdatedById = adminUser.Id;
+                await DeviceGroupService.AddDeviceGroupAsync(editingGroup);
+            }
+            else
+            {
+                editingGroup.UpdatedById = adminUser.Id;
+                await DeviceGroupService.UpdateDeviceGroupAsync(editingGroup);
+            }
+            showGroupModal = false;
+            await LoadDeviceGroups();
         }
         else
         {
-            await DeviceGroupService.UpdateDeviceGroupAsync(editingGroup);
+            // Handle case where admin user doesn't exist
+            // You might want to show an error message to the user
         }
-
-        showGroupModal = false;
-        await LoadDeviceGroups();
     }
 
     private async Task ShowAssignDevicesModal(DeviceGroup group)
     {
         selectedGroup = group;
-        await LoadAvailableDevices();
-        selectedDeviceIds = group.Devices.Select(d => d.Id).ToHashSet();
+        selectedDeviceIds = new HashSet<Guid>(group.Devices.Select(d => d.Id));
         showAssignDevicesModal = true;
+        await LoadAvailableDevices();
     }
 
     private void HideAssignDevicesModal()
     {
         showAssignDevicesModal = false;
-        selectedGroup = null;
     }
 
-    private void ToggleDeviceSelection(int deviceId, object? isChecked)
+    private void ToggleDeviceSelection(Guid deviceId, object? isChecked)
     {
-        bool checkedValue = false;
-        if (isChecked is bool b)
-            checkedValue = b;
-        else if (isChecked is string s && bool.TryParse(s, out var parsed))
-            checkedValue = parsed;
-
-        if (checkedValue)
-            selectedDeviceIds.Add(deviceId);
-        else
-            selectedDeviceIds.Remove(deviceId);
+        if (isChecked is bool checkedValue)
+        {
+            if (checkedValue)
+            {
+                selectedDeviceIds.Add(deviceId);
+            }
+            else
+            {
+                selectedDeviceIds.Remove(deviceId);
+            }
+        }
     }
 
     private async Task SaveDeviceAssignments()
     {
-        if (selectedGroup != null)
-        {
-            await DeviceGroupService.SetDevicesForGroupAsync(selectedGroup.Id, selectedDeviceIds.ToList());
-            await LoadDeviceGroups();
-        }
+        await DeviceGroupService.SetDevicesForGroupAsync(selectedGroup.Id, selectedDeviceIds.ToList());
         showAssignDevicesModal = false;
+        await LoadDeviceGroups();
     }
 
-    private void ConfirmDeleteGroup(int groupId)
+    private void ConfirmDeleteGroup(Guid groupId)
     {
         groupIdToDelete = groupId;
         showDeleteConfirm = true;
@@ -332,41 +342,74 @@ else
     private async Task ShowGroupControlModal(DeviceGroup group)
     {
         selectedGroup = group;
-        groupState = await DeviceGroupService.GetGroupStateAsync(group.Id);
         showGroupControlModal = true;
+        await LoadGroupState();
     }
 
     private void HideGroupControlModal()
     {
         showGroupControlModal = false;
-        selectedGroup = null;
-        groupState.Clear();
+    }
+
+    private async Task LoadGroupState()
+    {
+        if (selectedGroup != null)
+        {
+            groupState = await DeviceGroupService.GetGroupStateAsync(selectedGroup.Id);
+        }
     }
 
     private async Task OnGroupToggle(ChangeEventArgs e)
     {
-        if (selectedGroup != null && e.Value is bool isOn)
+        if (e.Value is bool isOn)
         {
-            await DeviceGroupService.SetGroupStateAsync(selectedGroup.Id, isOn ? "on" : "off");
+            await DeviceGroupService.SetGroupStateAsync(selectedGroup.Id, isOn ? "On" : "Off");
             groupState["isOn"] = isOn;
         }
     }
 
     private async Task OnGroupBrightnessChange(object? value)
     {
-        if (selectedGroup != null && value is int brightness)
+        if (value is int brightness && selectedGroup != null)
         {
             await DeviceGroupService.SetGroupBrightnessAsync(selectedGroup.Id, brightness);
-            groupState["brightness"] = brightness;
+            await LoadGroupState();
         }
     }
 
     private async Task OnGroupColorChange(object? value)
     {
-        if (selectedGroup != null && value is string color)
+        if (value is string color && selectedGroup != null)
         {
             await DeviceGroupService.SetGroupColorAsync(selectedGroup.Id, color);
-            groupState["color"] = color;
+            await LoadGroupState();
+        }
+    }
+
+    private async Task SetGroupState(string state)
+    {
+        if (selectedGroup != null)
+        {
+            await DeviceGroupService.SetGroupStateAsync(selectedGroup.Id, state);
+            await LoadGroupState();
+        }
+    }
+
+    private async Task SetGroupBrightness(int brightness)
+    {
+        if (selectedGroup != null)
+        {
+            await DeviceGroupService.SetGroupBrightnessAsync(selectedGroup.Id, brightness);
+            await LoadGroupState();
+        }
+    }
+
+    private async Task SetGroupColor(string color)
+    {
+        if (selectedGroup != null)
+        {
+            await DeviceGroupService.SetGroupColorAsync(selectedGroup.Id, color);
+            await LoadGroupState();
         }
     }
 } 

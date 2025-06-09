@@ -1,9 +1,11 @@
+using System;
+
 namespace MSH.Infrastructure.Entities;
 
 public class UserDevicePermission : BaseEntity
 {
-    public int UserId { get; set; }
-    public int DeviceId { get; set; }
+    public Guid UserId { get; set; }
+    public Guid DeviceId { get; set; }
     public string PermissionLevel { get; set; } = null!; // e.g., 'read', 'write', 'admin'
     
     // Navigation properties

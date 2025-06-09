@@ -3,10 +3,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MSH.Web.Data;
+using MSH.Infrastructure.Data;
+using MSH.Infrastructure.Services;
 using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Npgsql;
 
 namespace MSH.Web.Services;
 
@@ -60,28 +63,42 @@ public class BackupBackgroundService : BackgroundService
 
         // Get the connection string from the context
         var connectionString = dbContext.Database.GetConnectionString();
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            throw new Exception("Database connection string is empty or null.");
+        }
+
+        // Parse connection string to get individual components
+        var builder = new NpgsqlConnectionStringBuilder(connectionString);
         
         // Perform the backup using pg_dump
         var startInfo = new System.Diagnostics.ProcessStartInfo
         {
             FileName = "pg_dump",
-            Arguments = $"-Fc \"{connectionString}\" -f \"{backupFilePath}\"",
+            Arguments = $"-h {builder.Host} -p {builder.Port} -U {builder.Username} -Fc -f \"{backupFilePath}\" {builder.Database}",
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
             CreateNoWindow = true
         };
 
+        // Set PGPASSWORD environment variable for password authentication
+        startInfo.Environment["PGPASSWORD"] = builder.Password;
+
         using var process = System.Diagnostics.Process.Start(startInfo);
         if (process == null)
         {
             throw new Exception("Failed to start backup process.");
         }
+
+        var output = await process.StandardOutput.ReadToEndAsync();
+        var error = await process.StandardError.ReadToEndAsync();
         await process.WaitForExitAsync();
 
         if (process.ExitCode != 0)
         {
-            throw new Exception($"Backup failed with exit code {process.ExitCode}");
+            _logger.LogError("Backup failed. Error output: {Error}", error);
+            throw new Exception($"Backup failed with exit code {process.ExitCode}. Error: {error}");
         }
 
         _logger.LogInformation("Backup completed successfully: {BackupFile}", backupFilePath);

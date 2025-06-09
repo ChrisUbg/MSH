@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using MSH.Infrastructure.Data;
 using MSH.Infrastructure.Entities;
 using MSH.Web.Data;
 
@@ -8,74 +11,84 @@ namespace MSH.Web.Services;
 
 public class RoomService : IRoomService
 {
-    private readonly ApplicationDbContext _db;
-    private const int DEFAULT_USER_ID = 1; // Default user ID for initial setup
+    private readonly MSH.Infrastructure.Data.ApplicationDbContext _context;
+    private static readonly Guid DEFAULT_USER_ID = Guid.Parse("00000000-0000-0000-0000-000000000001"); // Default user ID for initial setup
 
-    public RoomService(ApplicationDbContext db)
+    public RoomService(MSH.Infrastructure.Data.ApplicationDbContext context)
     {
-        _db = db;
+        _context = context;
     }
 
-    public async Task<List<Room>> GetRoomsAsync()
+    public async Task<IEnumerable<Room>> GetRoomsAsync()
     {
-        var rooms = await _db.Rooms.Include(r => r.Devices).ToListAsync();
-        if (!rooms.Any())
-        {
-            // Create default room if none exists
-            var defaultRoom = new Room
-            {
-                Name = "Default-Room",
-                Description = "Default room for unassigned devices",
-                Floor = 1,
-                CreatedById = DEFAULT_USER_ID
-            };
-            _db.Rooms.Add(defaultRoom);
-            await _db.SaveChangesAsync();
-            rooms.Add(defaultRoom);
-        }
-        return rooms;
+        return await _context.Rooms
+            .Include(r => r.Devices)
+            .ToListAsync();
     }
 
-    public async Task<Room?> GetRoomAsync(int roomId) => await _db.Rooms.Include(r => r.Devices).FirstOrDefaultAsync(r => r.Id == roomId);
-    
+    public async Task<Room?> GetRoomAsync(Guid roomId)
+    {
+        return await _context.Rooms
+            .Include(r => r.Devices)
+            .FirstOrDefaultAsync(r => r.Id == roomId);
+    }
+
     public async Task<Room> AddRoomAsync(Room room)
     {
-        room.CreatedById = DEFAULT_USER_ID;
-        _db.Rooms.Add(room);
-        await _db.SaveChangesAsync();
+        if (room.Id == Guid.Empty)
+        {
+            room.Id = Guid.NewGuid();
+        }
+        _context.Rooms.Add(room);
+        await _context.SaveChangesAsync();
         return room;
     }
-    
+
     public async Task<Room> UpdateRoomAsync(Room room)
     {
-        room.UpdatedById = DEFAULT_USER_ID;
-        _db.Rooms.Update(room);
-        await _db.SaveChangesAsync();
+        _context.Rooms.Update(room);
+        await _context.SaveChangesAsync();
         return room;
     }
-    
-    public async Task<bool> DeleteRoomAsync(int roomId)
+
+    public async Task<bool> DeleteRoomAsync(Guid roomId)
     {
-        var room = await _db.Rooms.FindAsync(roomId);
-        if (room == null) return false;
-        _db.Rooms.Remove(room);
-        await _db.SaveChangesAsync();
+        var room = await _context.Rooms
+            .Include(r => r.Devices)
+            .FirstOrDefaultAsync(r => r.Id == roomId);
+
+        if (room == null)
+        {
+            return false;
+        }
+
+        // Move devices to unassigned state
+        foreach (var device in room.Devices)
+        {
+            device.RoomId = null;
+        }
+
+        _context.Rooms.Remove(room);
+        await _context.SaveChangesAsync();
         return true;
     }
-    
-    public async Task<bool> AssignDeviceToRoomAsync(int deviceId, int roomId)
+
+    public async Task<bool> AssignDeviceToRoomAsync(Guid deviceId, Guid? roomId)
     {
-        var device = await _db.Devices.FindAsync(deviceId);
-        var room = await _db.Rooms.FindAsync(roomId);
-        if (device == null || room == null) return false;
+        var device = await _context.Devices.FindAsync(deviceId);
+        if (device == null)
+        {
+            return false;
+        }
+
         device.RoomId = roomId;
-        await _db.SaveChangesAsync();
+        await _context.SaveChangesAsync();
         return true;
     }
-    
-    private async Task<int> EnsureDefaultRoomAsync()
+
+    private async Task<Guid> EnsureDefaultRoomAsync()
     {
-        var defaultRoom = await _db.Rooms.FirstOrDefaultAsync(r => r.Name == "Default-Room");
+        var defaultRoom = await _context.Rooms.FirstOrDefaultAsync(r => r.Name == "Default-Room");
         if (defaultRoom == null)
         {
             defaultRoom = new Room 
@@ -84,19 +97,19 @@ public class RoomService : IRoomService
                 Description = "Default room for unassigned devices",
                 CreatedById = DEFAULT_USER_ID
             };
-            _db.Rooms.Add(defaultRoom);
-            await _db.SaveChangesAsync();
+            _context.Rooms.Add(defaultRoom);
+            await _context.SaveChangesAsync();
         }
         return defaultRoom.Id;
     }
     
-    public async Task<bool> RemoveDeviceFromRoomAsync(int deviceId)
+    public async Task<bool> RemoveDeviceFromRoomAsync(Guid deviceId)
     {
-        var device = await _db.Devices.FindAsync(deviceId);
+        var device = await _context.Devices.FindAsync(deviceId);
         if (device == null) return false;
         var defaultRoomId = await EnsureDefaultRoomAsync();
         device.RoomId = defaultRoomId;
-        await _db.SaveChangesAsync();
+        await _context.SaveChangesAsync();
         return true;
     }
 } 

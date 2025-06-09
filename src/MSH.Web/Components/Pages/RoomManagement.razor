@@ -1,147 +1,217 @@
 @page "/rooms"
 @using MSH.Infrastructure.Entities
 @using MSH.Web.Services
+@using MSH.Infrastructure.Data
+@using Microsoft.EntityFrameworkCore
 @inject IRoomService RoomService
 @inject IDeviceService DeviceService
+@inject NavigationManager NavigationManager
+@inject ApplicationDbContext _context
 
 <PageTitle>Room Management</PageTitle>
 
-<div class="container">
-    <h1>Room Management</h1>
-    <div class="mb-3">
-        <button class="btn btn-primary" @onclick="ShowAddRoomModal">Add Room</button>
-    </div>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Location</th>
-                <th>Devices</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (rooms == null)
-            {
-                <tr><td colspan="5">Loading...</td></tr>
-            }
-            else if (!rooms.Any())
-            {
-                <tr><td colspan="5">No rooms found.</td></tr>
-            }
-            else
-            {
-                @foreach (var room in rooms)
-                {
-                    <tr>
-                        <td>@room.Name</td>
-                        <td>@room.Description</td>
-                        <td>@room.Floor</td>
-                        <td>
-                            @if (room.Devices != null && room.Devices.Any())
-                            {
-                                <ul>
-                                    @foreach (var device in room.Devices)
-                                    {
-                                        <li>
-                                            @device.Name
-                                            <button class="btn btn-sm btn-outline-danger ms-2" @onclick="() => RemoveDeviceFromRoom(device.Id)">Remove</button>
-                                        </li>
-                                    }
-                                </ul>
-                            }
-                            else
-                            {
-                                <span class="text-muted">No devices</span>
-                            }
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-secondary me-2" @onclick="() => EditRoom(room)">Edit</button>
-                            <button class="btn btn-sm btn-info me-2" @onclick="() => ShowAssignDeviceModal(room.Id)">Assign Device</button>
-                            <button class="btn btn-sm btn-danger" @onclick="() => DeleteRoom(room.Id)">Delete</button>
-                        </td>
-                    </tr>
-                }
-            }
-        </tbody>
-    </table>
+<div class="container-fluid">
+    <h1 class="mb-4">Room Management</h1>
 
-    @if (showRoomModal)
-    {
-        <div class="modal fade show" style="display: block;" tabindex="-1" @onclick:stopPropagation="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">@((editingRoom?.Id ?? 0) == 0 ? "Add Room" : "Edit Room")</h5>
-                        <button type="button" class="btn-close" @onclick="HideRoomModal"></button>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Rooms</h5>
+                </div>
+                <div class="card-body">
+                    @if (rooms == null)
+                    {
+                        <p>Loading rooms...</p>
+                    }
+                    else if (!rooms.Any())
+                    {
+                        <p>No rooms found. Add a new room to get started.</p>
+                    }
+                    else
+                    {
+                        <div class="list-group">
+                            @foreach (var room in rooms)
+                            {
+                                <button class="list-group-item list-group-item-action @(selectedRoom?.Id == room.Id ? "active" : "")"
+                                        @onclick="() => SelectRoom(room)">
+                                    @room.Name
+                                </button>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-primary" @onclick="() => ShowAddRoomDialog()">
+                        <i class="fas fa-plus"></i> Add Room
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            @if (selectedRoom != null)
+            {
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Room Details</h5>
                     </div>
-                    <div class="modal-body">
+                    <div class="card-body">
                         <div class="mb-3">
-                            <label class="form-label">Name</label>
-                            <input type="text" class="form-control" @bind="editingRoom.Name" required />
-                            <div class="invalid-feedback">Name is required.</div>
+                            <label class="form-label">Room Name</label>
+                            <input type="text" class="form-control" @bind="selectedRoom.Name" />
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <input type="text" class="form-control" @bind="editingRoom.Description" />
+                            <textarea class="form-control" @bind="selectedRoom.Description" rows="3"></textarea>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Floor</label>
-                            <input type="number" class="form-control" @bind="editingRoom.Floor" required />
-                            <div class="invalid-feedback">Floor is required.</div>
+                            <input type="number" class="form-control" @bind="selectedRoom.Floor" />
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @onclick="HideRoomModal">Cancel</button>
-                        <button type="button" class="btn btn-primary" @onclick="SaveRoom">Save</button>
+                    <div class="card-footer">
+                        <button class="btn btn-primary" @onclick="SaveRoom">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <button class="btn btn-danger" @onclick="() => ShowDeleteRoomDialog(selectedRoom)">
+                            <i class="fas fa-trash"></i> Delete Room
+                        </button>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="modal-backdrop fade show"></div>
-    }
 
-    @if (showAssignDeviceModal)
-    {
-        <div class="modal fade show" style="display: block;" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Assign Device to Room</h5>
-                        <button type="button" class="btn-close" @onclick="HideAssignDeviceModal"></button>
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Devices in Room</h5>
                     </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label">Select Device</label>
-                            <select class="form-select" @bind="selectedDeviceId">
-                                <option value="">-- Select a device --</option>
-                                @foreach (var device in unassignedDevices)
-                                {
-                                    <option value="@device.Id">@device.Name (@device.DeviceTypeId)</option>
-                                }
-                            </select>
-                        </div>
+                    <div class="card-body">
+                        @if (roomDevices == null)
+                        {
+                            <p>Loading devices...</p>
+                        }
+                        else if (!roomDevices.Any())
+                        {
+                            <p>No devices assigned to this room.</p>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var device in roomDevices)
+                                        {
+                                            <tr>
+                                                <td>@device.Name</td>
+                                                <td>@device.DeviceType?.Name</td>
+                                                <td>
+                                                    <span class="badge @(device.IsOnline ? "bg-success" : "bg-danger")">
+                                                        @(device.IsOnline ? "Online" : "Offline")
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-info" @onclick="() => ViewDeviceDetails(device.Id)">
+                                                        <i class="fas fa-info-circle"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger" @onclick="() => RemoveDeviceFromRoom(device)">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @onclick="HideAssignDeviceModal">Cancel</button>
-                        <button type="button" class="btn btn-primary" @onclick="AssignDeviceToRoom">Assign</button>
+                    <div class="card-footer">
+                        <button class="btn btn-primary" @onclick="() => ShowAddDeviceDialog()">
+                            <i class="fas fa-plus"></i> Add Device
+                        </button>
                     </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    Select a room to view and manage its details.
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@if (showAddRoomDialog)
+{
+    <div class="modal fade show" style="display: block;" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Room</h5>
+                    <button type="button" class="btn-close" @onclick="() => showAddRoomDialog = false"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Room Name</label>
+                        <input type="text" class="form-control" @bind="newRoom.Name" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" @bind="newRoom.Description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Floor</label>
+                        <input type="number" class="form-control" @bind="newRoom.Floor" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="() => showAddRoomDialog = false">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="AddRoom">Add Room</button>
                 </div>
             </div>
         </div>
-        <div class="modal-backdrop fade show"></div>
-    }
-</div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@if (showDeleteRoomDialog)
+{
+    <div class="modal fade show" style="display: block;" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Room</h5>
+                    <button type="button" class="btn-close" @onclick="() => showDeleteRoomDialog = false"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete the room "@roomToDelete?.Name"?</p>
+                    <p class="text-danger">This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="() => showDeleteRoomDialog = false">Cancel</button>
+                    <button type="button" class="btn btn-danger" @onclick="DeleteRoom">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
 
 @code {
     private List<Room>? rooms;
-    private Room editingRoom = new();
-    private bool showRoomModal = false;
-    private bool showAssignDeviceModal = false;
-    private int assignRoomId;
-    private int selectedDeviceId;
-    private List<Device> unassignedDevices = new();
+    private Room? selectedRoom;
+    private List<Device>? roomDevices;
+    private bool showAddRoomDialog;
+    private bool showDeleteRoomDialog;
+    private Room? roomToDelete;
+    private Room newRoom = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -150,80 +220,95 @@
 
     private async Task LoadRooms()
     {
-        rooms = await RoomService.GetRoomsAsync();
-        StateHasChanged();
+        var roomsEnumerable = await RoomService.GetRoomsAsync();
+        rooms = roomsEnumerable.ToList();
     }
 
-    private void ShowAddRoomModal()
+    private async Task SelectRoom(Room room)
     {
-        editingRoom = new Room();
-        showRoomModal = true;
+        selectedRoom = room;
+        await LoadRoomDevices();
     }
 
-    private void HideRoomModal()
+    private async Task LoadRoomDevices()
     {
-        showRoomModal = false;
-    }
-
-    private void EditRoom(Room room)
-    {
-        editingRoom = new Room
+        if (selectedRoom != null)
         {
-            Id = room.Id,
-            Name = room.Name,
-            Description = room.Description,
-            Floor = room.Floor
-        };
-        showRoomModal = true;
+            var devices = await DeviceService.GetDevicesAsync();
+            roomDevices = devices.Where(d => d.RoomId == selectedRoom.Id).ToList();
+        }
+    }
+
+    private void ShowAddRoomDialog()
+    {
+        newRoom = new Room();
+        showAddRoomDialog = true;
+    }
+
+    private async Task AddRoom()
+    {
+        // Get the admin user's ID
+        var adminUser = await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.UserName == "admin");
+        if (adminUser != null)
+        {
+            newRoom.Id = Guid.NewGuid();
+            newRoom.CreatedAt = DateTime.UtcNow;
+            newRoom.UpdatedAt = DateTime.UtcNow;
+            newRoom.IsDeleted = false;
+            newRoom.CreatedById = adminUser.Id;
+            newRoom.UpdatedById = adminUser.Id;
+            await RoomService.AddRoomAsync(newRoom);
+            showAddRoomDialog = false;
+            await LoadRooms();
+        }
+        else
+        {
+            // Handle case where admin user doesn't exist
+            // You might want to show an error message to the user
+        }
     }
 
     private async Task SaveRoom()
     {
-        if (editingRoom.Id == 0)
+        if (selectedRoom != null)
         {
-            await RoomService.AddRoomAsync(editingRoom);
-        }
-        else
-        {
-            await RoomService.UpdateRoomAsync(editingRoom);
-        }
-        showRoomModal = false;
-        await LoadRooms();
-    }
-
-    private async Task DeleteRoom(int roomId)
-    {
-        await RoomService.DeleteRoomAsync(roomId);
-        await LoadRooms();
-    }
-
-    private async Task ShowAssignDeviceModal(int roomId)
-    {
-        assignRoomId = roomId;
-        unassignedDevices = await DeviceService.GetUnassignedDevicesAsync();
-        selectedDeviceId = 0;
-        showAssignDeviceModal = true;
-        StateHasChanged();
-    }
-
-    private void HideAssignDeviceModal()
-    {
-        showAssignDeviceModal = false;
-    }
-
-    private async Task AssignDeviceToRoom()
-    {
-        if (selectedDeviceId != 0 && assignRoomId != 0)
-        {
-            await RoomService.AssignDeviceToRoomAsync(selectedDeviceId, assignRoomId);
-            showAssignDeviceModal = false;
+            await RoomService.UpdateRoomAsync(selectedRoom);
             await LoadRooms();
         }
     }
 
-    private async Task RemoveDeviceFromRoom(int deviceId)
+    private void ShowDeleteRoomDialog(Room room)
     {
-        await RoomService.RemoveDeviceFromRoomAsync(deviceId);
-        await LoadRooms();
+        roomToDelete = room;
+        showDeleteRoomDialog = true;
+    }
+
+    private async Task DeleteRoom()
+    {
+        if (roomToDelete != null)
+        {
+            await RoomService.DeleteRoomAsync(roomToDelete.Id);
+            showDeleteRoomDialog = false;
+            selectedRoom = null;
+            roomDevices = null;
+            await LoadRooms();
+        }
+    }
+
+    private void ViewDeviceDetails(Guid deviceId)
+    {
+        NavigationManager.NavigateTo($"/device-details/{deviceId}");
+    }
+
+    private async Task RemoveDeviceFromRoom(Device device)
+    {
+        device.RoomId = null;
+        await DeviceService.UpdateDeviceAsync(device);
+        await LoadRoomDevices();
+    }
+
+    private void ShowAddDeviceDialog()
+    {
+        // TODO: Implement add device dialog
     }
 } 

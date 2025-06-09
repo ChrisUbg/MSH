@@ -7,14 +7,14 @@ services:
       dockerfile: Dockerfile.dev
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://0.0.0.0:5000
+      - ASPNETCORE_URLS=http://0.0.0.0:8082
       - DOTNET_USE_POLLING_FILE_WATCHER=1
-      - WEB_PORT=5000
+      - WEB_PORT=8082
       - DB_PORT=5434
       - MATTER_BRIDGE_PORT=8084
       - CONNECTION_STRING=Host=db;Port=5432;Database=matter_dev;Username=postgres;Password=devpassword
     ports:
-      - "5000:5000"
+      - "8082:8082"
     volumes:
       - .:/app
       - ~/.aspnet/DataProtection-Keys:/root/.aspnet/DataProtection-Keys
@@ -25,7 +25,7 @@ services:
     networks:
       - msh_network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/test"]
+      test: ["CMD", "curl", "-f", "http://localhost:8082/test"]
       interval: 30s
       timeout: 10s
       retries: 3

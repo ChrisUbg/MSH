@@ -1,0 +1,62 @@
+@page "/room-overview"
+@using MSH.Infrastructure.Entities
+@using MSH.Web.Services
+@inject IRoomService RoomService
+@inject IDeviceService DeviceService
+
+<PageTitle>Room Overview</PageTitle>
+
+<div class="container">
+    <h1>Room Overview</h1>
+    <div class="row">
+        @if (rooms == null)
+        {
+            <div class="col-12">Loading...</div>
+        }
+        else if (!rooms.Any())
+        {
+            <div class="col-12">No rooms found.</div>
+        }
+        else
+        {
+            @foreach (var room in rooms)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">@room.Name</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">@room.Description</p>
+                            <p class="card-text"><strong>Floor:</strong> @room.Floor</p>
+                            <p class="card-text"><strong>Devices:</strong> @(room.Devices?.Count ?? 0)</p>
+                            <button class="btn btn-primary" @onclick="() => NavigateToRoomDetails(room.Id)">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    private List<Room>? rooms;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadRooms();
+    }
+
+    private async Task LoadRooms()
+    {
+        var roomsEnumerable = await RoomService.GetRoomsAsync();
+        rooms = roomsEnumerable.ToList();
+        StateHasChanged();
+    }
+
+    private void NavigateToRoomDetails(Guid roomId)
+    {
+        // Navigate to room details page
+        // Example: NavigationManager.NavigateTo($"/room-details/{roomId}");
+    }
+} 

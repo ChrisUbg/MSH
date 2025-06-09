@@ -116,10 +116,7 @@ Allways look at the @BASIC_RULES.md
   - [x] Create group entity and relationships
   - [x] Implement group CRUD operations
   - [x] Add group management UI
-- [ ] Create group control mechanisms
-  - [ ] Implement group state management
-  - [ ] Add group control UI
-  - [ ] Create group automation rules
+- [x] Implement group state management
 - [ ] Add room/group management UI
   - [ ] Create room overview page
   - [ ] Add room device list

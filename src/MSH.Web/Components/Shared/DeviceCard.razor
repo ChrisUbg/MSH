@@ -1,8 +1,10 @@
 @using MSH.Infrastructure.Models
+@using Microsoft.AspNetCore.Components
+@inject NavigationManager NavigationManager
 
 <div class="card device-card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">@Device.Name</h5>
+        <h5 class="mb-0">@mDevice.Name</h5>
         @if (ShowDeleteButton)
         {
             <button class="btn btn-sm btn-outline-danger" @onclick="OnDelete">
@@ -12,14 +14,14 @@
     </div>
     <div class="card-body">
         <p class="card-text">
-            <strong>Type:</strong> @Device.Type<br />
-            <strong>ID:</strong> @Device.DeviceId
+            <strong>Type:</strong> @mDevice.Type<br />
+            <strong>ID:</strong> @mDevice.DeviceId
         </p>
         
         @if (DeviceState != null)
         {
             <div class="device-state">
-                @if (Device.Type == "Light")
+                @if (mDevice.Type == "Light")
                 {
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" 
@@ -40,7 +42,7 @@
                                @onchange="(e) => OnColorChange(e.Value)" />
                     </div>
                 }
-                else if (Device.Type == "TemperatureSensor")
+                else if (mDevice.Type == "TemperatureSensor")
                 {
                     <div class="sensor-readings">
                         <p>Temperature: @DeviceState["temperature"]°C</p>
@@ -58,7 +60,7 @@
 
 @code {
     [Parameter]
-    public required Device Device { get; set; }
+    public required mDevice mDevice { get; set; }
 
     [Parameter]
     public Dictionary<string, object>? DeviceState { get; set; }
@@ -80,7 +82,7 @@
 
     private async Task OnDelete()
     {
-        await OnDeleteRequested.InvokeAsync(Device.DeviceId);
+        await OnDeleteRequested.InvokeAsync(mDevice.DeviceId.ToString());
     }
 
     private async Task OnToggle()
@@ -88,13 +90,19 @@
         await OnToggleRequested.InvokeAsync();
     }
 
-    private async Task OnBrightnessChange(object value)
+    private async Task OnBrightnessChange(object? value)
     {
-        await OnBrightnessChangeRequested.InvokeAsync(value);
+        if (value is int brightness && mDevice != null)
+        {
+            await OnBrightnessChangeRequested.InvokeAsync(value);
+        }
     }
 
-    private async Task OnColorChange(object value)
+    private async Task OnColorChange(object? value)
     {
-        await OnColorChangeRequested.InvokeAsync(value);
+        if (value is string color && mDevice != null)
+        {
+            await OnColorChangeRequested.InvokeAsync(value);
+        }
     }
 } 

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using MSH.Web.Data;
+using MSH.Infrastructure.Data;
 using MSH.Web.Services;
 using MSH.Web.Hubs;
 using MSH.Infrastructure.Services;
@@ -9,6 +9,11 @@ using Npgsql;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using MSH.Web.Components;
+using MSH.Web.Components.Account;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +23,7 @@ builder.Configuration.AddJsonFile("appsettings.Ports.json", optional: false);
 // Configure DataProtection
 builder.Services.AddDataProtection()
     .SetApplicationName("MSH")
-    .PersistKeysToFileSystem(new DirectoryInfo("/root/.aspnet/DataProtection-Keys"));
+    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "DataProtection-Keys")));
 
 // Get port configuration
 var webPort = builder.Configuration.GetValue<int>("Ports:Web:Internal");
@@ -36,47 +41,15 @@ if (builder.Environment.IsDevelopment())
     Console.WriteLine($"Using connection string: {devConnectionString}");
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(devConnectionString, npgsqlOptions => 
-            npgsqlOptions.MigrationsAssembly("MSH.Web")));
+            npgsqlOptions.MigrationsAssembly("MSH.Infrastructure")));
 }
 else
 {
-    try 
-    {
-        Console.WriteLine("Initializing production database connection...");
-        var envConnectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
-        string connectionString;
-        if (!string.IsNullOrEmpty(envConnectionString))
-        {
-            connectionString = envConnectionString;
-        }
-        else
-        {
-            var password = File.ReadAllText("/run/secrets/postgres_password").Trim();
-            connectionString = $"Host=db;Port={dbPort};Database=matter_prod;Username=postgres;Password={password};Pooling=true;Timeout=30;Include Error Detail=true";
-        }
-        // Test connection without psql
-        Console.WriteLine($"Testing raw TCP connection to db:{dbPort}...");
-        using (var socket = new System.Net.Sockets.TcpClient())
-        {
-            socket.ConnectAsync("db", dbPort).Wait();
-            Console.WriteLine("✅ TCP connection successful");
-        }
-        builder.Services.AddDbContext<ApplicationDbContext>(options => 
-            options.UseNpgsql(connectionString, npgsqlOptions => 
-            {
-                npgsqlOptions.EnableRetryOnFailure(
-                    maxRetryCount: 5,
-                    maxRetryDelay: TimeSpan.FromSeconds(10),
-                    errorCodesToAdd: null
-                );
-                npgsqlOptions.MigrationsAssembly("MSH.Web");
-            }));
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"❌ Connection failed: {ex}");
-        throw;
-    }
+    // Production database connection
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseNpgsql(connectionString, npgsqlOptions => 
+            npgsqlOptions.MigrationsAssembly("MSH.Infrastructure")));
 }
 
 // Register services
@@ -116,29 +89,32 @@ builder.Services.AddRazorComponents()
 builder.Services.AddHttpClient();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:5000") });
 
-// Register Identity
-builder.Services.AddDefaultIdentity<IdentityUser>(options =>
-{
+// Add services to the container.
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<IdentityUserAccessor>();
+builder.Services.AddScoped<IdentityRedirectManager>();
+
+// Add Identity with UI
+builder.Services.AddDefaultIdentity<IdentityUser>(options => {
     options.SignIn.RequireConfirmedAccount = false;
 })
-    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+// Add services
 builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<IDeviceService, DeviceService>();
+builder.Services.AddScoped<IDeviceTypeService, DeviceTypeService>();
 builder.Services.AddScoped<IDeviceGroupService, DeviceGroupService>();
+builder.Services.AddScoped<IUserLookupService, UserLookupService>();
 builder.Services.AddScoped<MatterDeviceService>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
+if (!app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
-}
-else
-{
-    app.UseExceptionHandler("/Error");
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -159,14 +135,12 @@ app.Use(async (context, next) =>
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseRouting();
-
-// Add authentication/authorization middleware
+app.UseAntiforgery();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Add this line to enable controllers
-app.MapControllers();
+// app.MapRazorComponents<App>()
+//     .AddInteractiveServerRenderMode();
 
 // Configure URLs explicitly
 app.Urls.Clear();
@@ -200,15 +174,34 @@ app.MapGet("/network-diag", () => {
 // Add this before app.Run()
 if (args.Contains("--migrate"))
 {
+    Console.WriteLine("Starting database migration...");
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    for (int i = 0; i < 5; i++) // Retry loop
+    var maxRetries = 5;
+    var retryDelay = TimeSpan.FromSeconds(5);
+
+    for (int i = 0; i < maxRetries; i++)
     {
-        try {
+        try 
+        {
+            Console.WriteLine($"Migration attempt {i + 1} of {maxRetries}...");
             db.Database.Migrate();
+            Console.WriteLine("✅ Database migration completed successfully");
             break;
-        } catch (NpgsqlException) {
-            await Task.Delay(5000);
+        }
+        catch (Exception ex) 
+        {
+            Console.WriteLine($"❌ Migration attempt {i + 1} failed: {ex.Message}");
+            if (i < maxRetries - 1)
+            {
+                Console.WriteLine($"Waiting {retryDelay.TotalSeconds} seconds before next attempt...");
+                await Task.Delay(retryDelay);
+            }
+            else
+            {
+                Console.WriteLine("❌ All migration attempts failed");
+                throw;
+            }
         }
     }
     return;
@@ -216,5 +209,10 @@ if (args.Contains("--migrate"))
 
 // Add SignalR hub
 app.MapHub<NotificationHub>("/notificationHub");
+app.MapHub<DeviceHub>("/deviceHub");
+
+app.MapRazorPages(); // For Identity UI
+// app.MapRazorComponents<App>()
+//     .AddInteractiveServerRenderMode();
 
 app.Run();

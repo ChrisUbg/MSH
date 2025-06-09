@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MSH.Infrastructure.Data;
 using MSH.Infrastructure.Entities;
-using MSH.Web.Data;
 
 namespace MSH.Web.Services;
 
@@ -18,7 +17,7 @@ public class UserSettingsService : IUserSettingsService
         _context = context;
     }
 
-    public async Task<UserSettings> GetUserSettingsAsync(int userId)
+    public async Task<UserSettings> GetUserSettingsAsync(Guid userId)
     {
         var settings = await _context.UserSettings
             .FirstOrDefaultAsync(s => s.UserId == userId && !s.IsDeleted);
@@ -46,7 +45,7 @@ public class UserSettingsService : IUserSettingsService
         return settings;
     }
 
-    public async Task<UserSettings> UpdateUserSettingsAsync(int userId, UserSettings settings)
+    public async Task<UserSettings> UpdateUserSettingsAsync(Guid userId, UserSettings settings)
     {
         var existingSettings = await GetUserSettingsAsync(userId);
         
@@ -58,7 +57,7 @@ public class UserSettingsService : IUserSettingsService
         return existingSettings;
     }
 
-    public async Task<UserSettings> UpdateThemeAsync(int userId, string theme)
+    public async Task<UserSettings> UpdateThemeAsync(Guid userId, string theme)
     {
         var settings = await GetUserSettingsAsync(userId);
         settings.Theme = theme;
@@ -68,7 +67,7 @@ public class UserSettingsService : IUserSettingsService
         return settings;
     }
 
-    public async Task<UserSettings> UpdateLanguageAsync(int userId, string language)
+    public async Task<UserSettings> UpdateLanguageAsync(Guid userId, string language)
     {
         var settings = await GetUserSettingsAsync(userId);
         settings.Language = language;
@@ -78,7 +77,7 @@ public class UserSettingsService : IUserSettingsService
         return settings;
     }
 
-    public async Task<UserSettings> UpdateDashboardLayoutAsync(int userId, object layout)
+    public async Task<UserSettings> UpdateDashboardLayoutAsync(Guid userId, object layout)
     {
         var settings = await GetUserSettingsAsync(userId);
         settings.DashboardLayout = JsonSerializer.SerializeToDocument(layout);
@@ -88,7 +87,7 @@ public class UserSettingsService : IUserSettingsService
         return settings;
     }
 
-    public async Task<UserSettings> UpdateNotificationPreferencesAsync(int userId, object preferences)
+    public async Task<UserSettings> UpdateNotificationPreferencesAsync(Guid userId, object preferences)
     {
         var settings = await GetUserSettingsAsync(userId);
         settings.NotificationPreferences = JsonSerializer.SerializeToDocument(preferences);
@@ -98,13 +97,10 @@ public class UserSettingsService : IUserSettingsService
         return settings;
     }
 
-    public async Task<UserSettings> AddFavoriteDeviceAsync(int userId, int deviceId)
+    public async Task<UserSettings> AddFavoriteDeviceAsync(Guid userId, Guid deviceId)
     {
         var settings = await GetUserSettingsAsync(userId);
-        var favorites = settings.FavoriteDevices != null 
-            ? JsonSerializer.Deserialize<int[]>(settings.FavoriteDevices)?.ToList() ?? new List<int>()
-            : new List<int>();
-
+        var favorites = settings.FavoriteDevices?.Deserialize<List<Guid>>() ?? new List<Guid>();
         if (!favorites.Contains(deviceId))
         {
             favorites.Add(deviceId);
@@ -112,26 +108,24 @@ public class UserSettingsService : IUserSettingsService
             settings.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
         }
-
         return settings;
     }
 
-    public async Task<UserSettings> RemoveFavoriteDeviceAsync(int userId, int deviceId)
+    public async Task<UserSettings> RemoveFavoriteDeviceAsync(Guid userId, Guid deviceId)
     {
         var settings = await GetUserSettingsAsync(userId);
-        if (settings.FavoriteDevices != null)
+        var favorites = settings.FavoriteDevices?.Deserialize<List<Guid>>() ?? new List<Guid>();
+        if (favorites.Contains(deviceId))
         {
-            var favorites = JsonSerializer.Deserialize<int[]>(settings.FavoriteDevices)?.ToList() ?? new List<int>();
             favorites.Remove(deviceId);
             settings.FavoriteDevices = JsonSerializer.SerializeToDocument(favorites);
             settings.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
         }
-
         return settings;
     }
 
-    public async Task<UserSettings> UpdateRoomDisplayOrderAsync(int userId, object order)
+    public async Task<UserSettings> UpdateRoomDisplayOrderAsync(Guid userId, object order)
     {
         var settings = await GetUserSettingsAsync(userId);
         settings.RoomDisplayOrder = JsonSerializer.SerializeToDocument(order);
@@ -141,7 +135,7 @@ public class UserSettingsService : IUserSettingsService
         return settings;
     }
 
-    public async Task<UserSettings> UpdateDeviceDisplayPreferencesAsync(int userId, object preferences)
+    public async Task<UserSettings> UpdateDeviceDisplayPreferencesAsync(Guid userId, object preferences)
     {
         var settings = await GetUserSettingsAsync(userId);
         settings.DeviceDisplayPreferences = JsonSerializer.SerializeToDocument(preferences);
@@ -151,7 +145,7 @@ public class UserSettingsService : IUserSettingsService
         return settings;
     }
 
-    public async Task<UserSettings> UpdateAutomationPreferencesAsync(int userId, object preferences)
+    public async Task<UserSettings> UpdateAutomationPreferencesAsync(Guid userId, object preferences)
     {
         var settings = await GetUserSettingsAsync(userId);
         settings.AutomationPreferences = JsonSerializer.SerializeToDocument(preferences);

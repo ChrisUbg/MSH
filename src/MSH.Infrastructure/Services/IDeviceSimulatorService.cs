@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MSH.Infrastructure.Models;
+using MSH.Infrastructure.Entities;
 
 namespace MSH.Infrastructure.Services;
 

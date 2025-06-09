@@ -1,11 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using MSH.Infrastructure.Entities;
 using MSH.Infrastructure.Services;
-using MSH.Web.Data;
-using System;
+using MSH.Infrastructure.Data;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 
@@ -16,6 +16,7 @@ public class DeviceGroupService : IDeviceGroupService
     private readonly ApplicationDbContext _context;
     private readonly MatterDeviceService _matterService;
     private readonly ILogger<DeviceGroupService> _logger;
+    private static readonly Guid DEFAULT_USER_ID = Guid.Parse("00000000-0000-0000-0000-000000000001"); // default admin
 
     public DeviceGroupService(
         ApplicationDbContext context, 
@@ -32,14 +33,16 @@ public class DeviceGroupService : IDeviceGroupService
         return await _context.DeviceGroups
             .Include(g => g.DeviceGroupMembers)
                 .ThenInclude(m => m.Device)
+                    .ThenInclude(d => d.DeviceType)
             .ToListAsync();
     }
 
-    public async Task<DeviceGroup?> GetDeviceGroupAsync(int groupId)
+    public async Task<DeviceGroup?> GetDeviceGroupAsync(Guid groupId)
     {
         return await _context.DeviceGroups
             .Include(g => g.DeviceGroupMembers)
                 .ThenInclude(m => m.Device)
+                    .ThenInclude(d => d.DeviceType)
             .FirstOrDefaultAsync(g => g.Id == groupId);
     }
 
@@ -57,7 +60,7 @@ public class DeviceGroupService : IDeviceGroupService
         return group;
     }
 
-    public async Task<bool> DeleteDeviceGroupAsync(int groupId)
+    public async Task<bool> DeleteDeviceGroupAsync(Guid groupId)
     {
         var group = await _context.DeviceGroups.FindAsync(groupId);
         if (group == null) return false;
@@ -67,7 +70,7 @@ public class DeviceGroupService : IDeviceGroupService
         return true;
     }
 
-    public async Task<bool> AddDeviceToGroupAsync(int deviceId, int groupId)
+    public async Task<bool> AddDeviceToGroupAsync(Guid deviceId, Guid groupId)
     {
         var exists = await _context.DeviceGroupMembers
             .AnyAsync(m => m.DeviceId == deviceId && m.DeviceGroupId == groupId);
@@ -77,15 +80,15 @@ public class DeviceGroupService : IDeviceGroupService
             {
                 DeviceId = deviceId,
                 DeviceGroupId = groupId,
-                CreatedById = 1, // default admin
-                UpdatedById = 1
+                CreatedById = DEFAULT_USER_ID,
+                UpdatedById = DEFAULT_USER_ID
             });
             await _context.SaveChangesAsync();
         }
         return true;
     }
 
-    public async Task<bool> RemoveDeviceFromGroupAsync(int deviceId, int groupId)
+    public async Task<bool> RemoveDeviceFromGroupAsync(Guid deviceId, Guid groupId)
     {
         var member = await _context.DeviceGroupMembers
             .FirstOrDefaultAsync(m => m.DeviceId == deviceId && m.DeviceGroupId == groupId);
@@ -97,7 +100,7 @@ public class DeviceGroupService : IDeviceGroupService
         return true;
     }
 
-    public async Task<bool> SetDevicesForGroupAsync(int groupId, List<int> deviceIds)
+    public async Task<bool> SetDevicesForGroupAsync(Guid groupId, List<Guid> deviceIds)
     {
         var group = await _context.DeviceGroups
             .Include(g => g.DeviceGroupMembers)
@@ -116,29 +119,34 @@ public class DeviceGroupService : IDeviceGroupService
             {
                 DeviceId = deviceId,
                 DeviceGroupId = groupId,
-                CreatedById = 1,
-                UpdatedById = 1
+                CreatedById = DEFAULT_USER_ID,
+                UpdatedById = DEFAULT_USER_ID
             });
         }
         await _context.SaveChangesAsync();
         return true;
     }
 
-    public async Task<GroupHealthStatus> GetGroupHealthStatusAsync(int groupId)
+    public async Task<GroupHealthStatus> GetGroupHealthStatusAsync(Guid groupId)
     {
-        var group = await GetDeviceGroupAsync(groupId);
+        var group = await _context.DeviceGroups
+            .Include(g => g.DeviceGroupMembers)
+                .ThenInclude(m => m.Device)
+            .FirstOrDefaultAsync(g => g.Id == groupId);
+
         if (group == null)
         {
             _logger.LogWarning("Group {GroupId} not found", groupId);
             return new GroupHealthStatus { IsHealthy = false, Error = "Group not found" };
         }
 
+        var devices = group.DeviceGroupMembers.Select(m => m.Device).ToList();
         var status = new GroupHealthStatus
         {
             GroupId = groupId,
             GroupName = group.Name,
-            TotalDevices = group.Devices.Count,
-            OnlineDevices = group.Devices.Count(d => d.Status == "online"),
+            TotalDevices = devices.Count,
+            OnlineDevices = devices.Count(d => d.IsOnline),
             LastUpdated = DateTime.UtcNow
         };
 
@@ -151,7 +159,7 @@ public class DeviceGroupService : IDeviceGroupService
         return status;
     }
 
-    public async Task<bool> SetGroupStateAsync(int groupId, string state)
+    public async Task<bool> SetGroupStateAsync(Guid groupId, string state)
     {
         try
         {
@@ -196,17 +204,16 @@ public class DeviceGroupService : IDeviceGroupService
                 _logger.LogWarning("Group {GroupId} state change: {SuccessCount} succeeded, {FailCount} failed", 
                     groupId, successCount, failCount);
             }
-
-            return successCount > 0;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to set state for group {GroupId}", groupId);
             return false;
         }
+        return true;
     }
 
-    public async Task<bool> SetGroupBrightnessAsync(int groupId, int brightness)
+    public async Task<bool> SetGroupBrightnessAsync(Guid groupId, int brightness)
     {
         try
         {
@@ -220,7 +227,7 @@ public class DeviceGroupService : IDeviceGroupService
             var successCount = 0;
             var failCount = 0;
 
-            foreach (var device in group.Devices.Where(d => d.DeviceType.Name == "Light"))
+            foreach (var device in group.Devices.Where(d => d.DeviceType?.Name == "Light"))
             {
                 try
                 {
@@ -229,11 +236,14 @@ public class DeviceGroupService : IDeviceGroupService
                         // TODO: Implement Matter brightness control
                         var config = device.Configuration ?? JsonDocument.Parse("{}");
                         var configDict = JsonSerializer.Deserialize<Dictionary<string, object>>(config);
-                        configDict["brightness"] = brightness;
-                        device.Configuration = JsonSerializer.SerializeToDocument(configDict);
-                        device.LastStateChange = DateTime.UtcNow;
-                        _context.Devices.Update(device);
-                        successCount++;
+                        if (configDict != null)
+                        {
+                            configDict["brightness"] = brightness;
+                            device.Configuration = JsonSerializer.SerializeToDocument(configDict);
+                            device.LastStateChange = DateTime.UtcNow;
+                            _context.Devices.Update(device);
+                            successCount++;
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -260,7 +270,7 @@ public class DeviceGroupService : IDeviceGroupService
         }
     }
 
-    public async Task<bool> SetGroupColorAsync(int groupId, string color)
+    public async Task<bool> SetGroupColorAsync(Guid groupId, string color)
     {
         try
         {
@@ -274,7 +284,7 @@ public class DeviceGroupService : IDeviceGroupService
             var successCount = 0;
             var failCount = 0;
 
-            foreach (var device in group.Devices.Where(d => d.DeviceType.Name == "Light"))
+            foreach (var device in group.Devices.Where(d => d.DeviceType?.Name == "Light"))
             {
                 try
                 {
@@ -283,11 +293,14 @@ public class DeviceGroupService : IDeviceGroupService
                         // TODO: Implement Matter color control
                         var config = device.Configuration ?? JsonDocument.Parse("{}");
                         var configDict = JsonSerializer.Deserialize<Dictionary<string, object>>(config);
-                        configDict["color"] = color;
-                        device.Configuration = JsonSerializer.SerializeToDocument(configDict);
-                        device.LastStateChange = DateTime.UtcNow;
-                        _context.Devices.Update(device);
-                        successCount++;
+                        if (configDict != null)
+                        {
+                            configDict["color"] = color;
+                            device.Configuration = JsonSerializer.SerializeToDocument(configDict);
+                            device.LastStateChange = DateTime.UtcNow;
+                            _context.Devices.Update(device);
+                            successCount++;
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -314,7 +327,7 @@ public class DeviceGroupService : IDeviceGroupService
         }
     }
 
-    public async Task<Dictionary<string, object>> GetGroupStateAsync(int groupId)
+    public async Task<Dictionary<string, object>> GetGroupStateAsync(Guid groupId)
     {
         var group = await GetDeviceGroupAsync(groupId);
         if (group == null)
@@ -332,8 +345,8 @@ public class DeviceGroupService : IDeviceGroupService
             {
                 ["deviceId"] = device.Id,
                 ["name"] = device.Name,
-                ["status"] = device.Status ?? "unknown",
-                ["lastStateChange"] = device.LastStateChange?.ToString("o") ?? DateTime.UtcNow.ToString("o")
+                ["status"] = device.Status,
+                ["lastStateChange"] = device.LastStateChange.ToString("o")
             };
             deviceStates.Add(deviceState);
         }

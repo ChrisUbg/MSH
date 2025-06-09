@@ -5,7 +5,7 @@
 ### Users
 ```sql
 CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
@@ -19,60 +19,78 @@ CREATE TABLE users (
 ### Rooms
 ```sql
 CREATE TABLE rooms (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(100) NOT NULL,
     description TEXT,
     floor INTEGER,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    is_deleted BOOLEAN DEFAULT FALSE,
+    created_by_id UUID NOT NULL REFERENCES users(id),
+    updated_by_id UUID REFERENCES users(id)
 );
 ```
 
 ### Device Types
 ```sql
 CREATE TABLE device_types (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(100) NOT NULL,
     description TEXT,
     capabilities JSONB NOT NULL, -- Stores supported features/commands
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    is_deleted BOOLEAN DEFAULT FALSE,
+    created_by_id UUID NOT NULL REFERENCES users(id),
+    updated_by_id UUID REFERENCES users(id)
 );
 ```
 
 ### Devices
 ```sql
 CREATE TABLE devices (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(100) NOT NULL,
-    device_type_id INTEGER REFERENCES device_types(id),
-    room_id INTEGER REFERENCES rooms(id),
+    device_type_id UUID REFERENCES device_types(id),
+    room_id UUID REFERENCES rooms(id),
     matter_device_id VARCHAR(255) UNIQUE, -- Matter protocol device identifier
     status VARCHAR(20) DEFAULT 'offline',
     last_seen TIMESTAMP WITH TIME ZONE,
     configuration JSONB, -- Device-specific configuration
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    is_deleted BOOLEAN DEFAULT FALSE,
+    created_by_id UUID NOT NULL REFERENCES users(id),
+    updated_by_id UUID REFERENCES users(id)
 );
 ```
 
 ### Device Groups
 ```sql
 CREATE TABLE device_groups (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(100) NOT NULL,
     description TEXT,
-    room_id INTEGER REFERENCES rooms(id),
+    room_id UUID REFERENCES rooms(id),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    is_deleted BOOLEAN DEFAULT FALSE,
+    created_by_id UUID NOT NULL REFERENCES users(id),
+    updated_by_id UUID REFERENCES users(id)
 );
 ```
 
 ### Device Group Members
 ```sql
 CREATE TABLE device_group_members (
-    group_id INTEGER REFERENCES device_groups(id),
-    device_id INTEGER REFERENCES devices(id),
-    PRIMARY KEY (group_id, device_id)
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    device_id UUID REFERENCES devices(id),
+    group_id UUID REFERENCES device_groups(id),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    is_deleted BOOLEAN DEFAULT FALSE,
+    created_by_id UUID NOT NULL REFERENCES users(id),
+    updated_by_id UUID REFERENCES users(id)
 );
 ```
 

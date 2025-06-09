@@ -1,10 +1,12 @@
+using System.Collections.Generic;
+
 namespace MSH.Infrastructure.Models;
 
-public class Room
+public class mRoom
 {
-    public int RoomId { get; set; }
+    public Guid RoomId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Type { get; set; } = string.Empty;
     public string? Location { get; set; }
-    public ICollection<Device>? Devices { get; set; }
+    public ICollection<mDevice>? Devices { get; set; }
 } 

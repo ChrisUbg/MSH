@@ -1,15 +1,23 @@
 @using MSH.Web.Services
+@using System.Threading
 @inject IDeviceGroupService DeviceGroupService
+@implements IDisposable
 
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Group Health Status</h5>
-        <button class="btn btn-sm btn-outline-secondary" @onclick="RefreshStatus">
+        <button class="btn btn-sm btn-outline-secondary" @onclick="RefreshStatus" disabled="@isRefreshing">
             <i class="oi oi-reload"></i>
         </button>
     </div>
     <div class="card-body">
-        @if (healthStatus == null)
+        @if (errorMessage != null)
+        {
+            <div class="alert alert-danger">
+                @errorMessage
+            </div>
+        }
+        else if (healthStatus == null)
         {
             <div class="text-center">
                 <div class="spinner-border text-primary" role="status">
@@ -81,9 +89,12 @@
 
 @code {
     [Parameter]
-    public int GroupId { get; set; }
+    public Guid GroupId { get; set; }
 
     private GroupHealthStatus? healthStatus;
+    private string? errorMessage;
+    private bool isRefreshing;
+    private readonly SemaphoreSlim _semaphore = new(1, 1);
 
     protected override async Task OnInitializedAsync()
     {
@@ -92,6 +103,29 @@
 
     public async Task RefreshStatus()
     {
-        healthStatus = await DeviceGroupService.GetGroupHealthStatusAsync(GroupId);
+        if (isRefreshing) return;
+
+        try
+        {
+            isRefreshing = true;
+            errorMessage = null;
+            await _semaphore.WaitAsync();
+            healthStatus = await DeviceGroupService.GetGroupHealthStatusAsync(GroupId);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error refreshing status: {ex.Message}";
+        }
+        finally
+        {
+            _semaphore.Release();
+            isRefreshing = false;
+            StateHasChanged();
+        }
+    }
+
+    public void Dispose()
+    {
+        _semaphore?.Dispose();
     }
 } 

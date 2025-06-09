@@ -6,8 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.Language.Flow;
-using MSH.Core.Entities;
-using MSH.Core.Interfaces;
 using MSH.Infrastructure.Data;
 using MSH.Infrastructure.Models;
 using MSH.Infrastructure.Services;
@@ -22,19 +20,19 @@ namespace MSH.Tests.Services;
 
 public class DeviceGroupServiceTests : IDisposable
 {
-    private readonly ApplicationDbContext _context;
+    private readonly MSH.Infrastructure.Data.ApplicationDbContext _context;
     private readonly Mock<ILogger<DeviceGroupService>> _loggerMock;
     private readonly Mock<MatterDeviceService> _matterServiceMock;
     private readonly DeviceGroupService _service;
-    private readonly int _testGroupId = 1;
+    private readonly Guid _testGroupId = Guid.NewGuid();
 
     public DeviceGroupServiceTests()
     {
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+        var options = new DbContextOptionsBuilder<MSH.Infrastructure.Data.ApplicationDbContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
 
-        _context = new ApplicationDbContext(options);
+        _context = new MSH.Infrastructure.Data.ApplicationDbContext(options);
         _loggerMock = new Mock<ILogger<DeviceGroupService>>();
         _matterServiceMock = new Mock<MatterDeviceService>();
         _service = new DeviceGroupService(_context, _matterServiceMock.Object, _loggerMock.Object);
@@ -92,8 +90,8 @@ public class DeviceGroupServiceTests : IDisposable
             DeviceGroupMembers = devices.Select(d => new DeviceGroupMember
             {
                 Device = d,
-                CreatedById = 1,
-                UpdatedById = 1
+                CreatedById = Guid.NewGuid(),
+                UpdatedById = Guid.NewGuid()
             }).ToList()
         };
 
@@ -120,7 +118,7 @@ public class DeviceGroupServiceTests : IDisposable
     public async Task GetGroupHealthStatusAsync_WithInvalidGroup_ReturnsUnhealthyStatus()
     {
         // Act
-        var status = await _service.GetGroupHealthStatusAsync(999);
+        var status = await _service.GetGroupHealthStatusAsync(Guid.NewGuid());
 
         // Assert
         Assert.NotNull(status);
@@ -146,7 +144,7 @@ public class DeviceGroupServiceTests : IDisposable
     public async Task SetGroupStateAsync_WithInvalidGroup_ReturnsFalse()
     {
         // Act
-        var result = await _service.SetGroupStateAsync(999, "on");
+        var result = await _service.SetGroupStateAsync(Guid.NewGuid(), "on");
 
         // Assert
         Assert.False(result);

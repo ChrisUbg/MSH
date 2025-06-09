@@ -1,0 +1,69 @@
+@page "/rooms/{RoomId}"
+@using MSH.Infrastructure.Entities
+@using MSH.Web.Services
+@inject IRoomService RoomService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Room Details</PageTitle>
+
+<div class="container">
+    <h1>Room Details</h1>
+
+    @if (_room == null)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">@_room.Name</h5>
+                <p class="card-text">@_room.Description</p>
+            </div>
+        </div>
+
+        <h2 class="mt-4">Devices</h2>
+        @if (_room.Devices == null || !_room.Devices.Any())
+        {
+            <p>No devices in this room.</p>
+        }
+        else
+        {
+            <div class="row">
+                @foreach (var device in _room.Devices)
+                {
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">@device.Name</h5>
+                                <p class="card-text">@device.Description</p>
+                                <p class="card-text">
+                                    <strong>Device Type:</strong> @device.DeviceType?.Name
+                                </p>
+                                <p class="card-text">
+                                    <strong>Status:</strong> @device.Status
+                                </p>
+                                <a href="/devices/@device.MatterDeviceId" class="btn btn-primary">Details</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string RoomId { get; set; } = null!;
+
+    private Room? _room;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Guid.TryParse(RoomId, out var roomId))
+        {
+            _room = await RoomService.GetRoomAsync(roomId);
+        }
+    }
+} 

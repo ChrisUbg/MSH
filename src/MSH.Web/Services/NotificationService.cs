@@ -5,17 +5,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MSH.Infrastructure.Data;
 using MSH.Infrastructure.Entities;
-using MSH.Web.Data;
 
 namespace MSH.Web.Services;
 
 public interface INotificationService
 {
-    Task SendNotificationToUserAsync(int userId, string title, string message, string type);
-    Task SendAlertToUserAsync(int userId, string title, string message, string severity);
-    Task SendDeviceStatusUpdateAsync(int userId, int deviceId, string status);
-    Task SendEnvironmentalAlertAsync(int userId, string parameter, double currentValue, double threshold);
-    Task<IEnumerable<Notification>> GetUserNotificationsAsync(int userId);
+    Task SendNotificationToUserAsync(Guid userId, string title, string message, string type);
+    Task SendAlertToUserAsync(Guid userId, string title, string message, string severity);
+    Task SendDeviceStatusUpdateAsync(Guid userId, Guid deviceId, string status);
+    Task SendEnvironmentalAlertAsync(Guid userId, string parameter, double currentValue, double threshold);
+    Task<IEnumerable<Notification>> GetUserNotificationsAsync(Guid userId);
     Task MarkNotificationAsReadAsync(int notificationId);
 }
 
@@ -35,13 +34,13 @@ public class NotificationService : INotificationService
         _emailService = emailService;
     }
 
-    public async Task SendNotificationToUserAsync(int userId, string title, string message, string type)
+    public async Task SendNotificationToUserAsync(Guid userId, string title, string message, string type)
     {
         try
         {
             var notification = new Notification
             {
-                UserId = userId.ToString(),
+                UserId = userId,
                 Message = $"{title}: {message}",
                 Type = Enum.Parse<NotificationType>(type, true),
                 CreatedAt = DateTime.UtcNow,
@@ -60,13 +59,13 @@ public class NotificationService : INotificationService
         }
     }
 
-    public async Task SendAlertToUserAsync(int userId, string title, string message, string severity)
+    public async Task SendAlertToUserAsync(Guid userId, string title, string message, string severity)
     {
         try
         {
             var notification = new Notification
             {
-                UserId = userId.ToString(),
+                UserId = userId,
                 Message = $"[{severity}] {title}: {message}",
                 Type = NotificationType.Warning,
                 CreatedAt = DateTime.UtcNow,
@@ -91,7 +90,7 @@ public class NotificationService : INotificationService
         }
     }
 
-    public async Task SendDeviceStatusUpdateAsync(int userId, int deviceId, string status)
+    public async Task SendDeviceStatusUpdateAsync(Guid userId, Guid deviceId, string status)
     {
         try
         {
@@ -103,7 +102,7 @@ public class NotificationService : INotificationService
 
             var notification = new Notification
             {
-                UserId = userId.ToString(),
+                UserId = userId,
                 Message = $"Device {device.Name} status updated: {status}",
                 Type = NotificationType.Info,
                 CreatedAt = DateTime.UtcNow,
@@ -122,13 +121,13 @@ public class NotificationService : INotificationService
         }
     }
 
-    public async Task SendEnvironmentalAlertAsync(int userId, string parameter, double currentValue, double threshold)
+    public async Task SendEnvironmentalAlertAsync(Guid userId, string parameter, double currentValue, double threshold)
     {
         try
         {
             var notification = new Notification
             {
-                UserId = userId.ToString(),
+                UserId = userId,
                 Message = $"Environmental alert: {parameter} is {currentValue} (threshold: {threshold})",
                 Type = NotificationType.Warning,
                 CreatedAt = DateTime.UtcNow,
@@ -147,10 +146,10 @@ public class NotificationService : INotificationService
         }
     }
 
-    public async Task<IEnumerable<Notification>> GetUserNotificationsAsync(int userId)
+    public async Task<IEnumerable<Notification>> GetUserNotificationsAsync(Guid userId)
     {
         return await _dbContext.Notifications
-            .Where(n => n.UserId == userId.ToString())
+            .Where(n => n.UserId == userId)
             .OrderByDescending(n => n.CreatedAt)
             .ToListAsync();
     }

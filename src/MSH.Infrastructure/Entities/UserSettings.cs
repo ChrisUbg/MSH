@@ -1,10 +1,11 @@
+using System;
 using System.Text.Json;
 
 namespace MSH.Infrastructure.Entities;
 
 public class UserSettings : BaseEntity
 {
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
     
     // UI Preferences
     public string Theme { get; set; } = "light"; // light, dark, system

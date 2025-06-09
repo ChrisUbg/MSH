@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using MSH.Infrastructure.Entities;
 using MSH.Infrastructure.Services;
+using Microsoft.AspNetCore.Identity;
 
 namespace MSH.Infrastructure.Data;
 
@@ -21,7 +22,8 @@ public class ApplicationDbContext : IdentityDbContext
         _userLookupService = userLookupService;
     }
 
-    public new DbSet<User> Users { get; set; } = null!;
+    public new DbSet<IdentityUser> Users { get; set; } = null!;
+    public DbSet<User> ApplicationUsers { get; set; } = null!;
     public DbSet<UserSettings> UserSettings { get; set; } = null!;
     public DbSet<Room> Rooms { get; set; } = null!;
     public DbSet<DeviceType> DeviceTypes { get; set; } = null!;
@@ -36,6 +38,14 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<UserRoomPermission> UserRoomPermissions { get; set; } = null!;
     public DbSet<EnvironmentalSettings> EnvironmentalSettings { get; set; } = null!;
     public DbSet<Notification> Notifications { get; set; } = null!;
+    public DbSet<DeviceHistory> DeviceHistory { get; set; } = null!;
+    public DbSet<Group> Groups { get; set; } = null!;
+    public DbSet<GroupMember> GroupMembers { get; set; } = null!;
+    public DbSet<GroupState> GroupStates { get; set; } = null!;
+    public DbSet<GroupStateHistory> GroupStateHistory { get; set; } = null!;
+    public DbSet<RuleCondition> RuleConditions { get; set; } = null!;
+    public DbSet<RuleAction> RuleActions { get; set; } = null!;
+    public DbSet<RuleExecutionHistory> RuleExecutionHistory { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -70,7 +80,7 @@ public class ApplicationDbContext : IdentityDbContext
 
         // Configure unique constraints
         modelBuilder.Entity<User>()
-            .HasIndex(u => u.Username)
+            .HasIndex(u => u.UserName)
             .IsUnique();
 
         modelBuilder.Entity<User>()
@@ -84,12 +94,14 @@ public class ApplicationDbContext : IdentityDbContext
 
         // Configure UserSettings
         modelBuilder.Entity<UserSettings>()
-            .HasOne(us => us.User)
-            .WithOne()
-            .HasForeignKey<UserSettings>(us => us.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasKey(us => us.UserId);
 
-        
+        modelBuilder.Entity<UserSettings>()
+            .HasOne<User>()
+            .WithOne()
+            .HasForeignKey<UserSettings>(us => us.UserId);
+
+        // Configure relationships
         modelBuilder.Entity<Device>()
             .HasOne(d => d.DeviceType)
             .WithMany(dt => dt.Devices)
@@ -125,7 +137,127 @@ public class ApplicationDbContext : IdentityDbContext
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        // Add more configurations as needed
+        // Configure Device
+        modelBuilder.Entity<Device>()
+            .HasKey(d => d.Id);
+
+        modelBuilder.Entity<Device>()
+            .Property(d => d.Properties)
+            .HasColumnType("jsonb");
+
+        // Configure DeviceHistory
+        modelBuilder.Entity<DeviceHistory>()
+            .HasKey(dh => dh.Id);
+
+        modelBuilder.Entity<DeviceHistory>()
+            .HasOne<Device>()
+            .WithMany()
+            .HasForeignKey(dh => dh.DeviceId);
+
+        // Configure Group
+        modelBuilder.Entity<Group>()
+            .HasKey(g => g.Id);
+
+        // Configure GroupMember
+        modelBuilder.Entity<GroupMember>()
+            .HasKey(gm => new { gm.GroupId, gm.DeviceId });
+
+        modelBuilder.Entity<GroupMember>()
+            .HasOne<Group>()
+            .WithMany()
+            .HasForeignKey(gm => gm.GroupId);
+
+        modelBuilder.Entity<GroupMember>()
+            .HasOne<Device>()
+            .WithMany()
+            .HasForeignKey(gm => gm.DeviceId);
+
+        // Configure GroupState
+        modelBuilder.Entity<GroupState>()
+            .HasKey(gs => gs.GroupId);
+
+        modelBuilder.Entity<GroupState>()
+            .HasOne(gs => gs.Group)
+            .WithOne(g => g.State)
+            .HasForeignKey<GroupState>(gs => gs.GroupId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<GroupState>()
+            .Property(gs => gs.State)
+            .HasColumnType("jsonb");
+
+        // Configure GroupStateHistory
+        modelBuilder.Entity<GroupStateHistory>()
+            .HasKey(gsh => gsh.Id);
+
+        modelBuilder.Entity<GroupStateHistory>()
+            .HasOne<Group>()
+            .WithMany()
+            .HasForeignKey(gsh => gsh.GroupId);
+
+        modelBuilder.Entity<GroupStateHistory>()
+            .Property(gsh => gsh.OldState)
+            .HasColumnType("jsonb");
+
+        modelBuilder.Entity<GroupStateHistory>()
+            .Property(gsh => gsh.NewState)
+            .HasColumnType("jsonb");
+
+        // Configure Rule
+        modelBuilder.Entity<Rule>()
+            .HasKey(r => r.Id);
+
+        // Configure RuleCondition
+        modelBuilder.Entity<RuleCondition>()
+            .HasKey(rc => rc.Id);
+
+        modelBuilder.Entity<RuleCondition>()
+            .HasOne<Rule>()
+            .WithMany()
+            .HasForeignKey(rc => rc.RuleId);
+
+        modelBuilder.Entity<RuleCondition>()
+            .Property(rc => rc.Condition)
+            .HasColumnType("jsonb");
+
+        // Configure RuleAction
+        modelBuilder.Entity<RuleAction>()
+            .HasKey(ra => ra.Id);
+
+        modelBuilder.Entity<RuleAction>()
+            .HasOne<Rule>()
+            .WithMany()
+            .HasForeignKey(ra => ra.RuleId);
+
+        modelBuilder.Entity<RuleAction>()
+            .Property(ra => ra.Action)
+            .HasColumnType("jsonb");
+
+        // Configure RuleTrigger
+        modelBuilder.Entity<RuleTrigger>()
+            .HasKey(rt => rt.Id);
+
+        modelBuilder.Entity<RuleTrigger>()
+            .HasOne<Rule>()
+            .WithMany()
+            .HasForeignKey(rt => rt.RuleId);
+
+        modelBuilder.Entity<RuleTrigger>()
+            .Property(rt => rt.Trigger)
+            .HasColumnType("jsonb");
+
+        // Configure RuleExecutionHistory
+        modelBuilder.Entity<RuleExecutionHistory>()
+            .HasKey(reh => reh.Id);
+
+        modelBuilder.Entity<RuleExecutionHistory>()
+            .HasOne<Rule>()
+            .WithMany()
+            .HasForeignKey(reh => reh.RuleId);
+
+        modelBuilder.Entity<RuleExecutionHistory>()
+            .Property(reh => reh.Result)
+            .HasColumnType("jsonb");
     }
 
     public override int SaveChanges()
@@ -142,27 +274,40 @@ public class ApplicationDbContext : IdentityDbContext
 
     private void UpdateTimestamps()
     {
-        var currentUserId = _userLookupService?.GetCurrentUserId();
+        var entries = ChangeTracker.Entries()
+            .Where(e => e.Entity is BaseEntity && (
+                e.State == EntityState.Added
+                || e.State == EntityState.Modified));
 
-        var entries = ChangeTracker.Entries<BaseEntity>()
-            .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
-
-        foreach (var entry in entries)
+        foreach (var entityEntry in entries)
         {
-            if (entry.State == EntityState.Added)
+            var entity = (BaseEntity)entityEntry.Entity;
+
+            if (entityEntry.State == EntityState.Added)
             {
-                entry.Entity.CreatedAt = DateTime.UtcNow;
-                if (currentUserId.HasValue)
+                entity.CreatedAt = DateTime.UtcNow;
+                if (_userLookupService != null)
                 {
-                    entry.Entity.CreatedById = currentUserId.Value;
+                    var userId = _userLookupService.GetCurrentUserId();
+                    if (userId.HasValue)
+                    {
+                        entity.CreatedById = (Guid)userId.Value;
+                    }
                 }
             }
             else
             {
-                entry.Entity.UpdatedAt = DateTime.UtcNow;
-                if (currentUserId.HasValue)
+                entityEntry.Property(nameof(BaseEntity.CreatedAt)).IsModified = false;
+                entityEntry.Property(nameof(BaseEntity.CreatedById)).IsModified = false;
+            }
+
+            entity.UpdatedAt = DateTime.UtcNow;
+            if (_userLookupService != null)
+            {
+                var userId = _userLookupService.GetCurrentUserId();
+                if (userId.HasValue)
                 {
-                    entry.Entity.UpdatedById = currentUserId.Value;
+                    entity.UpdatedById = (Guid)userId.Value;
                 }
             }
         }

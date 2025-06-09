@@ -2,15 +2,25 @@ version: '3.8'
 
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: src/MSH.Web/Dockerfile
     ports:
-      - "8082:8080"  # Changed from 8083 to 8082 for web service
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=msh;Username=postgres;Password=postgres
     depends_on:
       - db
-    environment:
-      - ConnectionStrings__DefaultConnection=Host=db;Database=msh;Username=postgres;Password=postgres
-    networks:
-      - msh-network
+    volumes:
+      - ./src:/app/src
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   db:
     image: postgres:16
@@ -19,29 +29,18 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:
-      - "5434:5432"  # Already correct
+      - "5432:5432"
     volumes:
-      - msh_postgres_data:/var/lib/postgresql/data
-    networks:
-      - msh-network
-
-  matter-bridge:
-    build: 
-      context: ./Matter
-      dockerfile: Dockerfile
-    ports:
-      - "8084:8080"  # Already correct
-    environment:
-      - MATTER_BRIDGE_HOST=0.0.0.0
-      - MATTER_BRIDGE_PORT=8080
-    networks:
-      - msh-network
-    depends_on:
-      - web
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 networks:
   msh-network:
     driver: bridge
 
 volumes:
-  msh_postgres_data: 
+  postgres_data: 

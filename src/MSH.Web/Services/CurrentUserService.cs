@@ -1,62 +1,88 @@
-using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using MSH.Web.Data;
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using MSH.Infrastructure.Entities;
+using MSH.Infrastructure.Data;
+using System.Security.Claims;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Components.Authorization;
+using MSH.Web.Interfaces;
 
 namespace MSH.Web.Services;
 
-public interface ICurrentUserService
-{
-    int? UserId { get; }
-    string? UserName { get; }
-    bool IsAuthenticated { get; }
-    Task<User?> GetCurrentUserAsync();
-}
-
 public class CurrentUserService : ICurrentUserService
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly ApplicationDbContext _dbContext;
-    private readonly ILogger<CurrentUserService> _logger;
+    private readonly UserManager<IdentityUser> _userManager;
+    private readonly ApplicationDbContext _context;
+    private readonly AuthenticationStateProvider _authenticationStateProvider;
 
     public CurrentUserService(
-        IHttpContextAccessor httpContextAccessor,
-        ApplicationDbContext dbContext,
-        ILogger<CurrentUserService> logger)
+        UserManager<IdentityUser> userManager,
+        ApplicationDbContext context,
+        AuthenticationStateProvider authenticationStateProvider)
     {
-        _httpContextAccessor = httpContextAccessor;
-        _dbContext = dbContext;
-        _logger = logger;
+        _userManager = userManager;
+        _context = context;
+        _authenticationStateProvider = authenticationStateProvider;
     }
 
-    public int? UserId
+    public Guid? UserId
     {
         get
         {
-            var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            return userIdClaim != null ? int.Parse(userIdClaim) : null;
+            var userIdClaim = _userManager.GetUserId(null);
+            return userIdClaim != null ? Guid.Parse(userIdClaim) : null;
         }
     }
 
-    public string? UserName => _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Name)?.Value;
-    public bool IsAuthenticated => _httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false;
+    public string? UserName => _userManager.Users.FirstOrDefault()?.UserName;
+
+    public bool IsAuthenticated => _userManager.Users.Any();
 
     public async Task<User?> GetCurrentUserAsync()
     {
-        if (!IsAuthenticated || !UserId.HasValue)
+        var identityUser = _userManager.Users.FirstOrDefault();
+        if (identityUser == null)
         {
             return null;
         }
 
-        try
+        var user = await _context.ApplicationUsers
+            .FirstOrDefaultAsync(u => u.UserName == identityUser.UserName);
+
+        if (user == null)
         {
-            return await _dbContext.Users.FindAsync(UserId.Value);
+            user = new User
+            {
+                UserName = identityUser.UserName!,
+                Email = identityUser.Email,
+                IsActive = true,
+                LastLogin = DateTime.UtcNow
+            };
+            _context.ApplicationUsers.Add(user);
+            await _context.SaveChangesAsync();
         }
-        catch (Exception ex)
+
+        return user;
+    }
+
+    public async Task<Guid?> GetCurrentUserIdAsync()
+    {
+        var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        
+        if (user.Identity?.IsAuthenticated != true)
         {
-            _logger.LogError(ex, "Error retrieving current user");
             return null;
         }
+
+        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+        {
+            return null;
+        }
+
+        return Guid.TryParse(userIdClaim.Value, out var userId) ? userId : null;
     }
 } 

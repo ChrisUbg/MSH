@@ -86,8 +86,47 @@
 -- cd ../.. && docker-compose -f docker-compose.dev-msh.yml build web
 -- docker-compose -f docker-compose.dev-msh.yml up -d --force-recreate web
 -- cd src/MSH.Infrastructure && dotnet ef migrations list
--- docker exec msh-web-1 dotnet run --project /app/src/MSH.Web/MSH.Web.csproj -- --migrate
+
+   cd src/MSH.Infrastructure
+   dotnet ef database update --project src/MSH.Infrastructure --startup-project ../MSH.Web
+   
+
+-- # Run migrations locally (not in container):
+-- ./scripts/migrate-db.sh
 
 -- docker-compose -f docker-compose.dev-msh.yml up
 
 - Always focus on long-term, sustainable implementations. Avoid short-term workarounds or hacks that may lead to technical debt or architectural issues later.
+
+## Database Migrations
+- Always run migrations from the Infrastructure project directory
+- Use the following command format:
+  ```bash
+  cd src/MSH.Infrastructure
+  CONNECTION_STRING="Host=localhost;Port=5434;Database=matter_dev;Username=postgres;Password=devpassword" dotnet ef database update
+  ```
+- Do NOT install dotnet-ef tool in containers
+- The database port is 5434 when connecting from the host machine
+- Verify migrations in pgAdmin after running them
+
+## Port Configuration
+- Web application runs on port 5000 (both internal and external)
+- Database runs on port 5434 externally, 5432 internally
+- Matter Bridge runs on port 8084
+- Port configuration is managed in:
+  - docker-compose.dev-msh.yml for container setup
+  - appsettings.Ports.json for application configuration
+- Always ensure port numbers match between these files
+
+## Matter Device Requirements
+- Devices must support the Matter protocol (CSA/CHIP standard) for interoperability and local control.
+- Preferred communication: Thread, Wi-Fi, or Ethernet (Zigbee/Z-Wave only if bridged to Matter) or BLE.
+- Devices should expose a local API or be controllable via standard Matter clusters (On/Off, Power Metering, etc.).
+- Power monitoring and energy metering are highly recommended for sockets, plugs, and switches.
+- Devices must be able to join and operate in a Matter fabric managed by our controller (Raspberry Pi/Docker).
+- OTA (Over-the-Air) firmware update support is preferred.
+- Devices should not require a cloud connection for basic operation and control.
+- Integration with open-source platforms (Home Assistant, OpenHAB, etc.) is a plus.
+- Documentation and/or SDK availability for custom integration is highly recommended.
+- If a device is not natively Matter, it must be flashable with open-source firmware (e.g., Tasmota, ESPHome) or support bridging to Matter.
+- All adopted devices must comply with EU safety and EMC standards (CE, RoHS, etc.).

@@ -13,14 +13,14 @@ public class UserLookupService : IUserLookupService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public int? GetCurrentUserId()
+    public Guid? GetCurrentUserId()
     {
         var userIdClaim = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier);
         if (userIdClaim == null) return null;
-        return int.TryParse(userIdClaim.Value, out var userId) ? userId : null;
+        return Guid.TryParse(userIdClaim.Value, out var userId) ? userId : null;
     }
 
-    public Task<User?> GetUserByIdAsync(int userId)
+    public Task<User?> GetUserByIdAsync(Guid userId)
     {
         // This will be implemented by the ApplicationDbContext
         throw new NotImplementedException();

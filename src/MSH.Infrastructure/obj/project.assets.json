@@ -3145,19 +3145,19 @@
     ]
   },
   "packageFolders": {
-    "/home/chris/.nuget/packages/": {}
+    "/root/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/chris/RiderProjects/MSH/src/MSH.Infrastructure/MSH.Infrastructure.csproj",
+      "projectUniqueName": "/app/src/MSH.Infrastructure/MSH.Infrastructure.csproj",
       "projectName": "MSH.Infrastructure",
-      "projectPath": "/home/chris/RiderProjects/MSH/src/MSH.Infrastructure/MSH.Infrastructure.csproj",
-      "packagesPath": "/home/chris/.nuget/packages/",
-      "outputPath": "/home/chris/RiderProjects/MSH/src/MSH.Infrastructure/obj/",
+      "projectPath": "/app/src/MSH.Infrastructure/MSH.Infrastructure.csproj",
+      "packagesPath": "/root/.nuget/packages/",
+      "outputPath": "/app/src/MSH.Infrastructure/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/chris/.nuget/NuGet/NuGet.Config"
+        "/root/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
