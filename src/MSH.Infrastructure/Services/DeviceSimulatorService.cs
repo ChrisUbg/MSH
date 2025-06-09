@@ -13,7 +13,7 @@ public class DeviceSimulatorService : IDeviceSimulatorService, IHostedService
 {
     private readonly ILogger<DeviceSimulatorService> _logger;
     private readonly Dictionary<string, SimulatedDevice> _devices;
-    private Timer _simulationTimer;
+    private Timer _simulationTimer = null!;
 
     public DeviceSimulatorService(ILogger<DeviceSimulatorService> logger)
     {
@@ -42,24 +42,24 @@ public class DeviceSimulatorService : IDeviceSimulatorService, IHostedService
 
     public async Task<IEnumerable<Device>> GetSimulatedDevicesAsync()
     {
-        return _devices.Values.Select(d => new Device
+        return await Task.FromResult(_devices.Values.Select(d => new Device
         {
             DeviceId = d.DeviceId,
             Name = d.Name,
             Type = d.Type
-        });
+        }));
     }
 
-    public async Task<Device> GetSimulatedDeviceAsync(string deviceId)
+    public async Task<Device?> GetSimulatedDeviceAsync(string deviceId)
     {
         if (_devices.TryGetValue(deviceId, out var device))
         {
-            return new Device
+            return await Task.FromResult(new Device
             {
                 DeviceId = device.DeviceId,
                 Name = device.Name,
                 Type = device.Type
-            };
+            });
         }
         return null;
     }
@@ -70,9 +70,8 @@ public class DeviceSimulatorService : IDeviceSimulatorService, IHostedService
     //    return GetSimulatedDevicesAsync();
     // }
 
-    public Task<Device> GetDeviceAsync(string deviceId)
+    public Task<Device?> GetDeviceAsync(string deviceId)
     {
-        // throw new NotImplementedException();
         return GetSimulatedDeviceAsync(deviceId);
     }
 
@@ -94,7 +93,7 @@ public class DeviceSimulatorService : IDeviceSimulatorService, IHostedService
         return false;
     }
 
-    public async Task<Dictionary<string, object>> GetDeviceStateAsync(string deviceId)
+    public async Task<Dictionary<string, object>?> GetDeviceStateAsync(string deviceId)
     {
         if (_devices.TryGetValue(deviceId, out var device))
         {
@@ -107,7 +106,7 @@ public class DeviceSimulatorService : IDeviceSimulatorService, IHostedService
     {
         if (_devices.ContainsKey(device.DeviceId))
         {
-            return false;
+            return await Task.FromResult(false);
         }
 
         SimulatedDevice simulatedDevice = device.Type switch
@@ -118,12 +117,12 @@ public class DeviceSimulatorService : IDeviceSimulatorService, IHostedService
         };
 
         _devices.Add(device.DeviceId, simulatedDevice);
-        return true;
+        return await Task.FromResult(true);
     }
 
     public async Task<bool> RemoveSimulatedDeviceAsync(string deviceId)
     {
-        return _devices.Remove(deviceId);
+        return await Task.FromResult(_devices.Remove(deviceId));
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -145,7 +144,7 @@ public class DeviceSimulatorService : IDeviceSimulatorService, IHostedService
         return Task.CompletedTask;
     }
 
-    private void SimulateDevices(object state)
+    private void SimulateDevices(object? state)
     {
         foreach (var device in _devices.Values)
         {

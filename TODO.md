@@ -64,7 +64,7 @@ Allways look at the @BASIC_RULES.md
     - [x] Implement current user service
     - [x] Implement device management service
     - [x] Implement environmental monitoring service
-    - [ ] Implement rule engine service
+    - [x] Implement rule engine service
     - [ ] Implement user management service
   - [x] Web layer
 - [ ] Implement basic authentication
@@ -174,8 +174,8 @@ Allways look at the @BASIC_RULES.md
 
 ## Phase 4: Advanced Features
 ### Rule Engine
-- [ ] Design rule system
-- [ ] Implement rule execution engine
+- [x] Design rule system
+- [x] Implement rule execution engine
 - [ ] Create rule management UI
 - [ ] Add rule templates
 - [ ] Implement rule testing
@@ -251,7 +251,7 @@ Allways look at the @BASIC_RULES.md
 ## Rules and Automation
 - [x] Create Rule entity
 - [x] Create RuleTrigger entity
-- [ ] Implement rule evaluation engine
+- [x] Implement rule evaluation engine
 - [ ] Add time-based triggers
 - [ ] Add condition-based triggers
 - [ ] Implement action execution

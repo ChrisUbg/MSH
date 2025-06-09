@@ -14,4 +14,14 @@ public class Device
     public bool IsActive { get; set; } = true;
     public int? RoomId { get; set; }
     public Room? Room { get; set; }
+
+    public Device()
+    {
+        DeviceId = string.Empty;
+        Name = string.Empty;
+        Type = string.Empty;
+        Configuration = string.Empty;
+        State = string.Empty;
+        GroupId = string.Empty;
+    }
 } 

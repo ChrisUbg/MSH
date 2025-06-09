@@ -38,19 +38,19 @@ public class SimulatedLight : SimulatedDevice
             _color = (string)newState["color"];
 
         UpdateState();
-        return true;
+        return await Task.FromResult(true);
     }
 
     public override async Task<bool> ToggleAsync()
     {
         _isOn = !_isOn;
         UpdateState();
-        return true;
+        return await Task.FromResult(true);
     }
 
     public override async Task<Dictionary<string, object>> GetStateAsync()
     {
-        return State;
+        return await Task.FromResult(State);
     }
 
     public override async Task SimulateBehaviorAsync()
@@ -62,6 +62,7 @@ public class SimulatedLight : SimulatedDevice
             _brightness = Math.Max(0, Math.Min(100, _brightness + random.Next(-5, 6)));
             UpdateState();
         }
+        await Task.CompletedTask;
     }
 }
 
@@ -93,18 +94,18 @@ public class SimulatedTemperatureSensor : SimulatedDevice
             _humidity = (double)newState["humidity"];
 
         UpdateState();
-        return true;
+        return await Task.FromResult(true);
     }
 
     public override async Task<bool> ToggleAsync()
     {
         // Temperature sensors don't toggle
-        return false;
+        return await Task.FromResult(false);
     }
 
     public override async Task<Dictionary<string, object>> GetStateAsync()
     {
-        return State;
+        return await Task.FromResult(State);
     }
 
     public override async Task SimulateBehaviorAsync()
@@ -119,5 +120,6 @@ public class SimulatedTemperatureSensor : SimulatedDevice
         _humidity = Math.Max(30.0, Math.Min(70.0, _humidity));
         
         UpdateState();
+        await Task.CompletedTask;
     }
 } 
