@@ -1,5 +1,7 @@
 # Smart Home Implementation TODO List
 
+Allways look at the @BASIC_RULES.md 
+
 ## Phase 1: Core Infrastructure Setup
 ### Docker Environment
 - [x] Create base docker-compose.yml
@@ -105,15 +107,15 @@
 - [x] Add device control UI components
 
 ### Room and Device Grouping
-- [ ] Create room management system
-  - [ ] Design room entity and relationships
-  - [ ] Create room CRUD operations
-  - [ ] Implement room assignment UI
-  - [ ] Add room-based device filtering
-- [ ] Implement device grouping
-  - [ ] Create group entity and relationships
-  - [ ] Implement group CRUD operations
-  - [ ] Add group management UI
+- [x] Create room management system
+  - [x] Design room entity and relationships
+  - [x] Create room CRUD operations
+  - [x] Implement room assignment UI
+  - [x] Add room-based device filtering
+- [x] Implement device grouping
+  - [x] Create group entity and relationships
+  - [x] Implement group CRUD operations
+  - [x] Add group management UI
 - [ ] Create group control mechanisms
   - [ ] Implement group state management
   - [ ] Add group control UI

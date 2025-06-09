@@ -23,6 +23,21 @@ namespace MSH.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("DeviceDeviceGroup", b =>
+                {
+                    b.Property<int>("DeviceGroupsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DevicesId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("DeviceGroupsId", "DevicesId");
+
+                    b.HasIndex("DevicesId");
+
+                    b.ToTable("DeviceDeviceGroup");
+                });
+
             modelBuilder.Entity("MSH.Infrastructure.Entities.Device", b =>
                 {
                     b.Property<int>("Id")
@@ -56,7 +71,7 @@ namespace MSH.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("RoomId")
+                    b.Property<int?>("RoomId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Status")
@@ -154,7 +169,7 @@ namespace MSH.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("RoomId")
+                    b.Property<int?>("RoomId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -176,22 +191,19 @@ namespace MSH.Infrastructure.Migrations
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceGroupMember", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("DeviceId")
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<int>("DeviceGroupId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("CreatedById")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("DeviceId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("GroupId")
                         .HasColumnType("integer");
 
                     b.Property<bool>("IsDeleted")
@@ -203,13 +215,11 @@ namespace MSH.Infrastructure.Migrations
                     b.Property<int?>("UpdatedById")
                         .HasColumnType("integer");
 
-                    b.HasKey("Id");
+                    b.HasKey("DeviceId", "DeviceGroupId");
 
                     b.HasIndex("CreatedById");
 
-                    b.HasIndex("DeviceId");
-
-                    b.HasIndex("GroupId");
+                    b.HasIndex("DeviceGroupId");
 
                     b.HasIndex("UpdatedById");
 
@@ -1001,6 +1011,21 @@ namespace MSH.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("DeviceDeviceGroup", b =>
+                {
+                    b.HasOne("MSH.Infrastructure.Entities.DeviceGroup", null)
+                        .WithMany()
+                        .HasForeignKey("DeviceGroupsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MSH.Infrastructure.Entities.Device", null)
+                        .WithMany()
+                        .HasForeignKey("DevicesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MSH.Infrastructure.Entities.Device", b =>
                 {
                     b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
@@ -1018,8 +1043,7 @@ namespace MSH.Infrastructure.Migrations
                     b.HasOne("MSH.Infrastructure.Entities.Room", "Room")
                         .WithMany("Devices")
                         .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
                         .WithMany()
@@ -1069,11 +1093,9 @@ namespace MSH.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MSH.Infrastructure.Entities.Room", "Room")
+                    b.HasOne("MSH.Infrastructure.Entities.Room", null)
                         .WithMany("DeviceGroups")
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RoomId");
 
                     b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
                         .WithMany()
@@ -1081,8 +1103,6 @@ namespace MSH.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("CreatedBy");
-
-                    b.Navigation("Room");
 
                     b.Navigation("UpdatedBy");
                 });
@@ -1092,7 +1112,13 @@ namespace MSH.Infrastructure.Migrations
                     b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MSH.Infrastructure.Entities.DeviceGroup", "DeviceGroup")
+                        .WithMany("DeviceGroupMembers")
+                        .HasForeignKey("DeviceGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MSH.Infrastructure.Entities.Device", "Device")
@@ -1101,22 +1127,15 @@ namespace MSH.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MSH.Infrastructure.Entities.DeviceGroup", "Group")
-                        .WithMany("DeviceGroupMembers")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
                         .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("UpdatedById");
 
                     b.Navigation("CreatedBy");
 
                     b.Navigation("Device");
 
-                    b.Navigation("Group");
+                    b.Navigation("DeviceGroup");
 
                     b.Navigation("UpdatedBy");
                 });

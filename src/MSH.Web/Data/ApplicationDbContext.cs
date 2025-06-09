@@ -102,6 +102,21 @@ public class ApplicationDbContext : IdentityDbContext
             .HasForeignKey(d => d.RoomId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<DeviceGroupMember>()
+            .HasKey(dgm => new { dgm.DeviceId, dgm.DeviceGroupId });
+
+        modelBuilder.Entity<DeviceGroupMember>()
+            .HasOne(dgm => dgm.Device)
+            .WithMany(d => d.DeviceGroupMembers)
+            .HasForeignKey(dgm => dgm.DeviceId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<DeviceGroupMember>()
+            .HasOne(dgm => dgm.DeviceGroup)
+            .WithMany(dg => dg.DeviceGroupMembers)
+            .HasForeignKey(dgm => dgm.DeviceGroupId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         modelBuilder.Entity<EnvironmentalSettings>(entity =>
         {
             entity.HasOne<User>()

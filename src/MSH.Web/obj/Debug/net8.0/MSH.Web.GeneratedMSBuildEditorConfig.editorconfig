@@ -42,6 +42,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9Ob3RpZmljYXRpb25Db21wb25lbnQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[/app/src/MSH.Web/Components/Pages/DeviceGroupManagement.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9EZXZpY2VHcm91cE1hbmFnZW1lbnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [/app/src/MSH.Web/Components/Pages/DeviceManagement.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9EZXZpY2VNYW5hZ2VtZW50LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 

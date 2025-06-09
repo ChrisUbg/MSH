@@ -69,7 +69,7 @@
 
     @if (showRoomModal)
     {
-        <div class="modal fade show" style="display: block;" tabindex="-1">
+        <div class="modal fade show" style="display: block;" tabindex="-1" @onclick:stopPropagation="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -79,7 +79,8 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label class="form-label">Name</label>
-                            <input type="text" class="form-control" @bind="editingRoom.Name" />
+                            <input type="text" class="form-control" @bind="editingRoom.Name" required />
+                            <div class="invalid-feedback">Name is required.</div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Description</label>
@@ -87,7 +88,8 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Floor</label>
-                            <input type="number" class="form-control" @bind="editingRoom.Floor" />
+                            <input type="number" class="form-control" @bind="editingRoom.Floor" required />
+                            <div class="invalid-feedback">Floor is required.</div>
                         </div>
                     </div>
                     <div class="modal-footer">

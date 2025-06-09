@@ -1,0 +1,285 @@
+@page "/device-groups"
+@using MSH.Infrastructure.Entities
+@using MSH.Web.Services
+@inject IDeviceGroupService DeviceGroupService
+@inject IDeviceService DeviceService
+
+<h1>Device Group Management</h1>
+
+<button class="btn btn-primary" @onclick="ShowAddGroupModal">Add Device Group</button>
+
+@if (deviceGroups == null)
+{
+    <p>Loading...</p>
+}
+else if (!deviceGroups.Any())
+{
+    <p>No device groups found.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Devices</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var group in deviceGroups)
+            {
+                <tr>
+                    <td>@group.Name</td>
+                    <td>@group.Description</td>
+                    <td>
+                        @if (group.Devices.Any())
+                        {
+                            <ul class="list-unstyled mb-0">
+                                @foreach (var device in group.Devices)
+                                {
+                                    <li>
+                                        <strong>@device.Name</strong>
+                                        (@device.DeviceType?.Name)
+                                        @if (device.Room != null)
+                                        {
+                                            <span>- @device.Room.Name</span>
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <span>No devices</span>
+                        }
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" @onclick="() => ShowEditGroupModal(group)">Edit</button>
+                        <button class="btn btn-sm btn-info" @onclick="() => ShowAssignDevicesModal(group)">Assign Devices</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => ConfirmDeleteGroup(group.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<!-- Add/Edit Group Modal -->
+@if (showGroupModal)
+{
+    <div class="modal fade show" style="display: block;" tabindex="-1" @onclick:stopPropagation="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@((editingGroup?.Id ?? 0) == 0 ? "Add Device Group" : "Edit Device Group")</h5>
+                    <button type="button" class="btn-close" @onclick="HideGroupModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" @bind="editingGroup.Name" required />
+                        <div class="invalid-feedback">Name is required.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <input type="text" class="form-control" @bind="editingGroup.Description" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="HideGroupModal">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="SaveGroup">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Assign Devices Modal -->
+@if (showAssignDevicesModal)
+{
+    <div class="modal fade show" style="display: block;" tabindex="-1" @onclick:stopPropagation="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Assign Devices to @selectedGroup?.Name</h5>
+                    <button type="button" class="btn-close" @onclick="HideAssignDevicesModal"></button>
+                </div>
+                <div class="modal-body">
+                    @if (availableDevices == null)
+                    {
+                        <p>Loading devices...</p>
+                    }
+                    else
+                    {
+                        <div class="list-group">
+                            @foreach (var device in availableDevices)
+                            {
+                                <div class="list-group-item">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox"
+                                               checked="@selectedDeviceIds.Contains(device.Id)"
+                                               @onchange="(e) => ToggleDeviceSelection(device.Id, ((ChangeEventArgs)e).Value)" />
+                                        <label class="form-check-label">
+                                            @device.Name (@device.DeviceType?.Name)
+                                        </label>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="HideAssignDevicesModal">Close</button>
+                    <button type="button" class="btn btn-primary" @onclick="SaveDeviceAssignments">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Delete Confirmation Modal -->
+@if (showDeleteConfirm)
+{
+    <div class="modal fade show" style="display: block;" tabindex="-1" @onclick:stopPropagation="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Delete</h5>
+                    <button type="button" class="btn-close" @onclick="HideDeleteConfirm"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this device group?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="HideDeleteConfirm">Cancel</button>
+                    <button type="button" class="btn btn-danger" @onclick="DeleteGroup">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<DeviceGroup>? deviceGroups;
+    private List<Device>? availableDevices;
+    private DeviceGroup? selectedGroup;
+    private DeviceGroup editingGroup = new();
+    private bool showGroupModal;
+    private bool showAssignDevicesModal;
+    private bool showDeleteConfirm;
+    private int groupIdToDelete;
+    private HashSet<int> selectedDeviceIds = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDeviceGroups();
+    }
+
+    private async Task LoadDeviceGroups()
+    {
+        deviceGroups = await DeviceGroupService.GetDeviceGroupsAsync();
+    }
+
+    private async Task LoadAvailableDevices()
+    {
+        var devices = await DeviceService.GetDevicesAsync();
+        availableDevices = devices?.ToList() ?? new List<Device>();
+    }
+
+    private void ShowAddGroupModal()
+    {
+        editingGroup = new DeviceGroup();
+        showGroupModal = true;
+    }
+
+    private void ShowEditGroupModal(DeviceGroup group)
+    {
+        editingGroup = new DeviceGroup
+        {
+            Id = group.Id,
+            Name = group.Name,
+            Description = group.Description
+        };
+        showGroupModal = true;
+    }
+
+    private void HideGroupModal()
+    {
+        showGroupModal = false;
+    }
+
+    private async Task SaveGroup()
+    {
+        editingGroup.CreatedById = 1;
+        editingGroup.UpdatedById = 1;
+        if (editingGroup.Id == 0)
+        {
+            await DeviceGroupService.AddDeviceGroupAsync(editingGroup);
+        }
+        else
+        {
+            await DeviceGroupService.UpdateDeviceGroupAsync(editingGroup);
+        }
+
+        showGroupModal = false;
+        await LoadDeviceGroups();
+    }
+
+    private async Task ShowAssignDevicesModal(DeviceGroup group)
+    {
+        selectedGroup = group;
+        await LoadAvailableDevices();
+        selectedDeviceIds = group.Devices.Select(d => d.Id).ToHashSet();
+        showAssignDevicesModal = true;
+    }
+
+    private void HideAssignDevicesModal()
+    {
+        showAssignDevicesModal = false;
+        selectedGroup = null;
+    }
+
+    private void ToggleDeviceSelection(int deviceId, object? isChecked)
+    {
+        bool checkedValue = false;
+        if (isChecked is bool b)
+            checkedValue = b;
+        else if (isChecked is string s && bool.TryParse(s, out var parsed))
+            checkedValue = parsed;
+
+        if (checkedValue)
+            selectedDeviceIds.Add(deviceId);
+        else
+            selectedDeviceIds.Remove(deviceId);
+    }
+
+    private async Task SaveDeviceAssignments()
+    {
+        if (selectedGroup != null)
+        {
+            await DeviceGroupService.SetDevicesForGroupAsync(selectedGroup.Id, selectedDeviceIds.ToList());
+            await LoadDeviceGroups();
+        }
+        showAssignDevicesModal = false;
+    }
+
+    private void ConfirmDeleteGroup(int groupId)
+    {
+        groupIdToDelete = groupId;
+        showDeleteConfirm = true;
+    }
+
+    private void HideDeleteConfirm()
+    {
+        showDeleteConfirm = false;
+    }
+
+    private async Task DeleteGroup()
+    {
+        await DeviceGroupService.DeleteDeviceGroupAsync(groupIdToDelete);
+        showDeleteConfirm = false;
+        await LoadDeviceGroups();
+    }
+} 

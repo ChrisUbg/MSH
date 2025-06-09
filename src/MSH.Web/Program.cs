@@ -35,7 +35,8 @@ if (builder.Environment.IsDevelopment())
         ?? $"Host=db;Port={dbPort};Database=matter_dev;Username=postgres;Password=devpassword";
     Console.WriteLine($"Using connection string: {devConnectionString}");
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseNpgsql(devConnectionString));
+        options.UseNpgsql(devConnectionString, npgsqlOptions => 
+            npgsqlOptions.MigrationsAssembly("MSH.Web")));
 }
 else
 {
@@ -68,6 +69,7 @@ else
                     maxRetryDelay: TimeSpan.FromSeconds(10),
                     errorCodesToAdd: null
                 );
+                npgsqlOptions.MigrationsAssembly("MSH.Web");
             }));
     }
     catch (Exception ex)
@@ -124,6 +126,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 
 builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<IDeviceService, DeviceService>();
+builder.Services.AddScoped<IDeviceGroupService, DeviceGroupService>();
 
 var app = builder.Build();
 
