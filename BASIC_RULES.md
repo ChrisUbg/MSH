@@ -85,6 +85,9 @@
 
 -- cd ../.. && docker-compose -f docker-compose.dev-msh.yml build web
 -- docker-compose -f docker-compose.dev-msh.yml up -d --force-recreate web
+-- cd src/MSH.Infrastructure && dotnet ef migrations list
 -- docker exec msh-web-1 dotnet run --project /app/src/MSH.Web/MSH.Web.csproj -- --migrate
 
 -- docker-compose -f docker-compose.dev-msh.yml up
+
+- Always focus on long-term, sustainable implementations. Avoid short-term workarounds or hacks that may lead to technical debt or architectural issues later.
