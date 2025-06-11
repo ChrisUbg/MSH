@@ -1,5 +1,5 @@
 @page "/network-settings"
-@inject HttpClient Http
+@inject IHttpClientFactory HttpClientFactory
 @inject ILogger<NetworkSettings> Logger
 
 <PageTitle>Network Settings</PageTitle>
@@ -43,6 +43,12 @@
     private string errorMessage = string.Empty;
     private string successMessage = string.Empty;
     private bool isLoading = false;
+    private HttpClient? _httpClient;
+
+    protected override void OnInitialized()
+    {
+        _httpClient = HttpClientFactory.CreateClient("API");
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -56,28 +62,18 @@
         {
             errorMessage = string.Empty;
             successMessage = string.Empty;
-            // Try HTTPS first
-            try
+            if (_httpClient != null)
             {
-                var response = await Http.GetAsync("api/network/mode");
+                var response = await _httpClient.GetAsync("api/network/mode");
                 if (response.IsSuccessStatusCode)
                 {
                     currentMode = await response.Content.ReadAsStringAsync();
-                    return;
                 }
-            }
-            catch { }
-            // Fallback to HTTP
-            var httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5000") };
-            var httpResponse = await httpClient.GetAsync("api/network/mode");
-            if (httpResponse.IsSuccessStatusCode)
-            {
-                currentMode = await httpResponse.Content.ReadAsStringAsync();
-            }
-            else
-            {
-                var error = await httpResponse.Content.ReadAsStringAsync();
-                errorMessage = $"Failed to get current network mode: {error}";
+                else
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    errorMessage = $"Failed to get current network mode: {error}";
+                }
             }
         }
         catch (Exception ex)
@@ -98,36 +94,19 @@
         {
             errorMessage = string.Empty;
             successMessage = string.Empty;
-            // Try HTTPS first
-            try
+            if (_httpClient != null)
             {
-                var response = await Http.PostAsync($"api/network/switch/{mode}", null);
+                var response = await _httpClient.PostAsync($"api/network/switch/{mode}", null);
                 if (response.IsSuccessStatusCode)
                 {
                     currentMode = mode;
                     successMessage = $"Successfully switched to {mode} mode";
-                    return;
                 }
                 else
                 {
                     var error = await response.Content.ReadAsStringAsync();
                     errorMessage = $"Failed to switch to {mode} mode: {error}";
-                    return;
                 }
-            }
-            catch { }
-            // Fallback to HTTP
-            var httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5000") };
-            var httpResponse = await httpClient.PostAsync($"api/network/switch/{mode}", null);
-            if (httpResponse.IsSuccessStatusCode)
-            {
-                currentMode = mode;
-                successMessage = $"Successfully switched to {mode} mode";
-            }
-            else
-            {
-                var error = await httpResponse.Content.ReadAsStringAsync();
-                errorMessage = $"Failed to switch to {mode} mode: {error}";
             }
         }
         catch (Exception ex)

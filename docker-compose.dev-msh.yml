@@ -25,10 +25,11 @@ services:
     networks:
       - msh_network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8082/test"]
+      test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 40s
 
   db:
     image: postgres:16
@@ -42,6 +43,12 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - msh_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   matter-bridge:
     build:
@@ -56,6 +63,12 @@ services:
       - ./Matter:/app
     networks:
       - msh_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8084/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
 networks:
   msh_network:

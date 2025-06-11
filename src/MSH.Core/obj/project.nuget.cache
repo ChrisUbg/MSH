@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "AvTDEUprDfY=",
+  "dgSpecHash": "RgeAjr+YnVs=",
   "success": true,
-  "projectFilePath": "/home/chris/RiderProjects/MSH/src/MSH.Core/MSH.Core.csproj",
+  "projectFilePath": "/app/src/MSH.Core/MSH.Core.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

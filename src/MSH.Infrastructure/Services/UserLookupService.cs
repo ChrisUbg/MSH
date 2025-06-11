@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using MSH.Infrastructure.Entities;
+using MSH.Infrastructure.Interfaces;
 
 namespace MSH.Infrastructure.Services;
 

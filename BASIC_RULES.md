@@ -7,8 +7,12 @@
 
 - The main goal is to develop and implement a smart home software, using the matter protocol. It should be based on open source libraries and frameworks. Where possible, Blazor Server, Bootstrap, C# as backend. For the matter part preferable Phyton if C# is not possible. Even the main goal is using the new matter protocol, the software should be designed beeing agnostic of this protocoll or certain db. Even though Blazor as a Frontend is preferred. The frontend should be framework agnostic too. 
 
+- Always use Blazor components and Bootstrap for UI elements where possible. This ensures consistency, maintainability, and a modern look and feel across the application.
+
 - The TODO.md is the backlog.  Which is to work on.
 - Standard apperiacne of cards: The style and the size of the cards should be the same. Best would we to calculate the max size of the all the cards. And then use this as the values for height and width.
+
+- When adding Microsoft packages or references, always use the same major version across all projects. For example, if using .NET 8, all Microsoft.* packages should be version 8.0.x. Never mix different major versions (e.g., 8.0.x with 9.0.x) as this will cause package downgrade conflicts.
 
 1. Always consider the existing codebase before suggesting any changes
 2. Search for existing implementations before creating new ones
@@ -110,7 +114,7 @@
 - Verify migrations in pgAdmin after running them
 
 ## Port Configuration
-- Web application runs on port 5000 (both internal and external)
+- Web application runs on port 8082 (both internal and external)
 - Database runs on port 5434 externally, 5432 internally
 - Matter Bridge runs on port 8084
 - Port configuration is managed in:
@@ -130,3 +134,5 @@
 - Documentation and/or SDK availability for custom integration is highly recommended.
 - If a device is not natively Matter, it must be flashable with open-source firmware (e.g., Tasmota, ESPHome) or support bridging to Matter.
 - All adopted devices must comply with EU safety and EMC standards (CE, RoHS, etc.).
+
+- When deleting, renaming, or moving files (especially interfaces, services, or packages), always check and update all references and dependencies throughout the codebase to prevent build/runtime errors.

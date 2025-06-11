@@ -1,10 +1,37 @@
-**/.git
-**/bin
-**/obj
-**/node_modules
-**/.vs
-**/.vscode
-**/.idea
-*.db
-*.log
-*.tmp
+# IDE and editor files
+**/.vs/
+**/.vscode/
+**/.idea/
+**/*.user
+**/*.suo
+**/*.userosscache
+**/*.sln.docstates
+
+# Build results
+**/[Dd]ebug/
+**/[Rr]elease/
+**/[Bb]in/
+**/[Oo]bj/
+**/build/
+**/out/
+**/*.log
+
+# NuGet
+**/packages/
+**/*.nupkg
+**/*.snupkg
+
+# Docker
+.docker/
+docker-compose*.yml
+Dockerfile*
+
+# Git
+.git/
+.gitignore
+
+# OS and temp files
+**/.DS_Store
+**/*.tmp
+**/*.swp
+**/*~

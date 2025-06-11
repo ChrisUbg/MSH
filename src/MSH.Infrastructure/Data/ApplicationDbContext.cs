@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using MSH.Infrastructure.Entities;
 using MSH.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
+using MSH.Infrastructure.Interfaces;
 
 namespace MSH.Infrastructure.Data;
 

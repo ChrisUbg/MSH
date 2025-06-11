@@ -6,17 +6,17 @@ services:
       context: .
       dockerfile: src/MSH.Web/Dockerfile
     ports:
-      - "5000:5000"
+      - "8082:8082"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:5000
+      - ASPNETCORE_URLS=http://+:8082
       - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=msh;Username=postgres;Password=postgres
     depends_on:
       - db
     volumes:
       - ./src:/app/src
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
       interval: 30s
       timeout: 10s
       retries: 3

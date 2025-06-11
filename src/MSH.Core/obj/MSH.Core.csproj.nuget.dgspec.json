@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/chris/RiderProjects/MSH/src/MSH.Core/MSH.Core.csproj": {}
+    "/app/src/MSH.Core/MSH.Core.csproj": {}
   },
   "projects": {
-    "/home/chris/RiderProjects/MSH/src/MSH.Core/MSH.Core.csproj": {
+    "/app/src/MSH.Core/MSH.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/chris/RiderProjects/MSH/src/MSH.Core/MSH.Core.csproj",
+        "projectUniqueName": "/app/src/MSH.Core/MSH.Core.csproj",
         "projectName": "MSH.Core",
-        "projectPath": "/home/chris/RiderProjects/MSH/src/MSH.Core/MSH.Core.csproj",
-        "packagesPath": "/home/chris/.nuget/packages/",
-        "outputPath": "/home/chris/RiderProjects/MSH/src/MSH.Core/obj/",
+        "projectPath": "/app/src/MSH.Core/MSH.Core.csproj",
+        "packagesPath": "/root/.nuget/packages/",
+        "outputPath": "/app/src/MSH.Core/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/chris/.nuget/NuGet/NuGet.Config"
+          "/root/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"

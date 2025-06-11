@@ -66,6 +66,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9Sb3V0ZXMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[/app/src/MSH.Web/Pages/Admin/UserManagement.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vVXNlck1hbmFnZW1lbnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [/app/src/MSH.Web/Pages/EnvironmentalSettings.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRW52aXJvbm1lbnRhbFNldHRpbmdzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
@@ -94,6 +98,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL05ldHdvcmtNb2RlQnV0dG9uLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[/app/src/MSH.Web/Shared/RedirectToLogin.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL1JlZGlyZWN0VG9Mb2dpbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/app/src/MSH.Web/Shared/SurveyPrompt.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL1N1cnZleVByb21wdC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
@@ -114,8 +122,28 @@ build_metadata.AdditionalFiles.CssScope = b-uzfao4p3ru
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL05hdk1lbnUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-e29uxkju41
 
+[/app/src/MSH.Web/Areas/Identity/Pages/Account/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXMvSWRlbnRpdHkvUGFnZXMvQWNjb3VudC9Mb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/app/src/MSH.Web/Areas/Identity/Pages/Account/Logout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXMvSWRlbnRpdHkvUGFnZXMvQWNjb3VudC9Mb2dvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/app/src/MSH.Web/Areas/Identity/Pages/Shared/_LoginPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXMvSWRlbnRpdHkvUGFnZXMvU2hhcmVkL19Mb2dpblBhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/app/src/MSH.Web/Areas/Identity/Pages/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXMvSWRlbnRpdHkvUGFnZXMvX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/app/src/MSH.Web/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRXJyb3IuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/app/src/MSH.Web/Pages/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvU2hhcmVkL19WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [/app/src/MSH.Web/Pages/_Host.cshtml]

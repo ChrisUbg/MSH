@@ -1,6 +1,6 @@
 @page "/network-test"
 @namespace MSH.Web.Pages
-@inject HttpClient Http
+@inject IHttpClientFactory HttpClientFactory
 @inject ILogger<NetworkTest> Logger
 @inject IConfiguration Configuration
 
@@ -14,7 +14,7 @@
             <h5 class="card-title">Connection Test</h5>
             @if (!string.IsNullOrEmpty(pingResult))
             {
-                <div class="alert @(pingResult == "pong" ? "alert-success" : "alert-danger")" role="alert">
+                <div class="alert @(pingResult.Trim('"') == "pong" ? "alert-success" : "alert-danger")" role="alert">
                     Ping Result: @pingResult
                 </div>
             }
@@ -88,6 +88,12 @@
     private string errorMessage = string.Empty;
     private string pingResult = string.Empty;
     private bool isLoading = false;
+    private HttpClient? _httpClient;
+
+    protected override void OnInitialized()
+    {
+        _httpClient = HttpClientFactory.CreateClient("API");
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -103,26 +109,13 @@
             pingResult = string.Empty;
             Logger.LogInformation("Testing ping endpoint...");
             
-            // Try both HTTP and HTTPS
-            try
+            if (_httpClient != null)
             {
-                var response = await Http.GetAsync("api/network/ping");
+                var response = await _httpClient.GetAsync("api/network/ping");
                 if (response.IsSuccessStatusCode)
                 {
                     pingResult = await response.Content.ReadAsStringAsync();
                     Logger.LogInformation("Ping test completed successfully: {Result}", pingResult);
-                    return;
-                }
-            }
-            catch
-            {
-                // If HTTPS fails, try HTTP
-                var httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5000") };
-                var response = await httpClient.GetAsync("api/network/ping");
-                if (response.IsSuccessStatusCode)
-                {
-                    pingResult = await response.Content.ReadAsStringAsync();
-                    Logger.LogInformation("Ping test completed successfully via HTTP: {Result}", pingResult);
                     return;
                 }
             }
@@ -149,26 +142,13 @@
             errorMessage = string.Empty;
             Logger.LogInformation("Running network test...");
             
-            // Try both HTTP and HTTPS
-            try
+            if (_httpClient != null)
             {
-                var response = await Http.GetAsync("api/network/test");
+                var response = await _httpClient.GetAsync("api/network/test");
                 if (response.IsSuccessStatusCode)
                 {
                     testResult = await response.Content.ReadFromJsonAsync<TestResult>();
                     Logger.LogInformation("Network test completed successfully");
-                    return;
-                }
-            }
-            catch
-            {
-                // If HTTPS fails, try HTTP
-                var httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5000") };
-                var response = await httpClient.GetAsync("api/network/test");
-                if (response.IsSuccessStatusCode)
-                {
-                    testResult = await response.Content.ReadFromJsonAsync<TestResult>();
-                    Logger.LogInformation("Network test completed successfully via HTTP");
                     return;
                 }
             }

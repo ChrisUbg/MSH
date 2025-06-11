@@ -14,6 +14,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MSH.Web.Components;
 using MSH.Web.Components.Account;
+using MSH.Infrastructure.Entities;
+using Microsoft.AspNetCore.Components.Server;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using MSH.Infrastructure.Interfaces;
+using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,73 +83,115 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IEnvironmentalMonitoringService, EnvironmentalMonitoringService>();
-builder.Services.AddSingleton<IBackupService, PostgresBackupService>();
 
 // Add device simulator service
-// builder.Services.AddSingleton<IDeviceSimulatorService, DeviceSimulatorService>();
+builder.Services.AddScoped<IDeviceSimulatorService, DeviceSimulatorService>();
 builder.Services.AddScoped<IDeviceService, DeviceService>();
-
-// Register hosted services
-builder.Services.AddHostedService<BackupBackgroundService>();
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddHttpClient();
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:5000") });
+builder.Services.AddHttpClient("API", client =>
+{
+    client.BaseAddress = new Uri("http://localhost:8082/");
+    client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+});
 
 // Add services to the container.
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
+builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
+builder.Services.AddScoped<MSH.Infrastructure.Interfaces.IUserLookupService, UserLookupService>();
 
 // Add Identity with UI
-builder.Services.AddDefaultIdentity<IdentityUser>(options => {
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => {
     options.SignIn.RequireConfirmedAccount = false;
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 8;
 })
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders()
+    .AddDefaultUI();
+
+// Configure cookie policy
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Identity/Account/Login";
+    options.LogoutPath = "/Identity/Account/Logout";
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    options.SlidingExpiration = true;
+    options.ExpireTimeSpan = TimeSpan.FromDays(7);
+    options.Cookie.Name = "MSH.Auth";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+});
+
+// Add authentication
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+});
 
 // Add services
-builder.Services.AddScoped<IRoomService, RoomService>();
-builder.Services.AddScoped<IDeviceService, DeviceService>();
-builder.Services.AddScoped<IDeviceTypeService, DeviceTypeService>();
-builder.Services.AddScoped<IDeviceGroupService, DeviceGroupService>();
-builder.Services.AddScoped<IUserLookupService, UserLookupService>();
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "MSH API", Version = "v1" });
+});
+
+// Add Infrastructure services
+builder.Services.AddScoped<IRuleEngineService, RuleEngineService>();
+builder.Services.AddScoped<IDeviceSimulatorService, DeviceSimulatorService>();
+builder.Services.AddScoped<IGroupStateManager, GroupStateManager>();
 builder.Services.AddScoped<MatterDeviceService>();
+
+// Add IRoomService and IDeviceGroupService
+builder.Services.AddScoped<IRoomService, RoomService>();
+builder.Services.AddScoped<IDeviceGroupService, DeviceGroupService>();
+
+// Add IDeviceTypeService and DeviceTypeService
+builder.Services.AddScoped<IDeviceTypeService, DeviceTypeService>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    app.UseSwagger();
+    app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
-// Add basic middleware
-app.Use(async (context, next) =>
-{
-    try
-    {
-        Console.WriteLine($"Processing request: {context.Request.Path}");
-        await next();
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error processing request: {ex}");
-        throw;
-    }
-});
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+app.UseRouting();
+
+// Add these in the correct order
 app.UseAuthentication();
 app.UseAuthorization();
 
-// app.MapRazorComponents<App>()
-//     .AddInteractiveServerRenderMode();
+app.MapRazorPages();
+app.MapControllers();
+app.MapBlazorHub();
+app.MapFallbackToPage("/_Host");
 
 // Configure URLs explicitly
 app.Urls.Clear();
@@ -154,9 +205,8 @@ app.MapGet("/test", () => {
     return "Hello World!";
 });
 
-// Configure Blazor
-app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
+// Map API controllers
+app.MapControllers();
 
 app.MapGet("/network-diag", () => {
     var sb = new StringBuilder();
@@ -169,6 +219,28 @@ app.MapGet("/network-diag", () => {
         sb.AppendLine($"❌ Connection failed: {ex.Message}");
     }
     return sb.ToString();
+});
+
+// Add simple health check endpoint
+app.MapGet("/health", async (HttpContext context, ApplicationDbContext db) =>
+{
+    try
+    {
+        // Try to connect to the database
+        var canConnect = await db.Database.CanConnectAsync();
+        if (canConnect)
+        {
+            await context.Response.WriteAsJsonAsync(new { status = "healthy", database = "connected" });
+            return;
+        }
+        context.Response.StatusCode = 503;
+        await context.Response.WriteAsJsonAsync(new { status = "unhealthy", database = "disconnected" });
+    }
+    catch (Exception ex)
+    {
+        context.Response.StatusCode = 503;
+        await context.Response.WriteAsJsonAsync(new { status = "unhealthy", error = ex.Message });
+    }
 });
 
 // Add this before app.Run()
@@ -197,22 +269,8 @@ if (args.Contains("--migrate"))
                 Console.WriteLine($"Waiting {retryDelay.TotalSeconds} seconds before next attempt...");
                 await Task.Delay(retryDelay);
             }
-            else
-            {
-                Console.WriteLine("❌ All migration attempts failed");
-                throw;
-            }
         }
     }
-    return;
 }
-
-// Add SignalR hub
-app.MapHub<NotificationHub>("/notificationHub");
-app.MapHub<DeviceHub>("/deviceHub");
-
-app.MapRazorPages(); // For Identity UI
-// app.MapRazorComponents<App>()
-//     .AddInteractiveServerRenderMode();
 
 app.Run();

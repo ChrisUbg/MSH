@@ -28,3 +28,9 @@
 /home/chris/RiderProjects/MSH/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.pdb
 /home/chris/RiderProjects/MSH/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.genruntimeconfig.cache
 /home/chris/RiderProjects/MSH/src/MSH.Infrastructure/obj/Debug/net8.0/ref/MSH.Infrastructure.dll
+/app/src/MSH.Infrastructure/bin/Debug/net8.0/MSH.Core.dll
+/app/src/MSH.Infrastructure/bin/Debug/net8.0/MSH.Core.pdb
+/app/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infr.23AEC79C.Up2Date
+/home/chris/RiderProjects/MSH/src/MSH.Infrastructure/bin/Debug/net8.0/MSH.Core.dll
+/home/chris/RiderProjects/MSH/src/MSH.Infrastructure/bin/Debug/net8.0/MSH.Core.pdb
+/home/chris/RiderProjects/MSH/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infr.23AEC79C.Up2Date
