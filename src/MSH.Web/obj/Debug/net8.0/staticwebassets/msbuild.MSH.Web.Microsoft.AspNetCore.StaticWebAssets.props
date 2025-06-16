@@ -4,7 +4,7 @@
       <SourceType>Package</SourceType>
       <SourceId>MSH.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/MSH.Web</BasePath>
+      <BasePath>/</BasePath>
       <RelativePath>css/bootstrap/bootstrap.min.css</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
@@ -20,7 +20,7 @@
       <SourceType>Package</SourceType>
       <SourceId>MSH.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/MSH.Web</BasePath>
+      <BasePath>/</BasePath>
       <RelativePath>css/bootstrap/bootstrap.min.css.map</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
@@ -36,7 +36,7 @@
       <SourceType>Package</SourceType>
       <SourceId>MSH.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/MSH.Web</BasePath>
+      <BasePath>/</BasePath>
       <RelativePath>css/environmental-monitor.css</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
@@ -52,7 +52,7 @@
       <SourceType>Package</SourceType>
       <SourceId>MSH.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/MSH.Web</BasePath>
+      <BasePath>/</BasePath>
       <RelativePath>css/environmental-settings.css</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
@@ -68,7 +68,7 @@
       <SourceType>Package</SourceType>
       <SourceId>MSH.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/MSH.Web</BasePath>
+      <BasePath>/</BasePath>
       <RelativePath>css/notifications.css</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
@@ -84,7 +84,7 @@
       <SourceType>Package</SourceType>
       <SourceId>MSH.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/MSH.Web</BasePath>
+      <BasePath>/</BasePath>
       <RelativePath>css/open-iconic/FONT-LICENSE</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
@@ -100,7 +100,7 @@
       <SourceType>Package</SourceType>
       <SourceId>MSH.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/MSH.Web</BasePath>
+      <BasePath>/</BasePath>
       <RelativePath>css/open-iconic/font/css/open-iconic-bootstrap.min.css</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
@@ -116,7 +116,7 @@
       <SourceType>Package</SourceType>
       <SourceId>MSH.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/MSH.Web</BasePath>
+      <BasePath>/</BasePath>
       <RelativePath>css/open-iconic/font/fonts/open-iconic.eot</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
@@ -132,7 +132,7 @@
       <SourceType>Package</SourceType>
       <SourceId>MSH.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/MSH.Web</BasePath>
+      <BasePath>/</BasePath>
       <RelativePath>css/open-iconic/font/fonts/open-iconic.otf</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
@@ -148,7 +148,7 @@
       <SourceType>Package</SourceType>
       <SourceId>MSH.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/MSH.Web</BasePath>
+      <BasePath>/</BasePath>
       <RelativePath>css/open-iconic/font/fonts/open-iconic.svg</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
@@ -164,7 +164,7 @@
       <SourceType>Package</SourceType>
       <SourceId>MSH.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/MSH.Web</BasePath>
+      <BasePath>/</BasePath>
       <RelativePath>css/open-iconic/font/fonts/open-iconic.ttf</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
@@ -180,7 +180,7 @@
       <SourceType>Package</SourceType>
       <SourceId>MSH.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/MSH.Web</BasePath>
+      <BasePath>/</BasePath>
       <RelativePath>css/open-iconic/font/fonts/open-iconic.woff</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
@@ -196,7 +196,7 @@
       <SourceType>Package</SourceType>
       <SourceId>MSH.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/MSH.Web</BasePath>
+      <BasePath>/</BasePath>
       <RelativePath>css/open-iconic/ICON-LICENSE</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
@@ -212,7 +212,7 @@
       <SourceType>Package</SourceType>
       <SourceId>MSH.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/MSH.Web</BasePath>
+      <BasePath>/</BasePath>
       <RelativePath>css/open-iconic/README.md</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
@@ -228,7 +228,7 @@
       <SourceType>Package</SourceType>
       <SourceId>MSH.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/MSH.Web</BasePath>
+      <BasePath>/</BasePath>
       <RelativePath>css/site.css</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
@@ -244,7 +244,7 @@
       <SourceType>Package</SourceType>
       <SourceId>MSH.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/MSH.Web</BasePath>
+      <BasePath>/</BasePath>
       <RelativePath>favicon.png</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
@@ -260,7 +260,7 @@
       <SourceType>Package</SourceType>
       <SourceId>MSH.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/MSH.Web</BasePath>
+      <BasePath>/</BasePath>
       <RelativePath>index.html</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
@@ -276,7 +276,7 @@
       <SourceType>Package</SourceType>
       <SourceId>MSH.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/MSH.Web</BasePath>
+      <BasePath>/</BasePath>
       <RelativePath>js/chartInterop.js</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>All</AssetMode>
@@ -292,7 +292,7 @@
       <SourceType>Package</SourceType>
       <SourceId>MSH.Web</SourceId>
       <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
-      <BasePath>_content/MSH.Web</BasePath>
+      <BasePath>/</BasePath>
       <RelativePath>MSH.Web.bundle.scp.css</RelativePath>
       <AssetKind>All</AssetKind>
       <AssetMode>Reference</AssetMode>

@@ -1,11 +1,13 @@
 @page
+@namespace MSH.Web.Pages.Auth
 @using Microsoft.AspNetCore.Identity
 @using MSH.Infrastructure.Data
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
-@model MSH.Web.Areas.Identity.Pages.Account.LoginModel
+@model MSH.Web.Pages.Auth.LoginModel
 
 @{
+    Layout = "/Pages/Shared/_Layout.cshtml";
     ViewData["Title"] = "Log in";
 }
 

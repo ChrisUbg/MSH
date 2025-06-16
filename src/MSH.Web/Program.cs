@@ -12,9 +12,8 @@ using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MSH.Web.Components;
-using MSH.Web.Components.Account;
-using MSH.Infrastructure.Entities;
+using MSH.Web.Pages;
+using MSH.Web.Shared;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using MSH.Infrastructure.Interfaces;
@@ -121,9 +120,9 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => {
 // Configure cookie policy
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/Identity/Account/Login";
-    options.LogoutPath = "/Identity/Account/Logout";
-    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    options.LoginPath = "/Auth/Login";
+    options.LogoutPath = "/Auth/Logout";
+    options.AccessDeniedPath = "/Auth/AccessDenied";
     options.SlidingExpiration = true;
     options.ExpireTimeSpan = TimeSpan.FromDays(7);
     options.Cookie.Name = "MSH.Auth";
@@ -188,10 +187,15 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Map Razor Pages first
 app.MapRazorPages();
-app.MapControllers();
+
+// Then map Blazor with specific routes
 app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
+app.MapFallbackToPage("/_Host", "/_Host");
+
+// Map API controllers
+app.MapControllers();
 
 // Configure URLs explicitly
 app.Urls.Clear();

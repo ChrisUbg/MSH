@@ -18,56 +18,24 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = /app/src/MSH.Web
 build_property._RazorSourceGeneratorDebug = 
 
-[/app/src/MSH.Web/Components/EnvironmentalMonitor.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9FbnZpcm9ubWVudGFsTW9uaXRvci5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = 
-
-[/app/src/MSH.Web/Components/EnvironmentalTrends.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9FbnZpcm9ubWVudGFsVHJlbmRzLnJhem9y
-build_metadata.AdditionalFiles.CssScope = 
-
-[/app/src/MSH.Web/Components/GroupHealthStatusCard.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9Hcm91cEhlYWx0aFN0YXR1c0NhcmQucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = 
-
-[/app/src/MSH.Web/Components/Layout/MainLayout.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9MYXlvdXQvTWFpbkxheW91dC5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = 
-
-[/app/src/MSH.Web/Components/NotificationComponent.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9Ob3RpZmljYXRpb25Db21wb25lbnQucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = 
-
-[/app/src/MSH.Web/Components/Pages/DeviceDetails.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9EZXZpY2VEZXRhaWxzLnJhem9y
-build_metadata.AdditionalFiles.CssScope = 
-
-[/app/src/MSH.Web/Components/Pages/DeviceGroupManagement.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9EZXZpY2VHcm91cE1hbmFnZW1lbnQucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = 
-
-[/app/src/MSH.Web/Components/Pages/DeviceManagement.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9EZXZpY2VNYW5hZ2VtZW50LnJhem9y
-build_metadata.AdditionalFiles.CssScope = 
-
-[/app/src/MSH.Web/Components/Pages/RoomDetails.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Sb29tRGV0YWlscy5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = 
-
-[/app/src/MSH.Web/Components/Pages/RoomManagement.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Sb29tTWFuYWdlbWVudC5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = 
-
-[/app/src/MSH.Web/Components/Pages/RoomOverview.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Sb29tT3ZlcnZpZXcucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = 
-
-[/app/src/MSH.Web/Components/Routes.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9Sb3V0ZXMucmF6b3I=
+[/app/src/MSH.Web/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [/app/src/MSH.Web/Pages/Admin/UserManagement.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQWRtaW4vVXNlck1hbmFnZW1lbnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/app/src/MSH.Web/Pages/DeviceDetails.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRGV2aWNlRGV0YWlscy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/app/src/MSH.Web/Pages/DeviceGroupManagement.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRGV2aWNlR3JvdXBNYW5hZ2VtZW50LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/app/src/MSH.Web/Pages/DeviceManagement.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRGV2aWNlTWFuYWdlbWVudC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [/app/src/MSH.Web/Pages/EnvironmentalSettings.razor]
@@ -94,12 +62,44 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvTmV0d29ya1Rlc3QucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[/app/src/MSH.Web/Pages/RoomDetails.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUm9vbURldGFpbHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/app/src/MSH.Web/Pages/RoomManagement.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUm9vbU1hbmFnZW1lbnQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/app/src/MSH.Web/Pages/RoomOverview.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUm9vbU92ZXJ2aWV3LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/app/src/MSH.Web/Shared/EnvironmentalMonitor.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL0Vudmlyb25tZW50YWxNb25pdG9yLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/app/src/MSH.Web/Shared/EnvironmentalTrends.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL0Vudmlyb25tZW50YWxUcmVuZHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/app/src/MSH.Web/Shared/GroupHealthStatusCard.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL0dyb3VwSGVhbHRoU3RhdHVzQ2FyZC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/app/src/MSH.Web/Shared/NetworkModeButton.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL05ldHdvcmtNb2RlQnV0dG9uLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[/app/src/MSH.Web/Shared/NotificationComponent.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL05vdGlmaWNhdGlvbkNvbXBvbmVudC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/app/src/MSH.Web/Shared/RedirectToLogin.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL1JlZGlyZWN0VG9Mb2dpbi5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/app/src/MSH.Web/Shared/Routes.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL1JvdXRlcy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [/app/src/MSH.Web/Shared/SurveyPrompt.razor]
@@ -110,9 +110,9 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/app/src/MSH.Web/Components/Shared/DeviceCard.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9TaGFyZWQvRGV2aWNlQ2FyZC5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = b-2kw5woxzuf
+[/app/src/MSH.Web/Shared/DeviceCard.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL0RldmljZUNhcmQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-gcae8nz9d8
 
 [/app/src/MSH.Web/Shared/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL01haW5MYXlvdXQucmF6b3I=
@@ -122,24 +122,20 @@ build_metadata.AdditionalFiles.CssScope = b-uzfao4p3ru
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL05hdk1lbnUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-e29uxkju41
 
-[/app/src/MSH.Web/Areas/Identity/Pages/Account/Login.cshtml]
-build_metadata.AdditionalFiles.TargetPath = QXJlYXMvSWRlbnRpdHkvUGFnZXMvQWNjb3VudC9Mb2dpbi5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[/app/src/MSH.Web/Areas/Identity/Pages/Account/Logout.cshtml]
-build_metadata.AdditionalFiles.TargetPath = QXJlYXMvSWRlbnRpdHkvUGFnZXMvQWNjb3VudC9Mb2dvdXQuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[/app/src/MSH.Web/Areas/Identity/Pages/Shared/_LoginPartial.cshtml]
-build_metadata.AdditionalFiles.TargetPath = QXJlYXMvSWRlbnRpdHkvUGFnZXMvU2hhcmVkL19Mb2dpblBhcnRpYWwuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[/app/src/MSH.Web/Areas/Identity/Pages/_ViewImports.cshtml]
-build_metadata.AdditionalFiles.TargetPath = QXJlYXMvSWRlbnRpdHkvUGFnZXMvX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+[/app/src/MSH.Web/Pages/Auth/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQXV0aC9Mb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/app/src/MSH.Web/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRXJyb3IuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/app/src/MSH.Web/Pages/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvU2hhcmVkL19MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/app/src/MSH.Web/Pages/Shared/_LoginPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvU2hhcmVkL19Mb2dpblBhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [/app/src/MSH.Web/Pages/Shared/_ValidationScriptsPartial.cshtml]
@@ -148,4 +144,28 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/app/src/MSH.Web/Pages/_Host.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvX0hvc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/app/src/MSH.Web/Pages/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/app/src/MSH.Web/Pages/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/app/src/MSH.Web/Shared/Logout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL0xvZ291dC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/app/src/MSH.Web/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL19MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/app/src/MSH.Web/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL19WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/app/src/MSH.Web/Shared/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL19WaWV3SW1wb3J0cy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace MSH.Web.Areas.Identity.Pages.Account;
+namespace MSH.Web.Shared;
 
 [AllowAnonymous]
 public class LogoutModel : PageModel
@@ -21,17 +21,10 @@ public class LogoutModel : PageModel
     {
     }
 
-    public async Task<IActionResult> OnPost(string? returnUrl = null)
+    public async Task<IActionResult> OnPost()
     {
         await _signInManager.SignOutAsync();
         _logger.LogInformation("User logged out.");
-        if (returnUrl != null)
-        {
-            return LocalRedirect(returnUrl);
-        }
-        else
-        {
-            return Redirect("~/");
-        }
+        return RedirectToPage("/Index");
     }
 } 

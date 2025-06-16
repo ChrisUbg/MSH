@@ -58,14 +58,14 @@
         <AuthorizeView>
             <Authorized>
                 <div class="nav-item px-3">
-                    <form method="post" action="/Identity/Account/Logout" style="display:inline">
+                    <form method="post" action="/Shared/Logout" style="display:inline">
                         <button type="submit" class="nav-link btn btn-link p-0" style="color:inherit; text-decoration:underline;">Logout</button>
                     </form>
                 </div>
             </Authorized>
             <NotAuthorized>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="/Identity/Account/Login">
+                    <NavLink class="nav-link" href="/Shared/Login">
                         <span class="oi oi-account-login" aria-hidden="true"></span> Login
                     </NavLink>
                 </div>

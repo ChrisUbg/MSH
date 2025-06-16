@@ -10,6 +10,7 @@
         "dependencies": {
           "MSH.Infrastructure": "1.0.0",
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "8.0.2",
+          "Microsoft.AspNetCore.Identity.UI": "8.0.2",
           "Microsoft.AspNetCore.SignalR.Client": "8.0.2",
           "Microsoft.EntityFrameworkCore.Design": "8.0.2",
           "Swashbuckle.AspNetCore": "6.5.0"

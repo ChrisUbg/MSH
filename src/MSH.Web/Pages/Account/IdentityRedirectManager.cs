@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace MSH.Web.Components.Account;
+namespace MSH.Web.Pages;
 
 public class IdentityRedirectManager
 {

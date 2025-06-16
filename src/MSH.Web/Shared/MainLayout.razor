@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@namespace MSH.Web.Shared
+@inherits LayoutComponentBase
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Identity
 @inject NavigationManager NavigationManager
@@ -23,8 +24,8 @@
                     </div>
                 </Authorized>
                 <NotAuthorized>
-                    <a href="/Identity/Account/Login" class="btn btn-link">Login</a>
-                    <a href="/Identity/Account/Register" class="btn btn-link">Register</a>
+                    <a href="/Auth/Login" class="btn btn-link">Login</a>
+                    <a href="/Auth/Register" class="btn btn-link">Register</a>
                 </NotAuthorized>
             </AuthorizeView>
         </div>
@@ -110,7 +111,7 @@
     {
         try
         {
-            var response = await Http.PostAsync("api/account/logout", null);
+            var response = await Http.PostAsync("api/shared/logout", null);
             if (response.IsSuccessStatusCode)
             {
                 // Force a full page reload to clear all state

@@ -1,0 +1,24 @@
+@page 
+@namespace MSH.Web.Shared
+@model MSH.Web.Shared.LogoutModel
+@{
+    Layout = "/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Log out";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <h2 class="card-title text-center mb-4">@ViewData["Title"]</h2>
+                    <form method="post">
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-danger btn-lg">Log out</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
