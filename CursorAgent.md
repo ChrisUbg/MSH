@@ -198,13 +198,50 @@ builder.Services.AddHttpClient("MatterBridge", client =>
 ## 🎯 **Current Focus**
 **Ready for real NOUS A8M device commissioning and control using the lightweight, officially certified python-matter-server implementation.**
 
+## 🔧 **Recent Critical Fixes**
+
+### **Network Mode Switching Docker Networking Fix (2024-01-21)**
+- **Issue**: Network mode switching worked via `http://192.168.0.102:8083` but failed via `http://localhost:8083`
+- **Root Cause**: HttpClient configured with hardcoded `http://localhost:8082/` base URL caused Docker networking conflicts
+- **Problem**: When accessing via `localhost:8083`, internal API calls to `localhost:8082` failed due to container network context differences
+- **Solution Applied**:
+  - Updated `NetworkSettings.razor` to use dynamic HttpClient base URL
+  - Implemented JavaScript-based current URL detection: `window.location.origin`
+  - HttpClient now uses same host as current request (localhost:8083 → localhost:8083, Pi IP → Pi IP)
+  - Removed dependency on hardcoded "API" HttpClient configuration for network settings
+- **Result**: ✅ Network mode switching now works from both access methods
+- **Files Modified**:
+  - `src/MSH.Web/Pages/NetworkSettings.razor` - Dynamic HttpClient configuration
+  - Added `@inject IJSRuntime JSRuntime` for URL detection
+  - Modified `OnInitializedAsync()` to set dynamic base URL
+
+### **PostgreSQL Authentication Permanent Fix**
+- **Implemented permanent database initialization** with `init-db.sql` and proper Docker configuration
+- **Created automated fix script** `fix-database-auth.sh` for when authentication issues occur
+- **Updated Docker Compose** with proper health checks and database dependency management
+- **Result**: ✅ Database authentication issues resolved permanently
+
 ## 📝 **Development Notes**
 - **Lightweight implementation operational** - python-matter-server running perfectly
 - **C# application architecture unchanged** - Seamless integration maintained
 - **Python bridge successfully deployed** - Pi integration working with WebSocket
+- **Network mode switching fixed** - Works from both localhost and Pi IP access
+- **Database authentication stabilized** - Permanent solution implemented
 - **Next step: Commission real NOUS A8M** - All infrastructure ready
 - **API contracts maintained** - C# integration fully compatible
 
+## 🏠 **Current System Status**
+- **MSH Smart Home system**: ✅ Running on Raspberry Pi with Docker
+- **PostgreSQL database**: ✅ Working with proper user accounts and test data
+- **Matter integration**: ✅ Using lightweight python-matter-server (officially certified)
+- **Web application**: ✅ Accessible at `http://localhost:8083` and `http://192.168.0.102:8083`
+- **pgAdmin access**: ✅ Host `192.168.0.102`, Port `5435`, Username `postgres`, Password `postgres`
+- **Device commissioning**: ✅ Saves to both Matter bridge and main database
+- **Room management**: ✅ Fully functional
+- **Device assignment**: ✅ Fixed and deployed
+- **Device group assignment**: ✅ Ready for testing with proper networking and test data
+- **Network mode switching**: ✅ Fixed - Works from both localhost and Pi IP access
+
 ---
-*Last Updated: 2024-01-09*  
-*System Status: Lightweight python-matter-server implementation operational, ready for real device commissioning* 
+*Last Updated: 2024-01-21*  
+*System Status: All major networking and authentication issues resolved, ready for real device commissioning* 

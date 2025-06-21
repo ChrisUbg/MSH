@@ -51,8 +51,8 @@
                                 <strong>Status:</strong> @device.Status
                             </p>
                             <button class="btn btn-primary" @onclick="() => NavigateToDeviceDetails(device.MatterDeviceId)">Details</button>
-                            <button class="btn btn-sm btn-info" @onclick="async () => await AssignDeviceToRoom(device.Id, device.RoomId ?? Guid.Empty)">Assign</button>
-                            <button class="btn btn-sm btn-danger" @onclick="async () => await RemoveDeviceFromRoom(device.Id)">Remove</button>
+                            <button class="btn btn-sm btn-info" @onclick="() => ShowAssignRoomModal(device)">Assign</button>
+                            <button class="btn btn-sm btn-warning" @onclick="async () => await RemoveDeviceFromRoom(device.Id)">Remove</button>
                             <button class="btn btn-sm btn-danger" @onclick="async () => await DeleteDevice(device.Id)">Delete</button>
                         </div>
                     </div>
@@ -107,12 +107,48 @@
     <div class="modal-backdrop fade show"></div>
 }
 
+@if (showAssignRoomModal)
+{
+    <div class="modal fade show" style="display: block;" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Assign Device to Room</h5>
+                    <button type="button" class="btn-close" @onclick="() => showAssignRoomModal = false"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Device:</strong> @selectedDevice?.Name</p>
+                    <p><strong>Current Room:</strong> @(selectedDevice?.Room?.Name ?? "Unassigned")</p>
+                    <div class="mb-3">
+                        <label class="form-label">Select New Room</label>
+                        <select class="form-select" @bind="selectedRoomId">
+                            <option value="">-- Unassigned --</option>
+                            @foreach (var room in _rooms)
+                            {
+                                <option value="@room.Id">@room.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="() => showAssignRoomModal = false">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="async () => await AssignDeviceToRoom()">Assign</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
 @code {
     private List<Device> _devices = new();
     private List<DeviceType> _deviceTypes = new();
     private List<Room> _rooms = new();
     private Device newDevice = new() { DeviceTypeId = Guid.Empty, RoomId = null };
     private bool showAddDeviceModal;
+    private bool showAssignRoomModal;
+    private Device? selectedDevice;
+    private Guid? selectedRoomId;
 
     protected override async Task OnInitializedAsync()
     {
@@ -157,10 +193,23 @@
         }
     }
 
-    private async Task AssignDeviceToRoom(Guid deviceId, Guid roomId)
+    private void ShowAssignRoomModal(Device device)
     {
-        await DeviceService.AssignDeviceToRoomAsync(deviceId, roomId);
-        await LoadDevices();
+        selectedDevice = device;
+        selectedRoomId = device.RoomId;
+        showAssignRoomModal = true;
+    }
+
+    private async Task AssignDeviceToRoom()
+    {
+        if (selectedDevice != null)
+        {
+            await DeviceService.AssignDeviceToRoomAsync(selectedDevice.Id, selectedRoomId);
+            showAssignRoomModal = false;
+            selectedDevice = null;
+            selectedRoomId = null;
+            await LoadDevices();
+        }
     }
 
     private async Task RemoveDeviceFromRoom(Guid deviceId)

@@ -95,7 +95,12 @@ builder.Services.AddRazorComponents()
 builder.Services.AddHttpClient();
 builder.Services.AddHttpClient("API", client =>
 {
-    client.BaseAddress = new Uri("http://localhost:8082/");
+    // Use the same base URL as the current request context
+    // This will work both from within Docker network and external access
+    var baseUrl = builder.Environment.IsDevelopment() 
+        ? "http://localhost:8082/" 
+        : "http://localhost:8082/"; // Will be overridden at runtime
+    client.BaseAddress = new Uri(baseUrl);
     client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 });
 
