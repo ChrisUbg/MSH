@@ -1,10 +1,10 @@
 # Web Framework
-fastapi==0.109.2
-uvicorn==0.27.1
+fastapi==0.104.1
+uvicorn==0.24.0
 
 # Utilities
 python-dotenv==1.0.1
-pydantic==2.6.1
+pydantic==2.5.0
 requests==2.31.0
 
 # Time and scheduling
@@ -18,4 +18,10 @@ pytest-asyncio==0.23.5
 # Development
 black==24.1.1
 isort==5.13.2
-flake8==7.0.0 
+flake8==7.0.0
+
+# Additional
+aiohttp==3.11.11
+
+# Matter integration
+python-matter-server[server]==7.0.1 

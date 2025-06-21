@@ -10,10 +10,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.AspNetCore.Identity.UI.UIFrameworkAttribute("Bootstrap5")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("MSH.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+aeeb97b87e9ab38588ba0d70b202c1b99dc8845f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5a66b42d67555f6db6f386a32902a599a9664460")]
 [assembly: System.Reflection.AssemblyProductAttribute("MSH.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MSH.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
