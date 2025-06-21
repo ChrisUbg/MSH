@@ -7,7 +7,7 @@ namespace MSH.Web.Services;
 public interface ICurrentUserService
 {
     Task<User?> GetCurrentUserAsync();
-    Task<Guid?> GetCurrentUserIdAsync();
+    Task<string?> GetCurrentUserIdAsync();
     string? UserName { get; }
     bool IsAuthenticated { get; }
 } 

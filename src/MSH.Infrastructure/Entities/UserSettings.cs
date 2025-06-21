@@ -5,7 +5,7 @@ namespace MSH.Infrastructure.Entities;
 
 public class UserSettings : BaseEntity
 {
-    public Guid UserId { get; set; }
+    public string UserId { get; set; } = Guid.NewGuid().ToString();
     
     // UI Preferences
     public string Theme { get; set; } = "light"; // light, dark, system

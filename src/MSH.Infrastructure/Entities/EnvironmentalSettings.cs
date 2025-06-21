@@ -4,7 +4,7 @@ namespace MSH.Infrastructure.Entities;
 
 public class EnvironmentalSettings : BaseEntity
 {
-    public Guid UserId { get; set; }
+    public string UserId { get; set; } = Guid.NewGuid().ToString();
     public double IndoorTemperatureMin { get; set; } = 18.0;
     public double IndoorTemperatureMax { get; set; } = 24.0;
     public double OutdoorTemperatureMin { get; set; } = 0.0;

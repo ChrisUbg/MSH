@@ -13,8 +13,8 @@ public class DeviceGroupMember
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
     public bool IsDeleted { get; set; }
-    public Guid CreatedById { get; set; }
-    public Guid? UpdatedById { get; set; }
+    public string CreatedById { get; set; }
+    public string? UpdatedById { get; set; }
 
     // Navigation properties
     public User CreatedBy { get; set; } = null!;

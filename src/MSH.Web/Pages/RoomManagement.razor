@@ -256,8 +256,8 @@
             newRoom.CreatedAt = DateTime.UtcNow;
             newRoom.UpdatedAt = DateTime.UtcNow;
             newRoom.IsDeleted = false;
-            newRoom.CreatedById = adminUser.Id;
-            newRoom.UpdatedById = adminUser.Id;
+            newRoom.CreatedById = adminUser.Id.ToString();
+            newRoom.UpdatedById = adminUser.Id.ToString();
             await RoomService.AddRoomAsync(newRoom);
             showAddRoomDialog = false;
             await LoadRooms();

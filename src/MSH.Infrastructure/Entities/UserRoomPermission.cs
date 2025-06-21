@@ -4,7 +4,7 @@ namespace MSH.Infrastructure.Entities;
 
 public class UserRoomPermission : BaseEntity
 {
-    public Guid UserId { get; set; }
+    public string UserId { get; set; } = null!;
     public Guid RoomId { get; set; }
     public string Permission { get; set; } = null!; // e.g., 'read', 'write', 'admin'
     

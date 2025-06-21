@@ -12,7 +12,7 @@ namespace MSH.Web.Services;
 public class RoomService : IRoomService
 {
     private readonly MSH.Infrastructure.Data.ApplicationDbContext _context;
-    private static readonly Guid DEFAULT_USER_ID = Guid.Parse("00000000-0000-0000-0000-000000000001"); // Default user ID for initial setup
+    private static readonly string DEFAULT_USER_ID = "00000000-0000-0000-0000-000000000001"; // Default user ID for initial setup
 
     public RoomService(MSH.Infrastructure.Data.ApplicationDbContext context)
     {

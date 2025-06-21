@@ -1,3 +1,11 @@
+# 🚨 GLOBAL RULE: Architectural/Disruptive Change Warnings
+
+Whenever making a change that could significantly impact the architecture, stability, or development workflow of the codebase (including, but not limited to, migrations, schema changes, dependency updates, or major refactoring), a clear warning or explanatory note must be added at the top of the relevant documentation or rules file.
+
+This ensures that all contributors are aware of potential risks and can make informed decisions before proceeding, regardless of their prior experience or knowledge.
+
+---
+
 - if something releated at a process flow, the refere at 
 /home/chris/RiderProjects/DevelopmentRules/diagram-blueprint-instructions.md and ledata-backup-process-blueprint.drawio documentation.
 

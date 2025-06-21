@@ -247,7 +247,6 @@
 /app/src/MSH.Web/obj/Debug/net8.0/MSH.Web.MvcApplicationPartsAssemblyInfo.cache
 /app/src/MSH.Web/obj/Debug/net8.0/MSH.Web.RazorAssemblyInfo.cache
 /app/src/MSH.Web/obj/Debug/net8.0/MSH.Web.RazorAssemblyInfo.cs
-/app/src/MSH.Web/obj/Debug/net8.0/MSH.Web.sourcelink.json
 /app/src/MSH.Web/obj/Debug/net8.0/staticwebassets.build.json
 /app/src/MSH.Web/obj/Debug/net8.0/staticwebassets.development.json
 /app/src/MSH.Web/obj/Debug/net8.0/staticwebassets/msbuild.MSH.Web.Microsoft.AspNetCore.StaticWebAssets.props

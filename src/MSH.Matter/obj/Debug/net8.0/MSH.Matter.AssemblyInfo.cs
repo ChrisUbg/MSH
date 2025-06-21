@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MSH.Matter")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7778ed0faef47ff7b6ba10dc2c11287c1c1f20a6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+aeeb97b87e9ab38588ba0d70b202c1b99dc8845f")]
 [assembly: System.Reflection.AssemblyProductAttribute("MSH.Matter")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MSH.Matter")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

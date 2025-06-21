@@ -263,18 +263,19 @@ else
     private async Task SaveGroup()
     {
         // Get the admin user's ID
-        var adminUser = await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.UserName == "admin");
-        if (adminUser != null)
+        //r adminUser = await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.UserName == "admin");
+        //if (adminUser != null)
+        if (true)
         {
             if (editingGroup.Id == Guid.Empty)
             {
-                editingGroup.CreatedById = adminUser.Id;
-                editingGroup.UpdatedById = adminUser.Id;
+                editingGroup.CreatedById = "bb1be326-f26e-4684-bbf5-5c3df450dc61";
+                editingGroup.UpdatedById = "bb1be326-f26e-4684-bbf5-5c3df450dc61";
                 await DeviceGroupService.AddDeviceGroupAsync(editingGroup);
             }
             else
             {
-                editingGroup.UpdatedById = adminUser.Id;
+                editingGroup.UpdatedById = "bb1be326-f26e-4684-bbf5-5c3df450dc61";
                 await DeviceGroupService.UpdateDeviceGroupAsync(editingGroup);
             }
             showGroupModal = false;

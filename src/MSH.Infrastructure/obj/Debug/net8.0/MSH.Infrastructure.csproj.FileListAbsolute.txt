@@ -7,7 +7,6 @@
 /app/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.AssemblyInfoInputs.cache
 /app/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.AssemblyInfo.cs
 /app/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.csproj.CoreCompileInputs.cache
-/app/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.sourcelink.json
 /app/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.dll
 /app/src/MSH.Infrastructure/obj/Debug/net8.0/refint/MSH.Infrastructure.dll
 /app/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.pdb

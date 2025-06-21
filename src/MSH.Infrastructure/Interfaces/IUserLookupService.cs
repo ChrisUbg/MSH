@@ -4,8 +4,8 @@ namespace MSH.Infrastructure.Interfaces;
 
 public interface IUserLookupService
 {
-    Guid? GetCurrentUserId();
-    Task<User?> GetUserByIdAsync(Guid userId);
+    String? GetCurrentUserId();
+    Task<User?> GetUserByIdAsync(string userId);
     Task<User?> GetUserByUsernameAsync(string username);
     Task<User?> GetUserByEmailAsync(string email);
 } 

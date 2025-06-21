@@ -5,6 +5,8 @@ WORKDIR /app
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
     curl \
+    dbus \
+    avahi-daemon \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
@@ -22,6 +24,8 @@ WORKDIR /app
 # Install runtime dependencies
 RUN apt-get update && apt-get install -y \
     curl \
+    dbus \
+    avahi-daemon \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy installed packages from builder
@@ -36,5 +40,9 @@ ENV PYTHONUNBUFFERED=1
 # Expose the port
 EXPOSE 8080
 
+# Copy entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Start the application
-CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"] 
+ENTRYPOINT ["/entrypoint.sh"] 

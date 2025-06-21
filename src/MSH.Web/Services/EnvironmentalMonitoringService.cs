@@ -34,19 +34,19 @@ public class EnvironmentalMonitoringService : IEnvironmentalMonitoringService
     private async Task<EnvironmentalSettings> GetOrCreateSettingsAsync()
     {
         var userId = await _currentUserService.GetCurrentUserIdAsync();
-        if (!userId.HasValue)
+        if (string.IsNullOrEmpty(userId))
         {
             throw new InvalidOperationException("User is not authenticated");
         }
 
         var settings = await _context.EnvironmentalSettings
-            .FirstOrDefaultAsync(s => s.UserId == userId.Value);
+            .FirstOrDefaultAsync(s => s.UserId == userId);
 
         if (settings == null)
         {
             settings = new EnvironmentalSettings
             {
-                UserId = userId.Value,
+                UserId = userId,
                 IndoorTemperatureMin = 18.0,
                 IndoorTemperatureMax = 24.0,
                 OutdoorTemperatureMin = 0.0,

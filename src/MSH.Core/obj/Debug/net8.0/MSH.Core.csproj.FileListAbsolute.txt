@@ -5,7 +5,6 @@
 /app/src/MSH.Core/obj/Debug/net8.0/MSH.Core.AssemblyInfoInputs.cache
 /app/src/MSH.Core/obj/Debug/net8.0/MSH.Core.AssemblyInfo.cs
 /app/src/MSH.Core/obj/Debug/net8.0/MSH.Core.csproj.CoreCompileInputs.cache
-/app/src/MSH.Core/obj/Debug/net8.0/MSH.Core.sourcelink.json
 /app/src/MSH.Core/obj/Debug/net8.0/MSH.Core.dll
 /app/src/MSH.Core/obj/Debug/net8.0/refint/MSH.Core.dll
 /app/src/MSH.Core/obj/Debug/net8.0/MSH.Core.pdb

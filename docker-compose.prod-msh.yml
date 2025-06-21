@@ -8,9 +8,9 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:8082
-      - WEB_PORT=8082
-      - DB_PORT=5434
-      - MATTER_BRIDGE_PORT=8084
+      - WEB_PORT=8083
+      - DB_PORT=5435
+      - MATTER_BRIDGE_PORT=8085
       - CONNECTION_STRING=Host=db;Port=5432;Database=msh;Username=postgres;Password=postgres
     restart: unless-stopped
     healthcheck:
@@ -19,7 +19,7 @@ services:
       timeout: 10s
       retries: 3
     ports:
-      - "${WEB_PORT:-8082}:8082"
+      - "${WEB_PORT:-8083}:8082"
     volumes:
       - msh_dataprotection:/root/.aspnet/DataProtection-Keys
     networks:
@@ -38,16 +38,16 @@ services:
       timeout: 10s
       retries: 3
     ports:
-      - "${DB_PORT:-5434}:5432"
+      - "${DB_PORT:-5435}:5432"
     volumes:
       - msh_postgres_data:/var/lib/postgresql/data
     networks:
       - msh-network
 
   matter-bridge:
-    build: 
+    build:
       context: ./Matter
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.simple
     environment:
       - MATTER_BRIDGE_HOST=0.0.0.0
       - MATTER_BRIDGE_PORT=8084
@@ -58,7 +58,21 @@ services:
       timeout: 10s
       retries: 3
     ports:
-      - "${MATTER_BRIDGE_PORT:-8084}:8084"
+      - "${MATTER_BRIDGE_PORT:-8085}:8084"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    devices:
+      - /dev/vhci:/dev/vhci
+      - /dev/bus/usb:/dev/bus/usb
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 2G
     networks:
       - msh-network
     depends_on:

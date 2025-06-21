@@ -1,27 +1,82 @@
-FROM python:3.11-slim
+FROM python:3.8
 
 WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
+    git \
     curl \
+    build-essential \
+    python3-dev \
+    python3-pip \
+    cmake \
+    ninja-build \
+    libssl-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    libncurses5-dev \
+    libncursesw5-dev \
+    libbz2-dev \
+    libffi-dev \
+    liblzma-dev \
+    zlib1g-dev \
+    pkg-config \
+    clang \
+    llvm \
+    libevent-dev \
+    python3-venv \
+    avahi-daemon \
+    libavahi-client-dev \
+    libavahi-common-dev \
+    wget \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for better caching
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Install Node.js (required for ZAP CLI)
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs && \
+    rm -rf /var/lib/apt/lists/*
 
-# Copy the rest of the code
+# Install ZAP CLI
+RUN npm install -g @project-chip/zap-cli@latest || npm install -g zap@latest
+
+# Clone Matter SDK
+RUN git clone https://github.com/project-chip/connectedhomeip.git /matter-sdk && \
+    cd /matter-sdk && \
+    git checkout v1.1.0.0 && \
+    ./scripts/checkout_submodules.py --platform linux --shallow
+
+# Set up Python environment for Matter SDK
+RUN cd /matter-sdk && \
+    python3 -m venv .environment/pigweed-venv && \
+    . .environment/pigweed-venv/bin/activate && \
+    pip install --upgrade pip && \
+    pip install prompt_toolkit==3.0.36 ptpython==3.0.23
+
+# Build Matter SDK
+RUN cd /matter-sdk && \
+    ./scripts/build/gn_bootstrap.sh && \
+    bash -c 'source scripts/activate.sh && \
+    gn gen out/linux-x64-all-clusters --args="chip_mdns=\"platform\" chip_build_tests=false chip_build_libshell=false" && \
+    ninja -C out/linux-x64-all-clusters'
+
+# Set up Python environment for our application
+RUN python3 -m venv /opt/venv && \
+    . /opt/venv/bin/activate && \
+    pip install --upgrade pip && \
+    pip install wheel setuptools
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN . /opt/venv/bin/activate && pip install -r requirements.txt
+
+# Copy application code
 COPY . .
 
-# Set environment variables
-ENV PYTHONUNBUFFERED=1
-ENV DEBUG=1
-ENV PYTHONPATH=/app
-ENV MATTER_BRIDGE_PORT=8084
+# Copy and set up entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-# Expose the port
 EXPOSE 8084
 
-# Start the application with auto-reload
-CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8084", "--reload"] 
+CMD ["/entrypoint.sh"] 

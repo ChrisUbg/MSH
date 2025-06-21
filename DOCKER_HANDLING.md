@@ -1,4 +1,4 @@
-# Or override with absolute path
+c# Or override with absolute path
 $env:DOCKERFILE_PATH="C:\Users\Dev\source\repos\MSH\Docker\Dockerfile.prod"
 docker-compose -f Docker\docker-compose-prod.yml build
 

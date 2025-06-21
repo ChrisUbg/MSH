@@ -10,11 +10,11 @@ namespace MSH.Web.Services;
 
 public interface INotificationService
 {
-    Task SendNotificationToUserAsync(Guid userId, string title, string message, string type);
-    Task SendAlertToUserAsync(Guid userId, string title, string message, string severity);
-    Task SendDeviceStatusUpdateAsync(Guid userId, Guid deviceId, string status);
-    Task SendEnvironmentalAlertAsync(Guid userId, string parameter, double currentValue, double threshold);
-    Task<IEnumerable<Notification>> GetUserNotificationsAsync(Guid userId);
+    Task SendNotificationToUserAsync(string userId, string title, string message, string type);
+    Task SendAlertToUserAsync(string userId, string title, string message, string severity);
+    Task SendDeviceStatusUpdateAsync(string userId, Guid deviceId, string status);
+    Task SendEnvironmentalAlertAsync(string userId, string parameter, double currentValue, double threshold);
+    Task<IEnumerable<Notification>> GetUserNotificationsAsync(string userId);
     Task MarkNotificationAsReadAsync(int notificationId);
 }
 
@@ -34,7 +34,7 @@ public class NotificationService : INotificationService
         _emailService = emailService;
     }
 
-    public async Task SendNotificationToUserAsync(Guid userId, string title, string message, string type)
+    public async Task SendNotificationToUserAsync(string userId, string title, string message, string type)
     {
         try
         {
@@ -59,7 +59,7 @@ public class NotificationService : INotificationService
         }
     }
 
-    public async Task SendAlertToUserAsync(Guid userId, string title, string message, string severity)
+    public async Task SendAlertToUserAsync(string userId, string title, string message, string severity)
     {
         try
         {
@@ -90,7 +90,7 @@ public class NotificationService : INotificationService
         }
     }
 
-    public async Task SendDeviceStatusUpdateAsync(Guid userId, Guid deviceId, string status)
+    public async Task SendDeviceStatusUpdateAsync(string userId, Guid deviceId, string status)
     {
         try
         {
@@ -121,7 +121,7 @@ public class NotificationService : INotificationService
         }
     }
 
-    public async Task SendEnvironmentalAlertAsync(Guid userId, string parameter, double currentValue, double threshold)
+    public async Task SendEnvironmentalAlertAsync(string userId, string parameter, double currentValue, double threshold)
     {
         try
         {
@@ -146,7 +146,7 @@ public class NotificationService : INotificationService
         }
     }
 
-    public async Task<IEnumerable<Notification>> GetUserNotificationsAsync(Guid userId)
+    public async Task<IEnumerable<Notification>> GetUserNotificationsAsync(string userId)
     {
         return await _dbContext.Notifications
             .Where(n => n.UserId == userId)

@@ -46,8 +46,8 @@ public static class RoleSeeder
                     Email = adminUser.Email,
                     IsActive = true,
                     LastLogin = DateTime.UtcNow,
-                    CreatedById = Guid.Empty, // System user
-                    UpdatedById = Guid.Empty
+                    CreatedById = "", // System user
+                    UpdatedById = ""
                 };
                 context.ApplicationUsers.Add(appUser);
                 await context.SaveChangesAsync();

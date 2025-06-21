@@ -16,7 +16,7 @@ public class DeviceGroupService : IDeviceGroupService
     private readonly ApplicationDbContext _context;
     private readonly MatterDeviceService _matterService;
     private readonly ILogger<DeviceGroupService> _logger;
-    private static readonly Guid DEFAULT_USER_ID = Guid.Parse("00000000-0000-0000-0000-000000000001"); // default admin
+    private static readonly string DEFAULT_USER_ID = "00000000-0000-0000-0000-000000000001"; // default admin
 
     public DeviceGroupService(
         ApplicationDbContext context, 

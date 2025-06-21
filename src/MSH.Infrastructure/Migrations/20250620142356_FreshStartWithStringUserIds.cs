@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MSH.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class FreshStart : Migration
+    public partial class FreshStartWithStringUserIds : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,7 +17,7 @@ namespace MSH.Infrastructure.Migrations
                 name: "ApplicationUsers",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<string>(type: "text", nullable: false),
                     UserName = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: true),
                     FirstName = table.Column<string>(type: "text", nullable: true),
@@ -27,8 +27,8 @@ namespace MSH.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -98,8 +98,8 @@ namespace MSH.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -123,7 +123,7 @@ namespace MSH.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
                     IndoorTemperatureMin = table.Column<double>(type: "double precision", nullable: false),
                     IndoorTemperatureMax = table.Column<double>(type: "double precision", nullable: false),
                     OutdoorTemperatureMin = table.Column<double>(type: "double precision", nullable: false),
@@ -138,8 +138,8 @@ namespace MSH.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -174,8 +174,8 @@ namespace MSH.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -199,7 +199,7 @@ namespace MSH.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
                     Message = table.Column<string>(type: "text", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
                     Severity = table.Column<int>(type: "integer", nullable: true),
@@ -208,8 +208,8 @@ namespace MSH.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -239,8 +239,8 @@ namespace MSH.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -272,8 +272,8 @@ namespace MSH.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -296,7 +296,7 @@ namespace MSH.Infrastructure.Migrations
                 name: "UserSettings",
                 columns: table => new
                 {
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
                     Theme = table.Column<string>(type: "text", nullable: false),
                     Language = table.Column<string>(type: "text", nullable: false),
                     ShowOfflineDevices = table.Column<bool>(type: "boolean", nullable: false),
@@ -313,13 +313,13 @@ namespace MSH.Infrastructure.Migrations
                     ShowEmptyRooms = table.Column<bool>(type: "boolean", nullable: false),
                     ShowAutomationSuggestions = table.Column<bool>(type: "boolean", nullable: false),
                     AutomationPreferences = table.Column<JsonDocument>(type: "jsonb", nullable: true),
-                    UserId1 = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId1 = table.Column<string>(type: "text", nullable: false),
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -469,8 +469,8 @@ namespace MSH.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -512,8 +512,8 @@ namespace MSH.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -549,8 +549,8 @@ namespace MSH.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -593,8 +593,8 @@ namespace MSH.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -630,14 +630,14 @@ namespace MSH.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
                     RoomId = table.Column<Guid>(type: "uuid", nullable: false),
                     Permission = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -680,8 +680,8 @@ namespace MSH.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -724,8 +724,8 @@ namespace MSH.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -770,8 +770,8 @@ namespace MSH.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -816,8 +816,8 @@ namespace MSH.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -883,8 +883,8 @@ namespace MSH.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -918,8 +918,8 @@ namespace MSH.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true),
                     Comment = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -963,8 +963,8 @@ namespace MSH.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1001,8 +1001,8 @@ namespace MSH.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1039,8 +1039,8 @@ namespace MSH.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1088,14 +1088,14 @@ namespace MSH.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
                     DeviceId = table.Column<Guid>(type: "uuid", nullable: false),
                     PermissionLevel = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<Guid>(type: "uuid", nullable: false),
-                    UpdatedById = table.Column<Guid>(type: "uuid", nullable: true)
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {

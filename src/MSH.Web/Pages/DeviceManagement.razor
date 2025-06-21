@@ -1,5 +1,5 @@
 @namespace MSH.Web.Pages
-@page "/devices"
+@page "/device-management"
 @using MSH.Infrastructure.Entities
 @using MSH.Web.Services
 @using MSH.Infrastructure.Data
@@ -141,8 +141,10 @@
             newDevice.CreatedAt = DateTime.UtcNow;
             newDevice.UpdatedAt = DateTime.UtcNow;
             newDevice.IsDeleted = false;
-            newDevice.CreatedById = adminUser.Id;
-            newDevice.UpdatedById = adminUser.Id;
+           // newDevice.CreatedById = adminUser.Id;
+            newDevice.CreatedById = "bb1be326-f26e-4684-bbf5-5c3df450dc61";
+           // newDevice.CreatedById = adminUser.Id;
+            newDevice.UpdatedById = "bb1be326-f26e-4684-bbf5-5c3df450dc61";
             await DeviceService.AddDeviceAsync(newDevice);
             showAddDeviceModal = false;
             newDevice = new Device();

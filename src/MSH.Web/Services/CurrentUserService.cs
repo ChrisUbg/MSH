@@ -27,12 +27,12 @@ public class CurrentUserService : ICurrentUserService
         _authenticationStateProvider = authenticationStateProvider;
     }
 
-    public Guid? UserId
+    public string? UserId
     {
         get
         {
             var userIdClaim = _userManager.GetUserId(null);
-            return userIdClaim != null ? Guid.Parse(userIdClaim) : null;
+            return userIdClaim;
         }
     }
 
@@ -67,7 +67,7 @@ public class CurrentUserService : ICurrentUserService
         return user;
     }
 
-    public async Task<Guid?> GetCurrentUserIdAsync()
+    public async Task<string?> GetCurrentUserIdAsync()
     {
         var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
@@ -78,11 +78,6 @@ public class CurrentUserService : ICurrentUserService
         }
 
         var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
-        if (userIdClaim == null)
-        {
-            return null;
-        }
-
-        return Guid.TryParse(userIdClaim.Value, out var userId) ? userId : null;
+        return userIdClaim?.Value;
     }
 } 

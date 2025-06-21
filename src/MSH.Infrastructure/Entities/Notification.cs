@@ -4,7 +4,7 @@ namespace MSH.Infrastructure.Entities;
 
 public class Notification : BaseEntity
 {
-    public Guid UserId { get; set; }
+    public string UserId { get; set; } = null!;
     public string Message { get; set; } = null!;
     public NotificationType Type { get; set; }
     public AlertSeverity? Severity { get; set; }

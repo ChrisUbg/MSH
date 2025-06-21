@@ -290,9 +290,9 @@ public class ApplicationDbContext : IdentityDbContext
                 if (_userLookupService != null)
                 {
                     var userId = _userLookupService.GetCurrentUserId();
-                    if (userId.HasValue)
+                    if (userId != null)
                     {
-                        entity.CreatedById = (Guid)userId.Value;
+                        entity.CreatedById = userId;
                     }
                 }
             }
@@ -306,9 +306,9 @@ public class ApplicationDbContext : IdentityDbContext
             if (_userLookupService != null)
             {
                 var userId = _userLookupService.GetCurrentUserId();
-                if (userId.HasValue)
+                if (userId != null)
                 {
-                    entity.UpdatedById = (Guid)userId.Value;
+                    entity.UpdatedById = userId;
                 }
             }
         }

@@ -164,7 +164,7 @@
 
                 return new UserViewModel
                 {
-                    Id = u.Id,
+                    Id = Guid.Parse(u.Id),
                     UserName = u.UserName,
                     Email = u.Email,
                     Role = role,

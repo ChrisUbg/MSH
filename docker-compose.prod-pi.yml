@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: matter_prod
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: prodpassword
+    ports:
+      - "5435:5432"  # Different port to avoid conflict with existing postgres
+    volumes:
+      - msh_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - msh_network
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: src/MSH.Web/Dockerfile.prod
+    ports:
+      - "8083:8082"  # Different port to avoid conflict with haustagebuch_web
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8082
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - msh_network
+    restart: unless-stopped
+
+  matter-bridge:
+    build:
+      context: ./Matter
+      dockerfile: Dockerfile.prod
+    environment:
+      - MATTER_SDK_PATH=/matter-sdk
+      - CHIP_TOOL_PATH=/matter-sdk/out/linux-x64-all-clusters-ipv6only/chip-tool
+    volumes:
+      - ./Matter:/app
+      - matter-sdk:/matter-sdk
+    ports:
+      - "8085:8084"  # Different port to avoid conflicts
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    devices:
+      - /dev/vhci:/dev/vhci
+      - /dev/bus/usb:/dev/bus/usb
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 2G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8084/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - msh_network
+    restart: unless-stopped
+
+volumes:
+  msh_postgres_data:
+  matter-sdk:
+
+networks:
+  msh_network:
+    driver: bridge 

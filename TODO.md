@@ -67,7 +67,7 @@ Allways look at the @BASIC_RULES.md
     - [x] Implement rule engine service
     - [ ] Implement user management service
   - [x] Web layer
-- [ ] Implement basic authentication
+- [x] Implement basic authentication (Blazor Server authentication and authorization are now working; Logout and user management remain open)
 - [x] Set up logging infrastructure
 - [x] Create basic UI layout
 

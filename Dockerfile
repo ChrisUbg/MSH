@@ -1,26 +1,34 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy csproj and restore dependencies
-COPY *.csproj ./
-RUN dotnet restore
+# Copy csproj files and restore dependencies
+COPY ["src/MSH.Web/MSH.Web.csproj", "src/MSH.Web/"]
+COPY ["src/MSH.Infrastructure/MSH.Infrastructure.csproj", "src/MSH.Infrastructure/"]
+COPY ["src/MSH.Core/MSH.Core.csproj", "src/MSH.Core/"]
+COPY ["src/MSH.Matter/MSH.Matter.csproj", "src/MSH.Matter/"]
+RUN dotnet restore "src/MSH.Web/MSH.Web.csproj"
 
 # Copy the rest of the code
 COPY . .
 
 # Build the application
-RUN dotnet build -c Release -o /app/build
+RUN dotnet build "src/MSH.Web/MSH.Web.csproj" -c Release -o /app/build
 
 # Publish the application
 FROM build AS publish
-RUN dotnet publish -c Release -o /app/publish
+RUN dotnet publish "src/MSH.Web/MSH.Web.csproj" -c Release -o /app/publish
 
 # Final stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 
-# Install curl for healthcheck
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+# Install curl for healthcheck and PostgreSQL client tools
+RUN apt-get update && apt-get install -y curl gnupg2 lsb-release wget && \
+    sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' && \
+    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+    apt-get update && \
+    apt-get install -y postgresql-client-16 && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy published files
 COPY --from=publish /app/publish .
@@ -36,4 +44,4 @@ ENV ASPNETCORE_URLS=http://+:8082
 EXPOSE 8082
 
 # Start the application
-CMD ["dotnet", "MSH.dll"] 
+CMD ["dotnet", "MSH.Web.dll"] 

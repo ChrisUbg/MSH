@@ -53,8 +53,10 @@ if (builder.Environment.IsDevelopment())
 }
 else
 {
-    // Production database connection
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    // Production database connection - use environment variable if available
+    var envConnectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+    var connectionString = envConnectionString ?? builder.Configuration.GetConnectionString("DefaultConnection");
+    Console.WriteLine($"Using connection string: {connectionString}");
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(connectionString, npgsqlOptions => 
             npgsqlOptions.MigrationsAssembly("MSH.Infrastructure")));
@@ -94,6 +96,14 @@ builder.Services.AddHttpClient();
 builder.Services.AddHttpClient("API", client =>
 {
     client.BaseAddress = new Uri("http://localhost:8082/");
+    client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+});
+
+// Add Matter bridge HTTP client
+builder.Services.AddHttpClient("MatterBridge", client =>
+{
+    var matterBridgeUrl = builder.Configuration["MatterBridge:BaseUrl"] ?? "http://matter-bridge:8084";
+    client.BaseAddress = new Uri(matterBridgeUrl);
     client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 });
 
