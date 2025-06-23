@@ -1,27 +1,22 @@
 # Web Framework
 fastapi==0.104.1
-uvicorn==0.24.0
+uvicorn[standard]==0.24.0
 
-# Utilities
-python-dotenv==1.0.1
+# Core dependencies
 pydantic==2.5.0
 requests==2.31.0
-
-# Time and scheduling
-schedule==1.2.0
-python-crontab==3.0.0
-
-# Testing
-pytest==8.0.0
-pytest-asyncio==0.23.5
-
-# Development
-black==24.1.1
-isort==5.13.2
-flake8==7.0.0
-
-# Additional
 aiohttp==3.11.11
+websockets==12.0
 
 # Matter integration
-python-matter-server[server]==7.0.1 
+python-matter-server[server]==7.0.1
+
+# Additional dependencies for real commissioning
+asyncio-mqtt==0.16.1
+bleak==0.21.1
+dbus-next==0.2.3
+pydbus==0.6.0
+
+# Development/Testing
+pytest==8.0.0
+pytest-asyncio==0.23.5 

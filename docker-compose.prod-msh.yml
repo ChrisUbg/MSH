@@ -51,40 +51,6 @@ services:
     networks:
       - msh-network
 
-  matter-bridge:
-    build:
-      context: ./Matter
-      dockerfile: Dockerfile.simple
-    environment:
-      - MATTER_BRIDGE_HOST=0.0.0.0
-      - MATTER_BRIDGE_PORT=8084
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8084/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    ports:
-      - "${MATTER_BRIDGE_PORT:-8085}:8084"
-    cap_add:
-      - NET_ADMIN
-      - NET_RAW
-    devices:
-      - /dev/vhci:/dev/vhci
-      - /dev/bus/usb:/dev/bus/usb
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    deploy:
-      resources:
-        limits:
-          memory: 4G
-        reservations:
-          memory: 2G
-    networks:
-      - msh-network
-    depends_on:
-      - web
-
 networks:
   msh-network:
     driver: bridge
@@ -93,4 +59,5 @@ volumes:
   msh_postgres_data:
     driver: local
   msh_dataprotection:
-    driver: local 
+    driver: local
+  db_data: 

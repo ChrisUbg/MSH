@@ -38,28 +38,25 @@ echo "Consider installing buildx or setting up cross-compilation."
 # Deploy to Pi by building directly on Pi with simplified Dockerfile 
 echo "Deploying to Pi using simplified Dockerfile..."
 echo "Transferring Matter files to Pi..."
+
+# Copy network-config.sh to Matter directory for deployment
+cp ../network-config.sh ./
+
+echo "Transferring Matter files to Pi..."
 scp -r . chregg@192.168.0.102:~/MSH/Matter/
 scp ../docker-compose.prod-msh.yml chregg@192.168.0.102:~/MSH/
 
-echo "Building and deploying on Pi..."
-ssh chregg@192.168.0.102 << 'ENDSSH'
-cd ~/MSH
+# Clean up the copied file
+rm -f network-config.sh
 
-echo "Stopping existing matter-bridge container..."
-docker-compose -f docker-compose.prod-msh.yml stop matter-bridge 2>/dev/null || echo "No running container to stop"
-docker-compose -f docker-compose.prod-msh.yml rm -f matter-bridge 2>/dev/null || echo "No stopped containers"
+echo "Stopping existing containers..."
+ssh chregg@192.168.0.102 "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml down"
 
-echo "Building matter-bridge with simplified Dockerfile on Pi..."
-docker-compose -f docker-compose.prod-msh.yml build matter-bridge
+echo "Building containers on Pi..."
+CACHE_BUSTER=$(date +%s)
+ssh chregg@192.168.0.102 "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml build --no-cache --build-arg CACHE_BUSTER=$CACHE_BUSTER"
 
-echo "Starting matter-bridge..."
-docker-compose -f docker-compose.prod-msh.yml up -d matter-bridge
-
-echo "Checking container status..."
-docker-compose -f docker-compose.prod-msh.yml ps
-
-echo "Checking container logs..."
-docker-compose -f docker-compose.prod-msh.yml logs --tail=50 matter-bridge
-ENDSSH
+echo "Starting containers..."
+ssh chregg@192.168.0.102 "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml up -d"
 
 echo "=== Deployment complete! ===" 

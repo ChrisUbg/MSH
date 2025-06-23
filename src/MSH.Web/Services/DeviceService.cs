@@ -46,7 +46,10 @@ public class DeviceService : IDeviceService
 
     public async Task<Device?> GetDeviceByIdAsync(Guid deviceId)
     {
-        return await _context.Devices.FindAsync(deviceId);
+        return await _context.Devices
+            .Include(d => d.DeviceType)
+            .Include(d => d.Room)
+            .FirstOrDefaultAsync(d => d.Id == deviceId);
     }
 
     public async Task<Device> AddDeviceAsync(Device device)

@@ -59,19 +59,24 @@ Building a Matter-protocol based smart home application running on Raspberry Pi 
 - [x] 6.4. Event logging and monitoring
 - [x] 6.5. Leverage Cursor's AI for complex logic implementation
 
-### 7. Security Implementation
-- [x] 7.1. Implement Matter security standards
-- [x] 7.2. User authentication and authorization
-- [x] 7.3. Device communication encryption
-- [x] 7.4. Secure storage for device credentials
-- [x] 7.5. Use Cursor's AI for security best practices
+### 7. Data Integrity and Reliability
+- [ ] 7.1. Matter Bridge Data Persistence: Store commissioned device list on a persistent Docker volume to prevent data loss on container restart.
+- [ ] 7.2. S3 Backup for Matter Bridge: Implement a regular backup of the Matter device list to an S3 bucket, similar to the Haustagebuch implementation.
+- [ ] 7.3. **Separation of Concerns**: Refactor commissioning flow to keep Matter Bridge focused only on Matter protocol operations. The Matter Bridge should only handle device commissioning and return the device ID, while the main C# application handles all business logic (room assignment, device type mapping, database operations, etc.). This will make the system more maintainable and allow the Matter Bridge to remain protocol-focused without coupling to business requirements.
 
-### 8. Testing and Optimization
-- [x] 8.1. Unit testing implementation
-- [x] 8.2. Integration testing
-- [x] 8.3. Performance optimization
-- [ ] 8.4. Security testing
-- [x] 8.5. Utilize Cursor's testing suggestions and debugging
+### 8. Security Implementation
+- [x] 8.1. Implement Matter security standards
+- [x] 8.2. User authentication and authorization
+- [x] 8.3. Device communication encryption
+- [x] 8.4. Secure storage for device credentials
+- [x] 8.5. Use Cursor's AI for security best practices
+
+### 9. Testing and Optimization
+- [x] 9.1. Unit testing implementation
+- [x] 9.2. Integration testing
+- [x] 9.3. Performance optimization
+- [ ] 9.4. Security testing
+- [x] 9.5. Utilize Cursor's testing suggestions and debugging
 
 ## Progress Tracking
 - Current Phase: 6. Advanced Features (Automation Engine)

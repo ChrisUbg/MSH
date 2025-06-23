@@ -54,6 +54,24 @@
                             </select>
                         </div>
                         <div class="mb-3">
+                            <label for="qrCode" class="form-label">QR Code *</label>
+                            <input type="text" class="form-control" id="qrCode" @bind="qrCode" required 
+                                   placeholder="MT:... (full QR code string from device)">
+                            <div class="form-text">Enter the complete QR code string from your Matter device</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="networkSsid" class="form-label">WiFi Network Name (SSID) *</label>
+                            <input type="text" class="form-control" id="networkSsid" @bind="networkSsid" required 
+                                   placeholder="Your WiFi network name">
+                            <div class="form-text">The WiFi network the device should connect to</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="networkPassword" class="form-label">WiFi Password *</label>
+                            <input type="password" class="form-control" id="networkPassword" @bind="networkPassword" required 
+                                   placeholder="Your WiFi password">
+                            <div class="form-text">The password for the WiFi network</div>
+                        </div>
+                        <div class="mb-3">
                             <label for="pin" class="form-label">Commissioning PIN (Optional)</label>
                             <input type="text" class="form-control" id="pin" @bind="pin" placeholder="Default: 20202021">
                         </div>
@@ -61,7 +79,8 @@
                             <strong>Instructions:</strong>
                             <ol>
                                 <li>Put your device in pairing mode</li>
-                                <li>Enter the device details above</li>
+                                <li>Scan the QR code on your device or enter it manually</li>
+                                <li>Enter your WiFi network details</li>
                                 <li>Click "Start Commissioning"</li>
                                 <li>Follow any on-screen instructions</li>
                             </ol>
@@ -121,6 +140,9 @@
 @code {
     private string deviceName = "";
     private string pin = "";
+    private string qrCode = "";
+    private string networkSsid = "";
+    private string networkPassword = "";
     private bool isCommissioning = false;
     private string errorMessage = "";
     private string successMessage = "";
@@ -191,6 +213,9 @@
             {
                 device_name = deviceName,
                 device_type = selectedDeviceType.Name.ToLower().Replace(" ", "_"),
+                qr_code = qrCode,
+                network_ssid = networkSsid,
+                network_password = networkPassword,
                 pin = string.IsNullOrEmpty(pin) ? "20202021" : pin
             };
 
@@ -203,7 +228,7 @@
                 
                 if (result != null && !string.IsNullOrEmpty(result.device_id))
                 {
-                    // Save device to database
+                    // Save device to database with user selections
                     await SaveCommissionedDevice(result, selectedDeviceType);
                     
                     successMessage = $"Device commissioned successfully! Device ID: {result.device_id}";
@@ -212,6 +237,9 @@
                     selectedDeviceTypeId = Guid.Empty;
                     selectedRoomId = null;
                     pin = "";
+                    qrCode = "";
+                    networkSsid = "";
+                    networkPassword = "";
                 }
                 else
                 {
@@ -238,28 +266,62 @@
     {
         try
         {
-            var device = new Device
+            // Check if device already exists
+            var existingDevice = await DeviceService.GetDeviceAsync(result.device_id);
+            
+            if (existingDevice != null)
             {
-                Name = deviceName,
-                Description = $"Commissioned {deviceType.Name}",
-                MatterDeviceId = result.device_id,
-                DeviceTypeId = deviceType.Id,
-                RoomId = selectedRoomId,
-                Status = "commissioned",
-                IsOnline = true,
-                LastSeen = DateTime.UtcNow,
-                LastStateChange = DateTime.UtcNow,
-                Properties = System.Text.Json.JsonDocument.Parse(@"{
-                    ""commissioned_at"": """ + DateTime.UtcNow.ToString("O") + @""",
-                    ""commissioning_method"": ""python-matter-server"",
-                    ""node_id"": """ + (result.node_id?.ToString() ?? "unknown") + @"""
-                }"),
-                Configuration = System.Text.Json.JsonDocument.Parse("{}"),
-                CreatedById = "bb1be326-f26e-4684-bbf5-5c3df450dc61",
-                UpdatedById = "bb1be326-f26e-4684-bbf5-5c3df450dc61"
-            };
+                // Update existing device with user selections
+                existingDevice.Name = deviceName;
+                existingDevice.Description = $"Commissioned {deviceType.Name}";
+                existingDevice.DeviceTypeId = deviceType.Id;
+                existingDevice.RoomId = selectedRoomId;
+                existingDevice.Status = "commissioned";
+                existingDevice.IsOnline = true;
+                existingDevice.LastSeen = DateTime.UtcNow;
+                existingDevice.LastStateChange = DateTime.UtcNow;
+                existingDevice.UpdatedAt = DateTime.UtcNow;
+                existingDevice.UpdatedById = "bb1be326-f26e-4684-bbf5-5c3df450dc61";
+                
+                // Update properties
+                var properties = new Dictionary<string, object>
+                {
+                    ["commissioned_at"] = DateTime.UtcNow.ToString("O"),
+                    ["commissioning_method"] = "python-matter-server",
+                    ["node_id"] = result.node_id?.ToString() ?? "unknown"
+                };
+                existingDevice.Properties = System.Text.Json.JsonDocument.Parse(
+                    System.Text.Json.JsonSerializer.Serialize(properties)
+                );
+                
+                await DeviceService.UpdateDeviceAsync(existingDevice);
+            }
+            else
+            {
+                // Create new device with user selections
+                var device = new Device
+                {
+                    Name = deviceName,
+                    Description = $"Commissioned {deviceType.Name}",
+                    MatterDeviceId = result.device_id,
+                    DeviceTypeId = deviceType.Id,
+                    RoomId = selectedRoomId,
+                    Status = "commissioned",
+                    IsOnline = true,
+                    LastSeen = DateTime.UtcNow,
+                    LastStateChange = DateTime.UtcNow,
+                    Properties = System.Text.Json.JsonDocument.Parse(@"{
+                        ""commissioned_at"": """ + DateTime.UtcNow.ToString("O") + @""",
+                        ""commissioning_method"": ""python-matter-server"",
+                        ""node_id"": """ + (result.node_id?.ToString() ?? "unknown") + @"""
+                    }"),
+                    Configuration = System.Text.Json.JsonDocument.Parse("{}"),
+                    CreatedById = "bb1be326-f26e-4684-bbf5-5c3df450dc61",
+                    UpdatedById = "bb1be326-f26e-4684-bbf5-5c3df450dc61"
+                };
 
-            await DeviceService.AddDeviceAsync(device);
+                await DeviceService.AddDeviceAsync(device);
+            }
         }
         catch (Exception ex)
         {

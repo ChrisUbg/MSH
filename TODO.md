@@ -46,7 +46,7 @@ Allways look at the @BASIC_RULES.md
 - [x] Configure Raspberry Pi WiFi client mode (A1 network)
 - [x] Set up Raspberry Pi Access Point mode
 - [x] Create mode switching script
-- [x] Implement basic UI for mode control
+- [x] Implement basic UI for mode control                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
 - [x] Implement robust network test page with HTTP/HTTPS fallback and diagnostics
 - [x] Refactor Network Settings UI for HTTP/HTTPS fallback and improved error handling
 - [x] Add loading indicators and clear user feedback to network-related pages

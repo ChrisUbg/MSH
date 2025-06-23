@@ -1,5 +1,6 @@
 # Stage 1: Build .NET app and Matter SDK
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG CACHE_BUSTER
 WORKDIR /src
 
 # Install Matter SDK dependencies

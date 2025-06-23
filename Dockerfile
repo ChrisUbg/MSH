@@ -33,6 +33,10 @@ RUN apt-get update && apt-get install -y curl gnupg2 lsb-release wget && \
 # Copy published files
 COPY --from=publish /app/publish .
 
+# Copy the network configuration script
+COPY network-config.sh /app/network-config.sh
+RUN chmod +x /app/network-config.sh
+
 # Create directory for DataProtection keys
 RUN mkdir -p /root/.aspnet/DataProtection-Keys
 
