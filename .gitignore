@@ -5,3 +5,47 @@ msh-app-prod.tar
 *.tar*.tar
 *.tar.gz
 *.tgz
+
+# Matter SDK build artifacts
+dev_connectedhomeip/
+connectedhomeip/
+matter_data/
+matter_host_env/
+fastapi_env/
+
+# Build artifacts
+*.a
+*.so
+*.o
+*.d
+*.pyc
+__pycache__/
+*.egg-info/
+
+# Large binary files
+*.pack
+*.bin
+*.exe
+*.dll
+*.dylib
+
+# Environment and cache files
+.env
+*.cache
+*.log
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# .NET build artifacts
+obj/
+bin/
+*.AssemblyInfo.cs
+*.AssemblyInfoInputs.cache
