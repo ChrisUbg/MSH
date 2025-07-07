@@ -60,4 +60,4 @@ volumes:
     driver: local
   msh_dataprotection:
     driver: local
-  db_data: 
+  db_data:

@@ -28,7 +28,13 @@ RUN apt-get update && apt-get install -y curl gnupg2 lsb-release wget && \
     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
     apt-get update && \
     apt-get install -y postgresql-client-16 && \
+    apt-get update && \
+    apt-get install -y gn && \
     rm -rf /var/lib/apt/lists/*
+
+# Install gn (Google build tool)
+RUN wget -O /usr/local/bin/gn https://chrome-infra-packages.appspot.com/dl/gn/gn/linux-arm64/+/latest -q --show-progress && \
+    chmod +x /usr/local/bin/gn
 
 # Copy published files
 COPY --from=publish /app/publish .
@@ -48,4 +54,7 @@ ENV ASPNETCORE_URLS=http://+:8082
 EXPOSE 8082
 
 # Start the application
-CMD ["dotnet", "MSH.Web.dll"] 
+CMD ["dotnet", "MSH.Web.dll"]
+
+RUN cd dev_connectedhomeip && \
+    bash ./scripts/bootstrap.sh 

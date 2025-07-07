@@ -12,7 +12,44 @@
 - **MSH.Matter** - Matter integration layer (Lightweight Python)
 - **PostgreSQL Database** - Primary data storage
 - **Python Matter Bridge** - FastAPI HTTP bridge using python-matter-server
-- **Docker Compose** - Production containerization
+- **python-matter-server** - Host-based Matter server (not containerized)
+
+### **Current Deployment Architecture (UPDATED 2024-01-22)**
+
+#### **Host-Based python-matter-server (NEW)**
+- **Location**: Raspberry Pi host (not containerized)
+- **Port**: 8084 (WebSocket)
+- **Purpose**: Direct hardware access for Matter commissioning and control
+- **Reason**: Container networking limitations prevent Bluetooth HCI socket access
+- **Status**: ✅ Running and operational
+
+#### **Containerized Services**
+- **MSH.Web** (C# Blazor Server)
+  - **External Port**: 8083
+  - **Internal Port**: 8082
+  - **Purpose**: Main web application
+  - **Status**: ✅ Running in Docker
+
+- **PostgreSQL Database**
+  - **External Port**: 5435
+  - **Internal Port**: 5432
+  - **Purpose**: Primary data storage
+  - **Status**: ✅ Running in Docker
+
+- **Python Matter Bridge** (FastAPI)
+  - **External Port**: 8085
+  - **Internal Port**: 8084 (not used)
+  - **Purpose**: HTTP API bridge to python-matter-server
+  - **Status**: ✅ Running in Docker
+
+### **Port Configuration (CURRENT)**
+
+| Service | External Port | Internal Port | Purpose | Status |
+|---------|---------------|---------------|---------|---------|
+| MSH.Web (C#) | 8083 | 8082 | Web UI | ✅ Running |
+| PostgreSQL | 5435 | 5432 | Database | ✅ Running |
+| python-matter-server | 8084 | 8084 | Matter WebSocket | ✅ Running (Host) |
+| FastAPI Bridge | 8085 | 8084 | HTTP API | ✅ Running |
 
 ### **Network Architecture (Hybrid Approach)**
 The system uses a hybrid network approach with three main goals:
@@ -41,11 +78,11 @@ The system uses a hybrid network approach with three main goals:
 - **Data Storage**: All commissioning data stored in PostgreSQL
 - **Recovery**: Backup/restore procedures for seamless hardware replacement
 
-### **Communication Flow**
+### **Communication Flow (UPDATED)**
 ```
-Blazor UI → HTTP Client → Python FastAPI Bridge → WebSocket → python-matter-server → Matter Devices
+Blazor UI (8083) → HTTP Client → FastAPI Bridge (8085) → WebSocket → python-matter-server (8084) → Matter Devices
          ↕                                                    ↕
-   Entity Framework ←→ PostgreSQL                      Real Device Control
+   Entity Framework ←→ PostgreSQL (5435)                      Real Device Control
 ```
 
 ## 📊 **Domain Model (Entity Framework)**
@@ -93,7 +130,7 @@ public class Device : BaseEntity
 - **Configuration Management** - Matter paths and URLs configurable
 
 #### **Python Matter Bridge (FastAPI + python-matter-server)**
-- **✅ Production Ready** at `http://pi:8085`
+- **✅ Production Ready** at `http://192.168.0.102:8085`
 - **python-matter-server integration** - Official Home Assistant certified implementation
 - **NOUS A8M integration** - Complete API endpoints for real device control
 - **Device commissioning endpoint** - `/commission` (WebSocket based)
@@ -157,44 +194,58 @@ public class Device : BaseEntity
 - `GET /health` - Bridge health check
 - `GET /dev/matter-server-test` - Test python-matter-server connectivity
 
-### **C# HTTP Client Configuration (UNCHANGED)**
+### **C# HTTP Client Configuration (UPDATED)**
 ```csharp
 builder.Services.AddHttpClient("MatterBridge", client =>
 {
-    var matterBridgeUrl = builder.Configuration["MatterBridge:BaseUrl"] ?? "http://matter-bridge:8084";
+    var matterBridgeUrl = builder.Configuration["MatterBridge:BaseUrl"] ?? "http://172.17.0.1:8085";
     client.BaseAddress = new Uri(matterBridgeUrl);
 });
 ```
 
 ## 📁 **Key Files & Locations**
 
-### **Core Application Files (UNCHANGED)**
+### **Core Application Files**
 - `src/MSH.Web/Program.cs` - Application startup and DI configuration
 - `src/MSH.Web/Pages/DeviceCommissioning.razor` - Matter device commissioning UI
 - `src/MSH.Infrastructure/Services/MatterDeviceService.cs` - C# Matter service
 - `src/MSH.Infrastructure/Entities/Device.cs` - Device domain model
 
-### **Matter Bridge Files (UPDATED)**
+### **Matter Bridge Files**
 - `Matter/app/main_simple.py` - Python FastAPI bridge (python-matter-server integration)
+- `Matter/app/custom_commissioning.py` - Real Matter commissioning implementation
 - `Matter/Dockerfile.simple` - Lightweight container build
 - `Matter/requirements.txt` - Python dependencies (includes python-matter-server)
 - `build-and-deploy-matter.sh` - Deployment script
 
-### **Configuration Files (UNCHANGED)**
+### **Configuration Files**
 - `docker-compose.prod-msh.yml` - Production orchestration
 - `src/MSH.Web/appsettings.json` - Application configuration
 - `Matter/entrypoint.sh` - Container startup script
 
-## ⚙️ **Official Deployment Process (Cross-Compilation)**
+## ⚙️ **Current Deployment Process**
 
-To ensure build consistency, speed, and reliability, the official and **required** deployment method is cross-compilation from the x86 development machine. **Directly building on the Raspberry Pi is unreliable and must be avoided.**
+### **Host-Based python-matter-server Setup**
+```bash
+# On Raspberry Pi host
+cd ~/MSH
+source matter_host_env/bin/activate
+matter-server --storage-path /home/chregg/MSH/matter_data --port 8084
+```
 
-The process is managed by the `build-and-deploy-matter.sh` script, which performs the following steps:
-1.  **Builds ARM64 Docker Images:** Uses `docker buildx` on the development machine to compile the C# and Python applications into images compatible with the Raspberry Pi's `arm64` architecture.
-2.  **Transfers Images to Pi:** Securely copies the final, built images to the Raspberry Pi.
-3.  **Restarts Services:** Uses `docker-compose` on the Pi to pull the new images and restart the relevant services.
+### **FastAPI Bridge Deployment**
+```bash
+# On Raspberry Pi host
+cd ~/MSH/Matter
+source fastapi_env/bin/activate
+python3 -m uvicorn app.main_simple:app --host 0.0.0.0 --port 8085
+```
 
-This workflow guarantees that all builds are performed in a stable environment and bypasses the resource and system-level instabilities of building directly on the Pi.
+### **C# Application Deployment**
+```bash
+# Cross-compilation from development machine
+./build-and-deploy-matter.sh
+```
 
 ## 🚀 **Next Steps Roadmap**
 
@@ -229,95 +280,30 @@ This workflow guarantees that all builds are performed in a stable environment a
 ## 🎯 **Current Focus**
 **Ready for real NOUS A8M device commissioning and control using the new RealMatterCommissioner implementation with automatic network mode switching and robust fallback mechanisms.**
 
-## 🔧 **Recent Implementation (2024-01-21)**
-
-### **Real Commissioning Implementation Complete**
-- **✅ RealMatterCommissioner Class** - Complete rewrite of `custom_commissioning.py`
-  - Real Matter chip stack initialization
-  - BLE device discovery and PASE session establishment
-  - WiFi commissioning with Access Point mode switching
-  - QR code parsing (MT: format) with device information extraction
-  - Real Matter cluster commands (OnOff cluster)
-  - Device state reading and synchronization
-
-- **✅ Network Mode Integration** - Automatic switching during commissioning
-  - Commissioning mode detection and switching
-  - Access Point mode for WiFi commissioning
-  - Normal mode restoration after commissioning
-  - Error recovery and fallback mechanisms
-
-- **✅ Enhanced API Endpoints** - Updated commissioning and control endpoints
-  - `/commission` - Real commissioning with fallback
-  - `/device/{id}/power` - Real Matter control with fallback
-  - `/device/{id}/state` - Real state reading with fallback
-  - `/dev/real-commissioning-test` - Diagnostics and testing
-
-- **✅ Robust Error Handling** - Multi-layer fallback system
-  - BLE commissioning → WiFi commissioning → python-matter-server → Mock
-  - Network mode switching error recovery
-  - Device control fallback mechanisms
-  - Comprehensive error logging and diagnostics
-
-### **Technical Implementation Details**
-
-#### **Real Commissioning Flow**
-1. **QR Code Parsing** - Extract device info (vendor_id, product_id, discriminator, passcode)
-2. **BLE Commissioning** - Discover device, establish PASE session, exchange WiFi credentials
-3. **WiFi Commissioning** - Switch to Access Point mode, device connects, mDNS discovery
-4. **Matter Commissioning** - Perform actual Matter commissioning handshake
-5. **Device Control** - Send real Matter cluster commands (OnOff, Electrical Measurement)
-
-#### **Network Mode Integration**
-- **Commissioning Mode** - Pi becomes Access Point (SSID: MSH_Setup)
-- **Normal Mode** - Pi connects to main WiFi network
-- **Automatic Switching** - Integrated into commissioning process
-- **Error Recovery** - Fallback to normal mode on failure
-
-#### **Device Control Implementation**
-- **Real Matter Commands** - Using ChipDeviceController for cluster operations
-- **State Synchronization** - Real-time device state reading and updating
-- **Power Metrics** - Electrical measurement cluster integration
-- **Fallback Mechanisms** - python-matter-server and mock fallbacks
-
-### **Testing and Validation Ready**
-- **Commissioning Test Endpoint** - `/dev/real-commissioning-test`
-- **Network Mode Testing** - Automatic mode detection and switching
-- **BLE Support Testing** - Bluetooth availability and functionality
-- **WiFi Support Testing** - Network configuration script availability
-- **QR Code Parsing Testing** - MT: format validation and parsing
-
-### **Next Steps for Testing**
-1. **Deploy Updated Code** - Build and deploy new Matter bridge
-2. **Test Real Commissioning** - Commission actual NOUS A8M device
-3. **Validate Network Switching** - Test Access Point mode during commissioning
-4. **Verify Device Control** - Test real power on/off commands
-5. **Monitor Error Handling** - Test fallback mechanisms and error recovery
-
-## 🔍 **Technical Decisions Made**
-
-### **Architecture Choices (EXCELLENT)**
-✅ **HTTP Bridge Pattern** - Clean separation between C# and Matter protocol  
-✅ **Lightweight python-matter-server** - Official Home Assistant certified implementation  
-✅ **WebSocket Communication** - Real-time device control and state updates  
-✅ **Configuration-driven** - Easy environment switching  
-✅ **Entity Framework** - Proper domain modeling and persistence  
-✅ **Docker containerization** - Production-ready deployment  
-✅ **Real Matter Libraries** - Direct integration with python-matter-server underlying libraries  
-✅ **Network Mode Integration** - Automatic switching for commissioning workflow  
-
-### **Matter Integration Strategy (OPTIMIZED)**
-- **C# for business logic** - Leverages existing .NET expertise
-- **Python for Matter protocol** - Uses official python-matter-server (certified)
-- **Real Matter Libraries** - Direct chip stack integration for commissioning
-- **WebSocket API boundary** - Real-time, efficient communication
-- **Graceful fallback mechanisms** - Mock mode when devices unavailable
-- **Resource efficient** - No heavy C++ SDK compilation required
-- **Network mode switching** - Integrated commissioning workflow
-
-## 🎯 **Current Focus**
-**Ready for real NOUS A8M device commissioning and control using the new RealMatterCommissioner implementation with automatic network mode switching and robust fallback mechanisms.**
-
 ## 🔧 **Recent Critical Fixes**
+
+### **Port Configuration Fix (2024-01-22)**
+- **Issue**: Inconsistent port configuration causing connection failures
+- **Root Cause**: Multiple services trying to use same ports, conflicting configurations
+- **Solution Applied**:
+  - **python-matter-server**: Host-based on port 8084 (WebSocket)
+  - **FastAPI Bridge**: Container on port 8085 (HTTP API)
+  - **C# Web App**: Container on port 8083 (external), 8082 (internal)
+  - **PostgreSQL**: Container on port 5435 (external), 5432 (internal)
+- **Result**: ✅ All services now have unique, non-conflicting ports
+- **Files Modified**:
+  - `Matter/app/main_simple.py` - Removed conflicting start_matter_server() calls
+  - `src/MSH.Web/appsettings.json` - Updated MatterBridge URL to 172.17.0.1:8085
+
+### **Host-Based python-matter-server Architecture (2024-01-22)**
+- **Issue**: Container networking limitations prevent Bluetooth HCI socket access
+- **Root Cause**: Docker containers cannot access UART-based Bluetooth on Raspberry Pi
+- **Solution Applied**:
+  - **python-matter-server**: Moved to host (not containerized)
+  - **FastAPI Bridge**: Remains containerized, connects to host matter-server
+  - **C# App**: Remains containerized, connects to FastAPI bridge
+- **Result**: ✅ Real Matter commissioning now possible with hardware access
+- **Architecture**: Host-based matter-server + Containerized bridge + Containerized web app
 
 ### **Network Mode Switching Docker Networking Fix (2024-01-21)**
 - **Issue**: Network mode switching worked via `http://192.168.0.102:8083` but failed via `http://localhost:8083`
@@ -362,221 +348,5 @@ This workflow guarantees that all builds are performed in a stable environment a
 - **Network mode switching**: ✅ Fixed - Works from both localhost and Pi IP access
 
 ---
-*Last Updated: 2024-01-21*  
+*Last Updated: 2024-01-22*  
 *System Status: All major networking and authentication issues resolved, ready for real device commissioning* 
-
-## 🔧 **Real Commissioning Implementation Plan**
-
-### **Current Issue Analysis**
-The commissioning process currently fails because:
-1. **python-matter-server WebSocket API** doesn't expose commissioning commands
-2. **Custom commissioning fallback** is only a simulation (not real commissioning)
-3. **BLE and WiFi onboarding** not properly implemented using Matter libraries
-
-### **Complete Real Commissioning Implementation Steps**
-
-#### **Phase 1: Implement Real Matter Commissioning Library (Priority: HIGH)**
-
-**Step 1.1: Replace Custom Commissioning Simulation**
-- **File**: `Matter/app/custom_commissioning.py`
-- **Action**: Implement real commissioning using python-matter-server's underlying libraries
-- **Requirements**:
-  - Use `chip.core.ChipDeviceController` for real device control
-  - Implement proper QR code parsing (MT: format)
-  - Handle BLE discovery and authentication
-  - Manage WiFi credential exchange
-  - Perform actual Matter commissioning handshake
-
-**Step 1.2: BLE Commissioning Implementation**
-- **Components**:
-  - BLE device discovery using `chip.discovery`
-  - PASE (Passcode-Authenticated Session Establishment) 
-  - Device attestation certificate (DAC) validation
-  - Secure credential exchange
-- **Code Structure**:
-  ```python
-  async def commission_device_ble(self, qr_code: str, ssid: str, password: str):
-      # 1. Parse QR code to extract device info
-      # 2. Discover device via BLE
-      # 3. Establish PASE session with PIN
-      # 4. Exchange WiFi credentials via BLE
-      # 5. Perform Matter commissioning
-      # 6. Return real device ID and node ID
-  ```
-
-**Step 1.3: WiFi Commissioning Implementation**
-- **Components**:
-  - WiFi network discovery
-  - Device connection to Pi's Access Point
-  - mDNS-based device discovery
-  - Direct WiFi commissioning (no BLE required)
-- **Code Structure**:
-  ```python
-  async def commission_device_wifi(self, qr_code: str, ssid: str, password: str):
-      # 1. Switch Pi to Access Point mode
-      # 2. Device connects to Pi's network
-      # 3. Discover device via mDNS
-      # 4. Perform WiFi-based commissioning
-      # 5. Switch back to normal mode
-  ```
-
-#### **Phase 2: Network Mode Integration (Priority: HIGH)**
-
-**Step 2.1: Automatic Network Mode Switching**
-- **File**: `Matter/app/main_simple.py`
-- **Action**: Integrate network mode switching into commissioning process
-- **Flow**:
-  1. Start commissioning → Switch to Access Point mode
-  2. Device connects to Pi's network
-  3. Perform commissioning
-  4. Switch back to normal mode
-  5. Device continues on main WiFi
-
-**Step 2.2: Commissioning Mode Detection**
-- **File**: `Matter/app/custom_commissioning.py`
-- **Action**: Detect current network mode and adapt commissioning strategy
-- **Logic**:
-  - If in commissioning mode → Use WiFi commissioning
-  - If in normal mode → Use BLE commissioning
-  - Automatic fallback between methods
-
-#### **Phase 3: NOUS A8M Specific Implementation (Priority: HIGH)**
-
-**Step 3.1: Device-Specific Commissioning**
-- **Requirements**:
-  - Handle NOUS A8M's specific QR code format
-  - Implement correct PIN code handling (default: 20202021)
-  - Support device-specific commissioning parameters
-- **Implementation**:
-  ```python
-  async def commission_nous_a8m(self, qr_code: str, ssid: str, password: str):
-      # NOUS A8M specific commissioning logic
-      # 1. Parse NOUS A8M QR code format
-      # 2. Use correct PIN code
-      # 3. Handle device-specific clusters (OnOff, Electrical Measurement)
-      # 4. Return proper device ID format (nous_a8m_XXXX)
-  ```
-
-**Step 3.2: Device Control Implementation**
-- **File**: `Matter/app/custom_commissioning.py`
-- **Action**: Implement real device control using Matter clusters
-- **Clusters**:
-  - OnOff Cluster (ID: 6) - Power control
-  - Electrical Measurement Cluster - Power monitoring
-  - Basic Information Cluster - Device info
-
-#### **Phase 4: Error Handling and Recovery (Priority: MEDIUM)**
-
-**Step 4.1: Commissioning Error Recovery**
-- **Scenarios**:
-  - BLE discovery timeout
-  - WiFi connection failure
-  - Device authentication failure
-  - Network mode switching failure
-- **Implementation**:
-  ```python
-  async def commission_with_fallback(self, qr_code: str, ssid: str, password: str):
-      # Try BLE commissioning first
-      # Fall back to WiFi commissioning
-      # Fall back to manual commissioning
-      # Return detailed error information
-  ```
-
-**Step 4.2: Device State Management**
-- **File**: `Matter/app/main_simple.py`
-- **Action**: Proper device state tracking and recovery
-- **Features**:
-  - Device online/offline detection
-  - Automatic reconnection
-  - State synchronization with database
-
-#### **Phase 5: Testing and Validation (Priority: HIGH)**
-
-**Step 5.1: Commissioning Test Suite**
-- **Test Cases**:
-  - BLE commissioning with real NOUS A8M
-  - WiFi commissioning with real NOUS A8M
-  - Network mode switching during commissioning
-  - Error recovery scenarios
-  - Device control validation
-
-**Step 5.2: Integration Testing**
-- **End-to-End Tests**:
-  - UI → API → Commissioning → Device Control
-  - Database synchronization
-  - Real-time state updates
-  - Power metrics collection
-
-### **Implementation Order and Dependencies**
-
-1. **Week 1**: Implement real commissioning library (Steps 1.1-1.3)
-2. **Week 2**: Network mode integration (Steps 2.1-2.2)
-3. **Week 3**: NOUS A8M specific implementation (Steps 3.1-3.2)
-4. **Week 4**: Error handling and testing (Steps 4.1-4.2, 5.1-5.2)
-
-### **Success Criteria**
-
-- ✅ **Real NOUS A8M commissioning** works via BLE and WiFi
-- ✅ **Network mode switching** integrated into commissioning flow
-- ✅ **Device control** (on/off, power metrics) functional
-- ✅ **Error recovery** handles all failure scenarios
-- ✅ **Database synchronization** maintains device state
-- ✅ **End-to-end testing** validates complete workflow
-
-### **Files to Modify**
-
-1. **`Matter/app/custom_commissioning.py`** - Complete rewrite for real commissioning
-2. **`Matter/app/main_simple.py`** - Integrate network mode switching
-3. **`network-config.sh`** - Ensure proper network mode handling
-4. **`src/MSH.Web/Pages/DeviceCommissioning.razor`** - Update UI for new commissioning flow
-
-### **Key Technical Requirements**
-
-- **BLE Support**: Raspberry Pi must have working Bluetooth
-- **Network Mode Switching**: Must work reliably during commissioning
-- **Matter Libraries**: Proper integration with python-matter-server's underlying libraries
-- **Error Handling**: Robust fallback mechanisms
-- **Testing**: Real device testing with NOUS A8M
-
----
-*Commissioning Implementation Plan Added: 2024-01-21* 
-
-## 🔍 **Bluetooth Commissioning Diagnosis (2024-01-22)**
-
-### **Problem Statement**
-Commissioning fails with error: `"Bluetooth commissioning is not available"` for both BLE and WiFi methods.
-
-### **Diagnostic Results**
-
-#### **1. Hardware & System Status**
-- ✅ **Host Bluetooth**: UART-based `hci0` interface running and powered
-- ✅ **D-Bus Access**: Container can communicate with host Bluetooth via D-Bus
-- ❌ **HCI Socket**: Container cannot open HCI socket (`Address family not supported by protocol`)
-- ✅ **python-matter-server**: Version 7.0.1 with home-assistant-chip-core 2024.11.4
-
-#### **2. Software Component Analysis**
-- ✅ **Custom Commissioner**: Reports `"ble_support": true` and `"wifi_support": true`
-- ❌ **python-matter-server**: Reports `"bluetooth_enabled": False`
-- ❌ **Commissioning Commands**: `commission_with_code` and `set_wifi_credentials` fail
-- ❌ **Real Commissioning**: Custom class falls back to simulation, not real commissioning
-
-#### **3. Root Cause Identified**
-**The issue is architectural, not configuration:**
-
-1. **Container Limitations**: Docker containers cannot access UART-based Bluetooth HCI sockets on Raspberry Pi
-2. **Simulation vs Reality**: Custom `RealMatterCommissioner` class reports success but actually falls back to simulation
-3. **python-matter-server Requirements**: Needs direct hardware access for real Matter commissioning
-4. **D-Bus Insufficient**: While D-Bus communication works, python-matter-server requires HCI socket access
-
-### **Diagnosis Outcome**
-**Current containerized approach cannot perform real Matter commissioning** because:
-- UART-based Bluetooth on Pi doesn't create `/dev/hci0` device files
-- Container networking prevents direct HCI socket access
-- python-matter-server requires hardware-level Bluetooth access
-- Custom commissioning class is simulating success, not performing real commissioning
-
-### **Sustainable Solution Required**
-**Move python-matter-server to host** where it can access Bluetooth hardware directly, while keeping the C# application containerized.
-
----
-*Diagnosis completed: 2024-01-22* 

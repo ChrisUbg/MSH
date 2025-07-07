@@ -4,6 +4,11 @@ Whenever making a change that could significantly impact the architecture, stabi
 
 This ensures that all contributors are aware of potential risks and can make informed decisions before proceeding, regardless of their prior experience or knowledge.
 
+In addition to this BASIC_RULES.md file, read and understand following documents too: CursorAgent.md, TODO.md, NETWORDK-CONFIG.md, PROJECT_DEFINITION.md and PRODJECT_ROADMAP.md
+
+Enforce all rules in BASIC_RULES.md including the in this document above mentioned md files.
+
+
 ---
 
 - if something releated at a process flow, the refere at 

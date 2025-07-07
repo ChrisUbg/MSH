@@ -1,6 +1,6 @@
 # Smart Home Implementation TODO List
 
-Allways look at the @BASIC_RULES.md 
+Allways look at the @BASIC_RULES.md first.
 
 ## Phase 1: Core Infrastructure Setup
 ### Docker Environment

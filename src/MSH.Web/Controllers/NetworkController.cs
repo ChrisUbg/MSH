@@ -30,11 +30,23 @@ public class NetworkController : ControllerBase
     {
         try
         {
-            if (System.IO.File.Exists("/etc/msh/commissioning"))
+            // Check for the new commissioning mode flags
+            if (System.IO.File.Exists("/etc/msh/auto_commissioning"))
             {
-                return Ok("commissioning");
+                return Ok("auto-commissioning");
             }
-            return Ok("normal");
+            else if (System.IO.File.Exists("/etc/msh/client_commissioning"))
+            {
+                return Ok("commissioning-client");
+            }
+            else if (System.IO.File.Exists("/etc/msh/commissioning"))
+            {
+                return Ok("commissioning-ap");
+            }
+            else
+            {
+                return Ok("normal");
+            }
         }
         catch (Exception ex)
         {
@@ -46,9 +58,12 @@ public class NetworkController : ControllerBase
     [HttpPost("switch/{mode}")]
     public IActionResult SwitchMode(string mode)
     {
-        if (mode != "normal" && mode != "commissioning")
+        // Validate the new supported modes
+        var validModes = new[] { "normal", "auto-commissioning", "commissioning-client", "commissioning-ap", "commissioning", "complete" };
+        
+        if (!validModes.Contains(mode))
         {
-            return BadRequest("Invalid mode. Must be 'normal' or 'commissioning'");
+            return BadRequest($"Invalid mode. Must be one of: {string.Join(", ", validModes)}");
         }
 
         try
@@ -95,13 +110,15 @@ public class NetworkController : ControllerBase
     {
         try
         {
+            var currentMode = GetCurrentModeString();
             var result = new
             {
                 ScriptExists = System.IO.File.Exists(_networkConfigScript),
                 ScriptPath = _networkConfigScript,
-                CurrentMode = System.IO.File.Exists("/etc/msh/commissioning") ? "commissioning" : "normal",
+                CurrentMode = currentMode,
                 ScriptPermissions = GetScriptPermissions(),
-                NetworkInterfaces = GetNetworkInterfaces()
+                NetworkInterfaces = GetNetworkInterfaces(),
+                GuiAccessible = IsGuiAccessible(currentMode)
             };
 
             return Ok(result);
@@ -111,6 +128,100 @@ public class NetworkController : ControllerBase
             _logger.LogError(ex, "Error testing network configuration");
             return StatusCode(500, $"Error testing network configuration: {ex.Message}");
         }
+    }
+
+    [HttpGet("status")]
+    public IActionResult GetDetailedStatus()
+    {
+        try
+        {
+            var currentMode = GetCurrentModeString();
+            var status = new
+            {
+                CurrentMode = currentMode,
+                GuiAccessible = IsGuiAccessible(currentMode),
+                NetworkInfo = GetNetworkInfo(currentMode),
+                AvailableModes = new[]
+                {
+                    new { Mode = "normal", Description = "Normal client mode", GuiAccessible = true },
+                    new { Mode = "auto-commissioning", Description = "GUI-driven commissioning workflow", GuiAccessible = true },
+                    new { Mode = "commissioning-client", Description = "Safe client commissioning mode", GuiAccessible = true },
+                    new { Mode = "commissioning-ap", Description = "AP mode for device control", GuiAccessible = false },
+                    new { Mode = "complete", Description = "Complete commissioning and return to client", GuiAccessible = true }
+                }
+            };
+
+            return Ok(status);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting detailed status");
+            return StatusCode(500, $"Error getting detailed status: {ex.Message}");
+        }
+    }
+
+    private string GetCurrentModeString()
+    {
+        if (System.IO.File.Exists("/etc/msh/auto_commissioning"))
+        {
+            return "auto-commissioning";
+        }
+        else if (System.IO.File.Exists("/etc/msh/client_commissioning"))
+        {
+            return "commissioning-client";
+        }
+        else if (System.IO.File.Exists("/etc/msh/commissioning"))
+        {
+            return "commissioning-ap";
+        }
+        else
+        {
+            return "normal";
+        }
+    }
+
+    private bool IsGuiAccessible(string mode)
+    {
+        return mode switch
+        {
+            "normal" => true,
+            "auto-commissioning" => true,
+            "commissioning-client" => true,
+            "commissioning-ap" => false,
+            _ => true
+        };
+    }
+
+    private object GetNetworkInfo(string mode)
+    {
+        return mode switch
+        {
+            "normal" => new { 
+                Network = "Main network", 
+                IP = "192.168.0.104", 
+                Access = "Full access" 
+            },
+            "auto-commissioning" => new { 
+                Network = "Main network", 
+                IP = "192.168.0.104", 
+                Access = "GUI accessible, BLE commissioning active" 
+            },
+            "commissioning-client" => new { 
+                Network = "Main network", 
+                IP = "192.168.0.104", 
+                Access = "GUI accessible, safe for BLE commissioning" 
+            },
+            "commissioning-ap" => new { 
+                Network = "AP network", 
+                IP = "192.168.4.1", 
+                Access = "GUI temporarily unavailable" 
+            },
+            _ => new { 
+                Network = "Unknown", 
+                IP = "Unknown", 
+                Access = "Unknown" 
+            }
+        };
     }
 
     private string GetScriptPermissions()

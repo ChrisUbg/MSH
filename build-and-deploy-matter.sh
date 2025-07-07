@@ -5,6 +5,10 @@
 
 echo "=== MSH Matter Bridge Build & Deploy (Simplified) ==="
 
+# Copy network-config.sh to Matter directory for deployment
+echo "Copying network-config.sh to Matter directory..."
+cp network-config.sh Matter/
+
 # Build using simplified Dockerfile 
 echo "Building Matter Bridge image using simplified approach..."
 cd Matter
@@ -18,6 +22,8 @@ docker build --platform linux/amd64 \
 # Check if build was successful
 if [ $? -ne 0 ]; then
     echo "Build failed!"
+    # Clean up
+    rm -f network-config.sh
     exit 1
 fi
 
@@ -39,24 +45,21 @@ echo "Consider installing buildx or setting up cross-compilation."
 echo "Deploying to Pi using simplified Dockerfile..."
 echo "Transferring Matter files to Pi..."
 
-# Copy network-config.sh to Matter directory for deployment
-cp ../network-config.sh ./
-
 echo "Transferring Matter files to Pi..."
-scp -r . chregg@192.168.0.102:~/MSH/Matter/
-scp ../docker-compose.prod-msh.yml chregg@192.168.0.102:~/MSH/
+scp -r . chregg@192.168.0.104:~/MSH/Matter/
+scp ../docker-compose.prod-msh.yml chregg@192.168.0.104:~/MSH/
 
 # Clean up the copied file
 rm -f network-config.sh
 
 echo "Stopping existing containers..."
-ssh chregg@192.168.0.102 "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml down"
+ssh chregg@192.168.0.104 "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml down"
 
 echo "Building containers on Pi..."
 CACHE_BUSTER=$(date +%s)
-ssh chregg@192.168.0.102 "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml build --no-cache --build-arg CACHE_BUSTER=$CACHE_BUSTER"
+ssh chregg@192.168.0.104 "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml build --no-cache --build-arg CACHE_BUSTER=$CACHE_BUSTER"
 
 echo "Starting containers..."
-ssh chregg@192.168.0.102 "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml up -d"
+ssh chregg@192.168.0.104 "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml up -d"
 
 echo "=== Deployment complete! ===" 

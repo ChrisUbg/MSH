@@ -1,0 +1,57 @@
+esphome:
+  name: matter_controller
+  friendly_name: MSH Matter Controller
+
+# Platform specification for Raspberry Pi
+host:
+  platform: linux
+  board: linux
+
+# Enable logging
+logger:
+  level: DEBUG
+
+# Time
+time:
+  - platform: sntp
+    id: esptime
+
+# API for external control
+api:
+  port: 8084
+
+# Web server for dashboard
+web_server:
+  port: 8086
+
+# Matter protocol configuration
+matter:
+  # Enable Matter controller
+  controller:
+    # Enable Bluetooth commissioning
+    bluetooth:
+      enabled: true
+    # Enable WiFi commissioning  
+    wifi:
+      enabled: true
+    # Enable Thread commissioning
+    thread:
+      enabled: false
+
+# WiFi configuration
+wifi:
+  ssid: "08-TvM6xr-FQ"
+  password: "Kartoffelernte"
+  ap:
+    ssid: "MSH_Setup"
+    password: "KrenWury34#"
+
+# Matter device template
+matter_device:
+  - name: "NOUS A8M Socket"
+    type: "socket"
+    commissioning_code: "MT:IXA27ACN16GUBE2H910"
+    clusters:
+      - on_off
+      - power_measurement
+      - energy_measurement 

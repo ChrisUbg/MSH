@@ -1,0 +1,50 @@
+# Dockerfile for building ARM64 Python wheels for Matter SDK
+FROM arm64v8/ubuntu:22.04
+
+# Install system dependencies
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    python3 python3-pip python3-venv \
+    build-essential git ninja-build cmake \
+    pkg-config libssl-dev libdbus-1-dev libglib2.0-dev \
+    libavahi-client-dev libcairo2-dev unzip wget bash \
+    clang && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* && \
+    ln -s /usr/bin/python3 /usr/bin/python
+
+# Build gn from source for ARM64
+RUN git clone https://gn.googlesource.com/gn.git /tmp/gn && \
+    cd /tmp/gn && \
+    python3 build/gen.py && \
+    ninja -C out && \
+    cp out/gn /usr/local/bin/gn && \
+    chmod +x /usr/local/bin/gn && \
+    cd / && rm -rf /tmp/gn
+
+# Set up workdir
+WORKDIR /matter
+
+# Copy Matter SDK source
+COPY dev_connectedhomeip/ ./dev_connectedhomeip/
+
+# Set environment variables for Python
+ENV PYTHON_BIN=python3
+ENV PIP_BIN=pip3
+
+# Bootstrap the environment (use bash)
+RUN cd dev_connectedhomeip && \
+    bash ./scripts/bootstrap.sh
+
+# Build Python wheels (use bash)
+RUN cd dev_connectedhomeip && \
+    bash ./scripts/build_python.sh
+
+# Copy wheels to a known location for extraction
+RUN mkdir -p /out/python_wheels && \
+    cp dev_connectedhomeip/out/python_lib/controller/python/*.whl /out/python_wheels/ || true && \
+    cp dev_connectedhomeip/out/python_lib/*.whl /out/python_wheels/ || true
+
+# Output directory for wheels
+VOLUME ["/out/python_wheels"]
+
+CMD ["/bin/bash"] 

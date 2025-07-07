@@ -35,3 +35,7 @@ Dockerfile*
 **/*.tmp
 **/*.swp
 **/*~
+
+# Matter SDK (large build directory)
+connectedhomeip/
+**/connectedhomeip/

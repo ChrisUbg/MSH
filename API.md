@@ -4,7 +4,7 @@
 
 ### Get Current Network Mode
 - **Route:** `GET /api/network/mode`
-- **Description:** Returns the current network mode (`normal` or `commissioning`).
+- **Description:** Returns the current network mode.
 - **Response:**
   - `200 OK`: Returns a string with the current mode.
   - `500 Internal Server Error`: Error getting current network mode.
@@ -14,27 +14,64 @@
   ```
 - **Example Response:**
   ```json
-  "normal"
+  "auto-commissioning"
   ```
 
 ---
 
 ### Switch Network Mode
 - **Route:** `POST /api/network/switch/{mode}`
-- **Description:** Switches the network mode to `normal` or `commissioning`.
+- **Description:** Switches the network mode.
 - **Parameters:**
-  - `mode` (string, required): Must be `normal` or `commissioning`.
+  - `mode` (string, required): Must be one of: `normal`, `auto-commissioning`, `commissioning-client`, `commissioning-ap`, `commissioning`, `complete`.
 - **Response:**
   - `200 OK`: Successfully switched mode.
   - `400 Bad Request`: Invalid mode.
   - `500 Internal Server Error`: Error switching network mode.
 - **Example Request:**
   ```http
-  POST /api/network/switch/commissioning
+  POST /api/network/switch/auto-commissioning
   ```
 - **Example Response:**
   ```json
-  "Switched to commissioning mode"
+  "Switched to auto-commissioning mode"
+  ```
+
+---
+
+### Get Detailed Network Status
+- **Route:** `GET /api/network/status`
+- **Description:** Returns detailed network status including GUI accessibility and available modes.
+- **Response:**
+  - `200 OK`: Returns a JSON object with current mode, GUI accessibility, network info, and available modes.
+  - `500 Internal Server Error`: Error getting network status.
+- **Example Request:**
+  ```http
+  GET /api/network/status
+  ```
+- **Example Response:**
+  ```json
+  {
+    "currentMode": "auto-commissioning",
+    "guiAccessible": true,
+    "networkInfo": {
+      "network": "Main network",
+      "ip": "192.168.0.104",
+      "access": "GUI accessible, BLE commissioning active"
+    },
+    "availableModes": [
+      {
+        "mode": "normal",
+        "description": "Normal client mode",
+        "guiAccessible": true
+      },
+      {
+        "mode": "auto-commissioning",
+        "description": "GUI-driven commissioning workflow",
+        "guiAccessible": true
+      }
+    ]
+  }
   ```
 
 ---
@@ -43,7 +80,7 @@
 - **Route:** `GET /api/network/test`
 - **Description:** Returns diagnostics about the network configuration script and current mode.
 - **Response:**
-  - `200 OK`: Returns a JSON object with script existence, path, mode, permissions, and network interfaces.
+  - `200 OK`: Returns a JSON object with script existence, path, mode, permissions, network interfaces, and GUI accessibility.
   - `500 Internal Server Error`: Error testing network configuration.
 - **Example Request:**
   ```http
@@ -52,12 +89,13 @@
 - **Example Response:**
   ```json
   {
-    "ScriptExists": true,
-    "ScriptPath": "/app/network-config.sh",
-    "CurrentMode": "normal",
-    "ScriptPermissions": "UserRead, UserWrite, ...",
-    "NetworkInterfaces": {
-      "RawOutput": "...output of ip addr show..."
+    "scriptExists": true,
+    "scriptPath": "/app/network-config.sh",
+    "currentMode": "auto-commissioning",
+    "scriptPermissions": "UserRead, UserWrite, ...",
+    "guiAccessible": true,
+    "networkInterfaces": {
+      "rawOutput": "...output of ip addr show..."
     }
   }
   ```
@@ -76,7 +114,36 @@
 - **Example Response:**
   ```json
   "pong"
-  ``` 
+  ```
+
+---
+
+## Network Modes
+
+### Normal Mode
+- **Description:** Standard operation on main network
+- **GUI Access:** ✅ Available
+- **Use Case:** Regular operation
+
+### Auto Commissioning Mode
+- **Description:** GUI-driven commissioning workflow (Recommended)
+- **GUI Access:** ✅ Available
+- **Use Case:** Device commissioning with GUI access
+
+### Client Commissioning Mode
+- **Description:** Safe BLE commissioning (maintains connectivity)
+- **GUI Access:** ✅ Available
+- **Use Case:** Safe device commissioning
+
+### AP Commissioning Mode
+- **Description:** AP mode for device control
+- **GUI Access:** ❌ Temporarily unavailable
+- **Use Case:** Device control after commissioning
+
+### Complete Mode
+- **Description:** Complete commissioning and return to client mode
+- **GUI Access:** ✅ Available
+- **Use Case:** Finish commissioning workflow
 
 ---
 
@@ -274,7 +341,7 @@
   {
     "status": "connected",
     "matter_server": "python-matter-server",
-    "url": "ws://localhost:5580/ws",
+    "url": "ws://localhost:8084/ws",
     "nodes": 1,
     "test_time": 2409425.509012635
   }

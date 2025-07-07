@@ -21,6 +21,24 @@ is_commissioning_mode() {
     fi
 }
 
+# Function to check if we're in client commissioning mode
+is_client_commissioning_mode() {
+    if [ -f "/etc/msh/client_commissioning" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Function to check if we're in auto commissioning mode
+is_auto_commissioning_mode() {
+    if [ -f "/etc/msh/auto_commissioning" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 # Function to switch to normal mode
 switch_to_normal_mode() {
     echo "Switching to normal mode..."
@@ -45,15 +63,40 @@ EOF
     systemctl restart networking
     systemctl restart wpa_supplicant@wlan0
     
-    # Remove commissioning flag
+    # Remove all commissioning flags
     rm -f /etc/msh/commissioning
+    rm -f /etc/msh/client_commissioning
+    rm -f /etc/msh/auto_commissioning
     
     echo "Switched to normal mode"
 }
 
-# Function to switch to commissioning mode
-switch_to_commissioning_mode() {
-    echo "Switching to commissioning mode..."
+# Function to switch to client commissioning mode (SAFE - maintains connectivity)
+switch_to_client_commissioning_mode() {
+    echo "Switching to client commissioning mode (maintains connectivity)..."
+    
+    # Ensure we're in client mode (should already be)
+    if ! systemctl is-active --quiet wpa_supplicant@wlan0; then
+        echo "Starting wpa_supplicant for client mode..."
+        systemctl start wpa_supplicant@wlan0
+    fi
+    
+    # Create client commissioning flag
+    mkdir -p /etc/msh
+    touch /etc/msh/client_commissioning
+    
+    # Remove other commissioning flags
+    rm -f /etc/msh/commissioning
+    rm -f /etc/msh/auto_commissioning
+    
+    echo "Switched to client commissioning mode"
+    echo "Pi remains on main network (192.168.0.104) for safe BLE commissioning"
+    echo "GUI remains accessible at msh.local:8083"
+}
+
+# Function to switch to AP commissioning mode (temporary - for device control)
+switch_to_ap_commissioning_mode() {
+    echo "Switching to AP commissioning mode (temporary)..."
     
     # Stop client mode
     systemctl stop wpa_supplicant@wlan0
@@ -93,20 +136,148 @@ EOF
     mkdir -p /etc/msh
     touch /etc/msh/commissioning
     
+    # Remove other commissioning flags
+    rm -f /etc/msh/client_commissioning
+    rm -f /etc/msh/auto_commissioning
+    
     # Restart services
     systemctl restart networking
     systemctl restart hostapd
     systemctl restart dnsmasq
     
-    echo "Switched to commissioning mode"
+    echo "Switched to AP commissioning mode"
+    echo "Pi is now on AP network ($AP_IP) - devices can join for control"
+    echo "Note: GUI access temporarily unavailable during AP mode"
+}
+
+# Function to switch to auto commissioning mode (GUI-driven workflow)
+switch_to_auto_commissioning_mode() {
+    echo "Switching to auto commissioning mode (GUI-driven workflow)..."
+    
+    # NEVER stop wpa_supplicant - this would break connectivity!
+    # Only start it if it's not running
+    if ! systemctl is-active --quiet wpa_supplicant@wlan0; then
+        echo "Starting wpa_supplicant for client mode..."
+        sudo systemctl start wpa_supplicant@wlan0
+    else
+        echo "wpa_supplicant already running - maintaining connectivity"
+    fi
+    
+    # Ensure we're NOT in AP mode
+    if systemctl is-active --quiet hostapd; then
+        echo "Stopping hostapd to ensure client mode..."
+        sudo systemctl stop hostapd
+        sudo systemctl stop dnsmasq
+    fi
+    
+    # Create auto commissioning flag
+    mkdir -p /etc/msh
+    touch /etc/msh/auto_commissioning
+    
+    # Remove other commissioning flags
+    rm -f /etc/msh/commissioning
+    rm -f /etc/msh/client_commissioning
+    
+    echo "Switched to auto commissioning mode"
+    echo "✅ GUI remains accessible at msh.local:8083"
+    echo "✅ Pi stays connected to main network"
+    echo "✅ BLE commissioning will work in client mode"
+    echo "✅ After successful commissioning, mode will auto-switch back to client"
+}
+
+# Function to complete commissioning and return to client mode
+complete_commissioning() {
+    echo "Completing commissioning and returning to client mode..."
+    
+    # Switch back to client mode
+    switch_to_normal_mode
+    
+    echo "Commissioning completed successfully"
+    echo "Pi is back in normal client mode"
+    echo "GUI accessible at msh.local:8083"
+}
+
+# Function to get current mode status
+get_mode_status() {
+    echo "=== Network Mode Status ==="
+    if is_commissioning_mode; then
+        echo "Current Mode: AP Commissioning Mode"
+        echo "IP Address: $AP_IP"
+        echo "Network: $AP_NETWORK"
+        echo "SSID: $AP_SSID"
+        echo "GUI Access: Temporarily unavailable"
+    elif is_client_commissioning_mode; then
+        echo "Current Mode: Client Commissioning Mode"
+        echo "Status: Connected to main network (safe for BLE commissioning)"
+        echo "GUI Access: Available at msh.local:8083"
+        echo "Use this mode for device commissioning"
+    elif is_auto_commissioning_mode; then
+        echo "Current Mode: Auto Commissioning Mode"
+        echo "Status: Connected to main network (GUI-driven workflow)"
+        echo "GUI Access: Available at msh.local:8083"
+        echo "BLE commissioning active - will auto-return to client mode"
+    else
+        echo "Current Mode: Normal Client Mode"
+        echo "Status: Connected to main network"
+        echo "GUI Access: Available at msh.local:8083"
+    fi
+    
+    echo ""
+    echo "Available Commands:"
+    echo "  $0 normal              - Switch to normal client mode"
+    echo "  $0 auto-commissioning  - Start GUI-driven commissioning workflow"
+    echo "  $0 commissioning-client - Switch to client commissioning mode (SAFE)"
+    echo "  $0 commissioning-ap    - Switch to AP commissioning mode (temporary)"
+    echo "  $0 complete            - Complete commissioning and return to client mode"
+    echo "  $0 status              - Show current mode status"
 }
 
 # Main script
-if [ "$1" == "commissioning" ]; then
-    switch_to_commissioning_mode
-elif [ "$1" == "normal" ]; then
-    switch_to_normal_mode
-else
-    echo "Usage: $0 [commissioning|normal]"
-    exit 1
-fi 
+case "$1" in
+    "auto-commissioning")
+        switch_to_auto_commissioning_mode
+        ;;
+    "commissioning-client")
+        switch_to_client_commissioning_mode
+        ;;
+    "commissioning-ap")
+        switch_to_ap_commissioning_mode
+        ;;
+    "commissioning")
+        echo "Warning: Direct AP mode switching may cause connectivity loss!"
+        echo "Recommended: Use 'auto-commissioning' for GUI-driven workflow"
+        echo "Or use 'commissioning-client' for safe commissioning"
+        read -p "Continue with AP mode? (y/N): " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            switch_to_ap_commissioning_mode
+        else
+            echo "Cancelled. Use 'auto-commissioning' for GUI-driven workflow."
+        fi
+        ;;
+    "complete")
+        complete_commissioning
+        ;;
+    "normal")
+        switch_to_normal_mode
+        ;;
+    "status")
+        get_mode_status
+        ;;
+    *)
+        echo "Usage: $0 [normal|auto-commissioning|commissioning-client|commissioning-ap|commissioning|complete|status]"
+        echo ""
+        echo "Recommended GUI-Driven Workflow:"
+        echo "1. $0 auto-commissioning  # Start commissioning with GUI access"
+        echo "2. Use web GUI (msh.local:8083) for commissioning"
+        echo "3. BLE commissioning works in client mode"
+        echo "4. After success: $0 complete  # Auto-return to client mode"
+        echo ""
+        echo "Alternative Manual Workflow:"
+        echo "1. $0 commissioning-client  # Safe BLE commissioning"
+        echo "2. Commission devices via BLE"
+        echo "3. $0 commissioning-ap      # Switch to AP mode for device control"
+        echo "4. $0 normal               # Return to normal mode when done"
+        exit 1
+        ;;
+esac 

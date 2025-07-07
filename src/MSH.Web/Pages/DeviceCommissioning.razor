@@ -28,7 +28,7 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Commission New Device</h5>
-                    <form @onsubmit="HandleCommissioning">
+                    <form>
                         <div class="mb-3">
                             <label for="deviceName" class="form-label">Device Name</label>
                             <input type="text" class="form-control" id="deviceName" @bind="deviceName" required>
@@ -85,7 +85,10 @@
                                 <li>Follow any on-screen instructions</li>
                             </ol>
                         </div>
-                        <button type="submit" class="btn btn-primary" disabled="@isCommissioning">
+                        <button type="button" class="btn btn-secondary me-2" @onclick="TestButtonClick">
+                            Test Button
+                        </button>
+                        <button type="button" class="btn btn-primary" @onclick="HandleCommissioning" disabled="@isCommissioning">
                             @if (isCommissioning)
                             {
                                 <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -192,21 +195,32 @@
         }
     }
 
+    private async Task TestButtonClick()
+    {
+        errorMessage = "Test button clicked at " + DateTime.Now.ToString();
+        StateHasChanged();
+    }
+
     private async Task HandleCommissioning()
     {
         try
         {
+            Console.WriteLine("HandleCommissioning called"); // Debug
             isCommissioning = true;
             errorMessage = "";
             successMessage = "";
+            StateHasChanged(); // Force UI update
 
             // Get selected device type
             var selectedDeviceType = deviceTypes.FirstOrDefault(dt => dt.Id == selectedDeviceTypeId);
             if (selectedDeviceType == null)
             {
                 errorMessage = "Please select a device type.";
+                StateHasChanged(); // Force UI update
                 return;
             }
+
+            Console.WriteLine($"Selected device type: {selectedDeviceType.Name}"); // Debug
 
             // Commission device through Matter bridge
             var request = new
@@ -219,8 +233,12 @@
                 pin = string.IsNullOrEmpty(pin) ? "20202021" : pin
             };
 
+            Console.WriteLine($"Sending request to MatterBridge: {System.Text.Json.JsonSerializer.Serialize(request)}"); // Debug
+
             var client = HttpClientFactory.CreateClient("MatterBridge");
             var response = await client.PostAsJsonAsync("/commission", request);
+            
+            Console.WriteLine($"Response status: {response.StatusCode}"); // Debug
             
             if (response.IsSuccessStatusCode)
             {
@@ -250,15 +268,18 @@
             {
                 var error = await response.Content.ReadAsStringAsync();
                 errorMessage = $"Commissioning failed: {error}";
+                Console.WriteLine($"Error response: {error}"); // Debug
             }
         }
         catch (Exception ex)
         {
             errorMessage = $"An error occurred: {ex.Message}";
+            Console.WriteLine($"Exception in HandleCommissioning: {ex}"); // Debug
         }
         finally
         {
             isCommissioning = false;
+            StateHasChanged(); // Force UI update
         }
     }
 

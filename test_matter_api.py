@@ -7,7 +7,7 @@ async def test_matter_server():
     """Test python-matter-server WebSocket API"""
     try:
         async with aiohttp.ClientSession() as session:
-            async with session.ws_connect("ws://localhost:5580/ws") as ws:
+            async with session.ws_connect("ws://localhost:8084/ws") as ws:
                 print("Connected to python-matter-server WebSocket")
                 
                 # Test get_nodes command

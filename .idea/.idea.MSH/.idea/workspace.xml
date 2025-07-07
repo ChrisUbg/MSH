@@ -11,78 +11,31 @@
   <component name="ChangeListManager">
     <list default="true" id="c31a682e-fd01-496c-bcbe-be73f320a679" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MSH/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MSH/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/BASIC_RULES.md" beforeDir="false" afterPath="$PROJECT_DIR$/BASIC_RULES.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/API.md" beforeDir="false" afterPath="$PROJECT_DIR$/API.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CursorAgent.md" beforeDir="false" afterPath="$PROJECT_DIR$/CursorAgent.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Matter/app/main_simple.py" beforeDir="false" afterPath="$PROJECT_DIR$/Matter/app/main_simple.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TODO.md" beforeDir="false" afterPath="$PROJECT_DIR$/TODO.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.dev-msh.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.dev-msh.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.prod-msh.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.prod-msh.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Core/bin/Debug/net8.0/MSH.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Core/bin/Debug/net8.0/MSH.Core.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Core/bin/Debug/net8.0/MSH.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Core/bin/Debug/net8.0/MSH.Core.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Core/obj/Debug/net8.0/MSH.Core.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Core/obj/Debug/net8.0/MSH.Core.AssemblyInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Core/obj/Debug/net8.0/MSH.Core.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Core/obj/Debug/net8.0/MSH.Core.AssemblyInfoInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Core/obj/Debug/net8.0/MSH.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Core/obj/Debug/net8.0/MSH.Core.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Core/obj/Debug/net8.0/MSH.Core.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Core/obj/Debug/net8.0/MSH.Core.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Core/obj/Debug/net8.0/MSH.Core.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Core/obj/Debug/net8.0/MSH.Core.sourcelink.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Core/obj/Debug/net8.0/ref/MSH.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Core/obj/Debug/net8.0/ref/MSH.Core.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Core/obj/Debug/net8.0/refint/MSH.Core.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Core/obj/Debug/net8.0/refint/MSH.Core.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/Models/Device.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/Models/Device.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/Services/DeviceSimulatorService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/Services/DeviceSimulatorService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/Services/IDeviceSimulatorService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/Services/IDeviceSimulatorService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/bin/Debug/net8.0/MSH.Infrastructure.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/bin/Debug/net8.0/MSH.Infrastructure.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/bin/Debug/net8.0/MSH.Infrastructure.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/bin/Debug/net8.0/MSH.Infrastructure.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.AssemblyInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.AssemblyInfoInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.assets.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.csproj.AssemblyReference.cache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.csproj.CoreCompileInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/MSH.Infrastructure.sourcelink.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/ref/MSH.Infrastructure.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/ref/MSH.Infrastructure.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/refint/MSH.Infrastructure.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/Debug/net8.0/refint/MSH.Infrastructure.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Infrastructure/obj/rider.project.model.nuget.info" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Matter/bin/Debug/net8.0/MSH.Matter.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Matter/bin/Debug/net8.0/MSH.Matter.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Matter/bin/Debug/net8.0/MSH.Matter.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Matter/bin/Debug/net8.0/MSH.Matter.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Matter/obj/Debug/net8.0/MSH.Matter.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Matter/obj/Debug/net8.0/MSH.Matter.AssemblyInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Matter/obj/Debug/net8.0/MSH.Matter.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Matter/obj/Debug/net8.0/MSH.Matter.AssemblyInfoInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Matter/obj/Debug/net8.0/MSH.Matter.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Matter/obj/Debug/net8.0/MSH.Matter.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Matter/obj/Debug/net8.0/MSH.Matter.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Matter/obj/Debug/net8.0/MSH.Matter.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Matter/obj/Debug/net8.0/MSH.Matter.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Matter/obj/Debug/net8.0/MSH.Matter.sourcelink.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Matter/obj/Debug/net8.0/ref/MSH.Matter.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Matter/obj/Debug/net8.0/ref/MSH.Matter.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Matter/obj/Debug/net8.0/refint/MSH.Matter.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Matter/obj/Debug/net8.0/refint/MSH.Matter.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Web/Components/Pages/DeviceManagement.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/Components/Pages/DeviceManagement.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Web/Data/DesignTimeDbContextFactory.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/Data/DesignTimeDbContextFactory.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Web/Controllers/DevicesController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/Controllers/DevicesController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Web/Pages/DeviceCommissioning.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/Pages/DeviceCommissioning.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Web/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Web/Shared/NavMenu.razor" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/Shared/NavMenu.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Web/appsettings.Development.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/appsettings.Development.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MSH.Web/appsettings.Production.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/appsettings.Production.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Web/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/appsettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Web/bin/Debug/net8.0/MSH.Infrastructure.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/bin/Debug/net8.0/MSH.Infrastructure.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Web/bin/Debug/net8.0/MSH.Infrastructure.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/bin/Debug/net8.0/MSH.Infrastructure.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Web/bin/Debug/net8.0/MSH.Web.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/bin/Debug/net8.0/MSH.Web.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Web/bin/Debug/net8.0/MSH.Web.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/bin/Debug/net8.0/MSH.Web.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Web/bin/Debug/net8.0/appsettings.Development.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/bin/Debug/net8.0/appsettings.Development.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Web/bin/Debug/net8.0/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/bin/Debug/net8.0/appsettings.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.AssemblyInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.AssemblyInfoInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.assets.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.csproj.AssemblyReference.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.csproj.CoreCompileInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/MSH.Web.sourcelink.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/ref/MSH.Web.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/ref/MSH.Web.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/refint/MSH.Web.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/Debug/net8.0/refint/MSH.Web.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MSH.Web/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/src/MSH.Web/obj/rider.project.model.nuget.info" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/bin/Debug/net8.0/MSH.Tests.dll" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/bin/Debug/net8.0/MSH.Tests.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/bin/Debug/net8.0/MSH.Tests.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/bin/Debug/net8.0/MSH.Tests.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_matter_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_matter_api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.AssemblyInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.AssemblyInfoInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.dll" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.sourcelink.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/ref/MSH.Tests.dll" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/ref/MSH.Tests.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/refint/MSH.Tests.dll" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/refint/MSH.Tests.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.assets.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/Debug/net8.0/MSH.Tests.csproj.AssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/MSH.Tests.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/MSH.Tests.csproj.nuget.dgspec.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/project.assets.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/MSH.Tests/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MSH.Tests/obj/project.nuget.cache" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -112,20 +65,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Docker.MSH.Web/Dockerfile.executor": "Debug",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Docker.MSH.Web/Dockerfile.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Docker.MSH.Web/Dockerfile">
     <configuration name="MSH.Web: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/src/MSH.Web/MSH.Web.csproj" />
@@ -185,6 +138,7 @@
       <updated>1749286126911</updated>
       <workItem from="1749286129925" duration="17000" />
       <workItem from="1749313155605" duration="1927000" />
+      <workItem from="1750689828637" duration="948000" />
     </task>
     <servers />
   </component>

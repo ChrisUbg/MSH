@@ -50,7 +50,7 @@ class RealMatterCommissioner:
             except Exception as e:
                 logger.error(f"Failed to connect to matter server: {e}")
                 # Fall back to basic initialization
-                self.initialized = True
+            self.initialized = True
                 logger.info("Falling back to basic commissioning mode")
             
         except Exception as e:
@@ -368,16 +368,16 @@ class RealMatterCommissioner:
             }
     
     async def _ensure_commissioning_mode(self):
-        """Ensure Pi is in commissioning (Access Point) mode"""
+        """Ensure Pi is in auto-commissioning mode for GUI-driven workflow"""
         try:
-            # Check if already in commissioning mode
+            # Check if already in auto-commissioning mode
             result = subprocess.run(
-                ["test", "-f", "/etc/msh/commissioning"],
+                ["test", "-f", "/etc/msh/auto_commissioning"],
                 capture_output=True
             )
             
             if result.returncode != 0:
-                logger.info("Switching to commissioning mode...")
+                logger.info("Switching to auto-commissioning mode...")
                 
                 # Try different possible paths for network-config.sh
                 network_script_paths = [
@@ -391,7 +391,8 @@ class RealMatterCommissioner:
                 for script_path in network_script_paths:
                     if subprocess.run(["test", "-f", script_path], capture_output=True).returncode == 0:
                         logger.info(f"Found network config script at: {script_path}")
-                        subprocess.run([script_path, "commissioning"], check=True)
+                        # Use auto-commissioning mode for GUI-driven workflow
+                        subprocess.run([script_path, "auto-commissioning"], check=True)
                         script_found = True
                         break
                 
@@ -401,10 +402,10 @@ class RealMatterCommissioner:
                 
                 await asyncio.sleep(3)  # Wait for network to stabilize
             else:
-                logger.info("Already in commissioning mode")
+                logger.info("Already in auto-commissioning mode")
                 
         except Exception as e:
-            logger.error(f"Failed to switch to commissioning mode: {e}")
+            logger.error(f"Failed to switch to auto-commissioning mode: {e}")
             # Don't raise - continue without network mode switching
             logger.info("Continuing without network mode switching")
     
@@ -521,19 +522,19 @@ class RealMatterCommissioner:
             logger.warning("Using fallback command simulation")
             await asyncio.sleep(1)  # Simulate command execution time
             
-            return {
-                "success": True,
-                "command": command,
-                "node_id": node_id,
+                return {
+                    "success": True, 
+                    "command": command,
+                    "node_id": node_id,
                 "cluster_id": cluster_id,
                 "device_id": device_id,
                 "method": "simulation"
-            }
+                }
             
         except Exception as e:
             logger.error(f"Device command failed: {e}")
             return {"success": False, "error": str(e)}
-    
+
     async def get_device_state(self, node_id: int) -> Dict[str, Any]:
         """Get current state of a commissioned device using python-matter-server WebSocket"""
         try:

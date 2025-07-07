@@ -8,47 +8,147 @@
 <div class="container mt-4">
     <h1>Network Settings</h1>
     
-    <div class="card">
+    <div class="card mb-4">
         <div class="card-body">
-            <h5 class="card-title">Network Mode</h5>
-            <p class="card-text">Current Mode: <strong>@currentMode</strong></p>
-            
-            @if (!string.IsNullOrEmpty(errorMessage))
-            {
-                <div class="alert alert-danger" role="alert">
-                    @errorMessage
+            <h5 class="card-title">Current Network Mode</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="card-text">
+                        <strong>Mode:</strong> 
+                        <span class="badge @GetModeBadgeClass(currentMode)">@currentMode</span>
+                    </p>
+                    @if (networkStatus != null)
+                    {
+                        <p class="card-text">
+                            <strong>GUI Access:</strong> 
+                            <span class="badge @(networkStatus.GuiAccessible ? "bg-success" : "bg-warning")">
+                                @(networkStatus.GuiAccessible ? "Available" : "Temporarily Unavailable")
+                            </span>
+                        </p>
+                        <p class="card-text">
+                            <strong>Network:</strong> @networkStatus.NetworkInfo?.Network
+                        </p>
+                        <p class="card-text">
+                            <strong>IP Address:</strong> @networkStatus.NetworkInfo?.IP
+                        </p>
+                    }
                 </div>
-            }
-            
-            @if (!string.IsNullOrEmpty(successMessage))
-            {
-                <div class="alert alert-success" role="alert">
-                    @successMessage
+                <div class="col-md-6">
+                    <button class="btn btn-secondary btn-sm" @onclick="RefreshStatus" disabled="@isLoading">
+                        <i class="oi oi-reload"></i> Refresh Status
+                    </button>
                 </div>
-            }
+            </div>
+        </div>
+    </div>
+    
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @errorMessage
+        </div>
+    }
+    
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success" role="alert">
+            @successMessage
+        </div>
+    }
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Network Mode Selection</h5>
+            <p class="card-text">Choose the appropriate network mode for your current task:</p>
             
-            <div class="d-flex gap-2">
-                <NetworkModeButton Mode="normal" CurrentMode="@currentMode" OnModeSelected="HandleModeSelected" Disabled="@isLoading" />
-                <NetworkModeButton Mode="commissioning" CurrentMode="@currentMode" OnModeSelected="HandleModeSelected" Disabled="@isLoading" />
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="oi oi-monitor"></i> Normal Mode
+                            </h6>
+                            <p class="card-text small">Standard operation on main network</p>
+                            <button class="btn btn-primary btn-sm" 
+                                    @onclick="@(() => HandleModeSelected("normal"))" 
+                                    disabled="@isLoading || currentMode == "normal"">
+                                Switch to Normal
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="oi oi-wifi"></i> Auto Commissioning
+                            </h6>
+                            <p class="card-text small">GUI-driven commissioning workflow (Recommended)</p>
+                            <button class="btn btn-success btn-sm" 
+                                    @onclick="@(() => HandleModeSelected("auto-commissioning"))" 
+                                    disabled="@isLoading || currentMode == "auto-commissioning"">
+                                Start Auto Commissioning
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="oi oi-bluetooth"></i> Client Commissioning
+                            </h6>
+                            <p class="card-text small">Safe BLE commissioning (maintains connectivity)</p>
+                            <button class="btn btn-info btn-sm" 
+                                    @onclick="@(() => HandleModeSelected("commissioning-client"))" 
+                                    disabled="@isLoading || currentMode == "commissioning-client"">
+                                Switch to Client Commissioning
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="oi oi-signal"></i> AP Commissioning
+                            </h6>
+                            <p class="card-text small">AP mode for device control (GUI unavailable)</p>
+                            <button class="btn btn-warning btn-sm" 
+                                    @onclick="@(() => HandleModeSelected("commissioning-ap"))" 
+                                    disabled="@isLoading || currentMode == "commissioning-ap"">
+                                Switch to AP Mode
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
             
-            <!-- Direct test buttons for debugging -->
-            <div class="mt-3">
-                <h6>Debug Test Buttons:</h6>
-                <button class="btn btn-warning me-2" @onclick="@(() => TestDirectCall("commissioning"))" disabled="@isLoading">
-                    Direct Test: Commissioning
-                </button>
-                <button class="btn btn-warning" @onclick="@(() => TestDirectCall("normal"))" disabled="@isLoading">
-                    Direct Test: Normal
-                </button>
-            </div>
-            
-            @if (isLoading)
+            @if (currentMode == "auto-commissioning" || currentMode == "commissioning-client")
             {
-                <div class="mt-2 text-info">Loading...</div>
+                <div class="mt-3">
+                    <div class="alert alert-info" role="alert">
+                        <h6><i class="oi oi-check"></i> Commissioning Active</h6>
+                        <p class="mb-2">You can now commission devices via BLE. The GUI remains accessible.</p>
+                        <button class="btn btn-success btn-sm" 
+                                @onclick="@(() => HandleModeSelected("complete"))" 
+                                disabled="@isLoading">
+                            Complete Commissioning
+                        </button>
+                    </div>
+                </div>
             }
         </div>
     </div>
+    
+    @if (isLoading)
+    {
+        <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Switching network mode...</p>
+        </div>
+    }
 </div>
 
 @code {
@@ -57,50 +157,53 @@
     private string successMessage = string.Empty;
     private bool isLoading = false;
     private HttpClient? _httpClient;
+    private NetworkStatus? networkStatus;
 
     protected override void OnInitialized()
     {
-        // Create HttpClient without using the "API" configuration
         _httpClient = HttpClientFactory.CreateClient();
     }
 
     protected override async Task OnInitializedAsync()
     {
-        // Set the base URL dynamically based on current request
         if (_httpClient != null)
         {
             var currentUrl = await JSRuntime.InvokeAsync<string>("eval", "window.location.origin");
             _httpClient.BaseAddress = new Uri(currentUrl);
             _httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
         }
-        await GetCurrentModeAsync();
+        await RefreshStatus();
     }
 
-    private async Task GetCurrentModeAsync()
+    private async Task RefreshStatus()
     {
         isLoading = true;
         try
         {
             errorMessage = string.Empty;
             successMessage = string.Empty;
+            
             if (_httpClient != null)
             {
-                var response = await _httpClient.GetAsync("api/network/mode");
-                if (response.IsSuccessStatusCode)
+                // Get current mode
+                var modeResponse = await _httpClient.GetAsync("api/network/mode");
+                if (modeResponse.IsSuccessStatusCode)
                 {
-                    currentMode = await response.Content.ReadAsStringAsync();
+                    currentMode = await modeResponse.Content.ReadAsStringAsync();
                 }
-                else
+                
+                // Get detailed status
+                var statusResponse = await _httpClient.GetAsync("api/network/status");
+                if (statusResponse.IsSuccessStatusCode)
                 {
-                    var error = await response.Content.ReadAsStringAsync();
-                    errorMessage = $"Failed to get current network mode: {error}";
+                    networkStatus = await statusResponse.Content.ReadFromJsonAsync<NetworkStatus>();
                 }
             }
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Error getting current network mode");
-            errorMessage = "Failed to get current network mode. Please try again.";
+            Logger.LogError(ex, "Error refreshing network status");
+            errorMessage = "Failed to refresh network status. Please try again.";
         }
         finally
         {
@@ -119,31 +222,24 @@
             
             if (_httpClient != null)
             {
-                Logger.LogInformation($"Making POST request to api/network/switch/{mode}");
                 var response = await _httpClient.PostAsync($"api/network/switch/{mode}", null);
-                
-                Logger.LogInformation($"Response status: {response.StatusCode}");
-                Logger.LogInformation($"Response success: {response.IsSuccessStatusCode}");
                 
                 if (response.IsSuccessStatusCode)
                 {
                     var responseContent = await response.Content.ReadAsStringAsync();
-                    Logger.LogInformation($"Response content: {responseContent}");
                     currentMode = mode;
                     successMessage = $"Successfully switched to {mode} mode";
                     Logger.LogInformation($"Successfully switched to {mode} mode");
+                    
+                    // Refresh status after mode change
+                    await RefreshStatus();
                 }
                 else
                 {
                     var error = await response.Content.ReadAsStringAsync();
                     Logger.LogError($"API call failed with status {response.StatusCode}: {error}");
-                    errorMessage = $"Failed to switch to {mode} mode: \"{error}\"";
+                    errorMessage = $"Failed to switch to {mode} mode: {error}";
                 }
-            }
-            else
-            {
-                Logger.LogError("HttpClient is null");
-                errorMessage = "HttpClient is not initialized";
             }
         }
         catch (Exception ex)
@@ -158,53 +254,37 @@
         }
     }
 
-    private async Task TestDirectCall(string mode)
+    private string GetModeBadgeClass(string mode)
     {
-        isLoading = true;
-        try
+        return mode switch
         {
-            errorMessage = string.Empty;
-            successMessage = string.Empty;
-            Logger.LogInformation($"Attempting to switch to {mode} mode directly");
-            
-            if (_httpClient != null)
-            {
-                Logger.LogInformation($"Making POST request to api/network/switch/{mode}");
-                var response = await _httpClient.PostAsync($"api/network/switch/{mode}", null);
-                
-                Logger.LogInformation($"Response status: {response.StatusCode}");
-                Logger.LogInformation($"Response success: {response.IsSuccessStatusCode}");
-                
-                if (response.IsSuccessStatusCode)
-                {
-                    var responseContent = await response.Content.ReadAsStringAsync();
-                    Logger.LogInformation($"Response content: {responseContent}");
-                    currentMode = mode;
-                    successMessage = $"Successfully switched to {mode} mode directly";
-                    Logger.LogInformation($"Successfully switched to {mode} mode directly");
-                }
-                else
-                {
-                    var error = await response.Content.ReadAsStringAsync();
-                    Logger.LogError($"API call failed with status {response.StatusCode}: {error}");
-                    errorMessage = $"Failed to switch to {mode} mode directly: \"{error}\"";
-                }
-            }
-            else
-            {
-                Logger.LogError("HttpClient is null");
-                errorMessage = "HttpClient is not initialized";
-            }
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, $"Exception occurred while switching to {mode} mode directly");
-            errorMessage = $"Failed to switch to {mode} mode directly. Please try again. Error: {ex.Message}";
-        }
-        finally
-        {
-            isLoading = false;
-            StateHasChanged();
-        }
+            "normal" => "bg-primary",
+            "auto-commissioning" => "bg-success",
+            "commissioning-client" => "bg-info",
+            "commissioning-ap" => "bg-warning",
+            _ => "bg-secondary"
+        };
+    }
+
+    private class NetworkStatus
+    {
+        public string CurrentMode { get; set; } = string.Empty;
+        public bool GuiAccessible { get; set; }
+        public NetworkInfo? NetworkInfo { get; set; }
+        public AvailableMode[]? AvailableModes { get; set; }
+    }
+
+    private class NetworkInfo
+    {
+        public string Network { get; set; } = string.Empty;
+        public string IP { get; set; } = string.Empty;
+        public string Access { get; set; } = string.Empty;
+    }
+
+    private class AvailableMode
+    {
+        public string Mode { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public bool GuiAccessible { get; set; }
     }
 } 
