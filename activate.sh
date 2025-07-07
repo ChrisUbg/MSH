@@ -1,3 +1,4 @@
+source config/environment.sh
 
 # convert to unix line endings
 #  cat -v scripts/activate.sh
@@ -31,8 +32,8 @@ _install_additional_pip_requirements() {
             # Allow none as an alias of nothing extra installed (like -p none)
             if [ "$platform" != "none" -a -e "$_CHIP_ROOT/scripts/setup/requirements.$platform.txt" ]; then
                 echo "Installing pip requirements for $platform..."
-                pip install -q \
-                    -r "$_CHIP_ROOT/scripts/setup/requirements.$platform.txt" \
+                pip install -q /
+                    -r "$_CHIP_ROOT/scripts/setup/requirements.$platform.txt" /
                     -c "$_CHIP_ROOT/scripts/setup/constraints.txt"
             fi
         done
@@ -129,10 +130,10 @@ _bootstrap_or_activate() {
     local _PYTHON_CIPD_JSON="$_PIGWEED_CIPD_JSON_ROOT/python311.json"
 
     local _GENERATED_PIGWEED_CIPD_JSON="$_PW_ACTUAL_ENVIRONMENT_ROOT/pigweed.json"
-    $_CHIP_ROOT/scripts/setup/gen_pigweed_cipd_json.py \
-        -i $_PIGWEED_CIPD_JSON                         \
-        -o $_GENERATED_PIGWEED_CIPD_JSON               \
-        -e darwin:$_PYTHON_CIPD_JSON                   \
+    $_CHIP_ROOT/scripts/setup/gen_pigweed_cipd_json.py /
+        -i $_PIGWEED_CIPD_JSON                         /
+        -o $_GENERATED_PIGWEED_CIPD_JSON               /
+        -e darwin:$_PYTHON_CIPD_JSON                   /
         -e windows:$_PYTHON_CIPD_JSON
 
     if test -n "$GITHUB_ACTION"; then
@@ -146,10 +147,10 @@ EOF
     if [ "$_BOOTSTRAP_NAME" = "bootstrap.sh" ] ||
         [ ! -f "$_SETUP_SH" ] ||
         [ ! -s "$_SETUP_SH" ]; then
-        pw_bootstrap --shell-file "$_SETUP_SH" \
-            --install-dir "$_PW_ACTUAL_ENVIRONMENT_ROOT" \
-            --config-file "$_CHIP_ROOT/$_CONFIG_FILE" \
-            --virtualenv-gn-out-dir "$_PW_ACTUAL_ENVIRONMENT_ROOT/gn_out" \
+        pw_bootstrap --shell-file "$_SETUP_SH" /
+            --install-dir "$_PW_ACTUAL_ENVIRONMENT_ROOT" /
+            --config-file "$_CHIP_ROOT/$_CONFIG_FILE" /
+            --virtualenv-gn-out-dir "$_PW_ACTUAL_ENVIRONMENT_ROOT/gn_out" /
             --additional-cipd-file "$_GENERATED_PIGWEED_CIPD_JSON"
         pw_finalize bootstrap "$_SETUP_SH"
         _ACTION_TAKEN="bootstrap"

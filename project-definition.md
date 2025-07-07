@@ -102,7 +102,7 @@ This project aims to develop and implement a smart home software system based on
 - Platform: Raspberry Pi
 
 ## Development Rules
-- All development rules defined in BASIC_RULES.md and /home/chris/RiderProjects/DevelopmentRules supersede any rules stated in this document
+- All development rules defined in basic-rules.md and /home/chris/RiderProjects/DevelopmentRules supersede any rules stated in this document
 - Project should be designed to be protocol and database agnostic
 - Frontend should be framework agnostic
-- Implementation should follow the process flow documentation referenced in BASIC_RULES.md 
+- Implementation should follow the process flow documentation referenced in basic-rules.md 

@@ -1,4 +1,5 @@
 #!/bin/bash
+source config/environment.sh
 
 # SAFE Network Configuration Script for MSH
 # This script NEVER changes network mode - only sets commissioning flags
@@ -50,7 +51,7 @@ switch_to_normal_mode() {
     rm -f /etc/msh/auto_commissioning
     
     echo "✅ Switched to normal mode"
-    echo "✅ Pi remains on main network (192.168.0.104)"
+    echo "✅ Pi remains on main network (${PI_IP})"
     echo "✅ GUI accessible at msh.local:8083"
 }
 
@@ -67,7 +68,7 @@ switch_to_client_commissioning_mode() {
     rm -f /etc/msh/auto_commissioning
     
     echo "✅ Switched to client commissioning mode"
-    echo "✅ Pi remains on main network (192.168.0.104)"
+    echo "✅ Pi remains on main network (${PI_IP})"
     echo "✅ GUI accessible at msh.local:8083"
     echo "✅ Safe for BLE commissioning"
 }
@@ -85,7 +86,7 @@ switch_to_auto_commissioning_mode() {
     rm -f /etc/msh/client_commissioning
     
     echo "✅ Switched to auto commissioning mode"
-    echo "✅ Pi remains on main network (192.168.0.104)"
+    echo "✅ Pi remains on main network (${PI_IP})"
     echo "✅ GUI accessible at msh.local:8083"
     echo "✅ BLE commissioning will work in client mode"
     echo "✅ After successful commissioning, mode will auto-switch back to client"
@@ -108,22 +109,22 @@ get_mode_status() {
     echo "=== SAFE Network Mode Status ==="
     if is_commissioning_mode; then
         echo "Current Mode: AP Commissioning Mode (FLAG ONLY)"
-        echo "Network: Main network (192.168.0.104) - NO CHANGE"
+        echo "Network: Main network (${PI_IP}) - NO CHANGE"
         echo "GUI Access: ✅ Available at msh.local:8083"
         echo "Note: This is a flag-only mode - no network switching"
     elif is_client_commissioning_mode; then
         echo "Current Mode: Client Commissioning Mode (FLAG ONLY)"
-        echo "Network: Main network (192.168.0.104) - NO CHANGE"
+        echo "Network: Main network (${PI_IP}) - NO CHANGE"
         echo "GUI Access: ✅ Available at msh.local:8083"
         echo "Status: Safe for BLE commissioning"
     elif is_auto_commissioning_mode; then
         echo "Current Mode: Auto Commissioning Mode (FLAG ONLY)"
-        echo "Network: Main network (192.168.0.104) - NO CHANGE"
+        echo "Network: Main network (${PI_IP}) - NO CHANGE"
         echo "GUI Access: ✅ Available at msh.local:8083"
         echo "Status: GUI-driven commissioning workflow"
     else
         echo "Current Mode: Normal Client Mode"
-        echo "Network: Main network (192.168.0.104)"
+        echo "Network: Main network (${PI_IP})"
         echo "GUI Access: ✅ Available at msh.local:8083"
     fi
     

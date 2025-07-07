@@ -12,7 +12,7 @@ This directory uses a centralized configuration approach for Pi-related settings
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `PI_IP` | Pi's IP address | `192.168.0.104` |
+| `PI_IP` | Pi's IP address | `${PI_IP}` |
 | `PI_USER` | SSH username | `pi` |
 | `PI_SSH_KEY` | SSH key path | `~/.ssh/id_rsa` |
 | `PI_HOME` | Pi's home directory | `/home/pi` |

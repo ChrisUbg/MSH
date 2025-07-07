@@ -1,4 +1,5 @@
 #!/bin/bash
+source config/environment.sh
 
 # Transfer Matter SDK tools to Raspberry Pi
 # This script packages and transfers the built Matter tools

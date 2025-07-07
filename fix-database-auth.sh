@@ -1,4 +1,5 @@
 #!/bin/bash
+source config/environment.sh
 
 # MSH Database Authentication Fix Script
 # Run this script when you encounter PostgreSQL authentication issues
@@ -22,7 +23,7 @@ if [[ $(hostname) == *"raspberrypi"* ]] || [[ $(hostname) == *"pi"* ]]; then
     }
 else
     echo "🌐 Running remotely, connecting to Pi"
-    PI_HOST="192.168.0.102"
+    PI_HOST="${PI_IP}"
     PI_USER="chregg"
     
     # Function to run commands on Pi
@@ -32,7 +33,7 @@ else
     
     # Function to run docker commands on Pi
     docker_on_pi() {
-        run_on_pi "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml $1"
+        run_on_pi "cd /${PROJECT_ROOT} && docker-compose -f docker-compose.prod-msh.yml $1"
     }
 fi
 
@@ -40,7 +41,7 @@ echo "🔍 Checking current container status..."
 if [[ $(hostname) == *"raspberrypi"* ]] || [[ $(hostname) == *"pi"* ]]; then
     docker-compose -f docker-compose.prod-msh.yml ps
 else
-    ssh $PI_USER@$PI_HOST "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml ps"
+    ssh $PI_USER@$PI_HOST "cd /${PROJECT_ROOT} && docker-compose -f docker-compose.prod-msh.yml ps"
 fi
 
 echo ""
@@ -71,9 +72,9 @@ if [[ $(hostname) == *"raspberrypi"* ]] || [[ $(hostname) == *"pi"* ]]; then
     sleep 10
     docker exec msh_db_1 psql -U postgres -d msh -c "ALTER USER postgres PASSWORD 'postgres';"
 else
-    run_on_pi "docker exec msh_db_1 psql -U postgres -d msh -c \"ALTER USER postgres PASSWORD 'postgres';\" 2>/dev/null || echo 'Database not ready yet, will retry...'"
+    run_on_pi "docker exec msh_db_1 psql -U postgres -d msh -c /"ALTER USER postgres PASSWORD 'postgres';/" 2>/dev/null || echo 'Database not ready yet, will retry...'"
     sleep 10
-    run_on_pi "docker exec msh_db_1 psql -U postgres -d msh -c \"ALTER USER postgres PASSWORD 'postgres';\""
+    run_on_pi "docker exec msh_db_1 psql -U postgres -d msh -c /"ALTER USER postgres PASSWORD 'postgres';/""
 fi
 
 echo ""

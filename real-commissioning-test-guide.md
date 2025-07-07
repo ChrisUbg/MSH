@@ -11,16 +11,16 @@ This guide helps you test the new real Matter commissioning implementation with 
 ./deploy-matter-bridge.sh
 
 # Or specify Pi IP manually
-./deploy-matter-bridge.sh 192.168.0.102
+./deploy-matter-bridge.sh ${PI_IP}
 ```
 
 ### 2. Verify Deployment
 ```bash
 # Test health endpoint
-curl http://192.168.0.102:8085/health
+curl http://${PI_IP}:8085/health
 
 # Test real commissioning diagnostics
-curl http://192.168.0.102:8085/dev/real-commissioning-test
+curl http://${PI_IP}:8085/dev/real-commissioning-test
 ```
 
 ## 🧪 Testing Phases
@@ -29,7 +29,7 @@ curl http://192.168.0.102:8085/dev/real-commissioning-test
 
 #### 1.1 Health Check
 ```bash
-curl http://192.168.0.102:8085/health
+curl http://${PI_IP}:8085/health
 ```
 **Expected Response:**
 ```json
@@ -42,7 +42,7 @@ curl http://192.168.0.102:8085/health
 
 #### 1.2 Real Commissioning Test
 ```bash
-curl http://192.168.0.102:8085/dev/real-commissioning-test
+curl http://${PI_IP}:8085/dev/real-commissioning-test
 ```
 **Expected Response:**
 ```json
@@ -77,13 +77,13 @@ curl http://192.168.0.102:8085/dev/real-commissioning-test
 #### 2.1 Test Network Mode Switching
 ```bash
 # Check current network mode
-ssh chregg@192.168.0.102 "test -f /etc/msh/commissioning && echo 'Commissioning Mode' || echo 'Normal Mode'"
+ssh ${PI_USER}@${PI_IP} "test -f /etc/msh/commissioning && echo 'Commissioning Mode' || echo 'Normal Mode'"
 
 # Test switching to commissioning mode
-ssh chregg@192.168.0.102 "cd ~/MSH && sudo ./network-config.sh commissioning"
+ssh ${PI_USER}@${PI_IP} "cd ~/MSH && sudo ./network-config.sh commissioning"
 
 # Test switching back to normal mode
-ssh chregg@192.168.0.102 "cd ~/MSH && sudo ./network-config.sh normal"
+ssh ${PI_USER}@${PI_IP} "cd ~/MSH && sudo ./network-config.sh normal"
 ```
 
 #### 2.2 Verify Access Point Configuration
@@ -101,7 +101,7 @@ When in commissioning mode, the Pi should:
 4. **Ensure device is within BLE range** of the Pi
 
 #### 3.2 Commission via Web UI
-1. **Access web UI**: http://192.168.0.102:8083
+1. **Access web UI**: http://${PI_IP}:8083
 2. **Navigate to Device Commissioning page**
 3. **Enter device details**:
    - Device Name: "Living Room Socket"
@@ -114,7 +114,7 @@ When in commissioning mode, the Pi should:
 #### 3.3 Monitor Commissioning Process
 ```bash
 # Watch Matter bridge logs
-ssh chregg@192.168.0.102 "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml logs -f matter-bridge"
+ssh ${PI_USER}@${PI_IP} "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml logs -f matter-bridge"
 ```
 
 **Expected Log Sequence:**
@@ -139,13 +139,13 @@ INFO: Device commissioned successfully: nous_a8m_<node_id> (method: ble-commissi
 #### 4.1 Test Power Control
 ```bash
 # Toggle device power
-curl -X POST http://192.168.0.102:8085/device/nous_a8m_<node_id>/power
+curl -X POST http://${PI_IP}:8085/device/nous_a8m_<node_id>/power
 
 # Get device state
-curl http://192.168.0.102:8085/device/nous_a8m_<node_id>/state
+curl http://${PI_IP}:8085/device/nous_a8m_<node_id>/state
 
 # Get power metrics
-curl http://192.168.0.102:8085/device/nous_a8m_<node_id>/power-metrics
+curl http://${PI_IP}:8085/device/nous_a8m_<node_id>/power-metrics
 ```
 
 #### 4.2 Verify Device Response
@@ -168,8 +168,8 @@ curl http://192.168.0.102:8085/device/nous_a8m_<node_id>/power-metrics
 #### 5.3 Test Invalid QR Code
 ```bash
 # Test with invalid QR code
-curl -X POST http://192.168.0.102:8085/commission \
-  -H "Content-Type: application/json" \
+curl -X POST http://${PI_IP}:8085/commission /
+  -H "Content-Type: application/json" /
   -d '{
     "device_name": "Test Device",
     "device_type": "Test Type",
@@ -219,34 +219,34 @@ curl -X POST http://192.168.0.102:8085/commission \
 #### Check System Status
 ```bash
 # Check Bluetooth status
-ssh chregg@192.168.0.102 "bluetoothctl show"
+ssh ${PI_USER}@${PI_IP} "bluetoothctl show"
 
 # Check WiFi interfaces
-ssh chregg@192.168.0.102 "iwconfig"
+ssh ${PI_USER}@${PI_IP} "iwconfig"
 
 # Check network services
-ssh chregg@192.168.0.102 "systemctl status hostapd dnsmasq"
+ssh ${PI_USER}@${PI_IP} "systemctl status hostapd dnsmasq"
 ```
 
 #### Check Matter Bridge Logs
 ```bash
 # View real-time logs
-ssh chregg@192.168.0.102 "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml logs -f matter-bridge"
+ssh ${PI_USER}@${PI_IP} "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml logs -f matter-bridge"
 
 # View recent logs
-ssh chregg@192.168.0.102 "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml logs --tail=100 matter-bridge"
+ssh ${PI_USER}@${PI_IP} "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml logs --tail=100 matter-bridge"
 ```
 
 #### Test Individual Components
 ```bash
 # Test QR code parsing
-curl http://192.168.0.102:8085/dev/real-commissioning-test | jq '.results.qr_parsing'
+curl http://${PI_IP}:8085/dev/real-commissioning-test | jq '.results.qr_parsing'
 
 # Test network mode detection
-ssh chregg@192.168.0.102 "test -f /etc/msh/commissioning && echo 'Commissioning' || echo 'Normal'"
+ssh ${PI_USER}@${PI_IP} "test -f /etc/msh/commissioning && echo 'Commissioning' || echo 'Normal'"
 
 # Test BLE availability
-ssh chregg@192.168.0.102 "bluetoothctl --version"
+ssh ${PI_USER}@${PI_IP} "bluetoothctl --version"
 ```
 
 ## ✅ Success Criteria

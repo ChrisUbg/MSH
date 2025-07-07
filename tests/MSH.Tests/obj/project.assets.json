@@ -1541,7 +1541,7 @@
         ".nupkg.metadata",
         ".signature.p7s",
         "ASL - Apache Software Foundation License.txt",
-        "CHANGELOG.md",
+        "changelog.md",
         "LICENSE",
         "castle-logo.png",
         "castle.core.5.1.1.nupkg.sha512",
@@ -3288,7 +3288,7 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "README.md",
+        "readme.md",
         "lib/net6.0/Npgsql.dll",
         "lib/net6.0/Npgsql.xml",
         "lib/net7.0/Npgsql.dll",
@@ -3311,7 +3311,7 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "README.md",
+        "readme.md",
         "lib/net8.0/Npgsql.EntityFrameworkCore.PostgreSQL.dll",
         "lib/net8.0/Npgsql.EntityFrameworkCore.PostgreSQL.xml",
         "npgsql.entityframeworkcore.postgresql.8.0.2.nupkg.sha512",
@@ -3326,7 +3326,7 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "README.md",
+        "readme.md",
         "icon.png",
         "lib/net472/NuGet.Frameworks.dll",
         "lib/netstandard2.0/NuGet.Frameworks.dll",
@@ -3710,7 +3710,7 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "_content/README.md",
+        "_content/readme.md",
         "_content/logo-128-transparent.png",
         "xunit.2.6.6.nupkg.sha512",
         "xunit.nuspec"
@@ -3741,7 +3741,7 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "_content/README.md",
+        "_content/readme.md",
         "_content/logo-128-transparent.png",
         "analyzers/dotnet/roslyn3.11/cs/xunit.analyzers.dll",
         "analyzers/dotnet/roslyn3.11/cs/xunit.analyzers.fixes.dll",
@@ -3766,7 +3766,7 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "_content/README.md",
+        "_content/readme.md",
         "_content/logo-128-transparent.png",
         "lib/net6.0/xunit.assert.dll",
         "lib/net6.0/xunit.assert.xml",
@@ -3783,7 +3783,7 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "_content/README.md",
+        "_content/readme.md",
         "_content/logo-128-transparent.png",
         "build/xunit.core.props",
         "build/xunit.core.targets",
@@ -3800,7 +3800,7 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "_content/README.md",
+        "_content/readme.md",
         "_content/logo-128-transparent.png",
         "lib/net452/xunit.core.dll",
         "lib/net452/xunit.core.dll.tdnet",
@@ -3820,7 +3820,7 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "_content/README.md",
+        "_content/readme.md",
         "_content/logo-128-transparent.png",
         "lib/net452/xunit.execution.desktop.dll",
         "lib/net452/xunit.execution.desktop.xml",
@@ -3837,7 +3837,7 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "_content/README.md",
+        "_content/readme.md",
         "_content/logo-128-transparent.png",
         "build/net462/xunit.abstractions.dll",
         "build/net462/xunit.runner.reporters.net452.dll",

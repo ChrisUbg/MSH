@@ -25,7 +25,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"/jxgvIh5ccTVuokOpnav51jQ8ub5/lhilNXa2Pf1qhk=\""
+          "Value": "/"/jxgvIh5ccTVuokOpnav51jQ8ub5/lhilNXa2Pf1qhk=/""
         },
         {
           "Name": "Last-Modified",
@@ -62,7 +62,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"/jxgvIh5ccTVuokOpnav51jQ8ub5/lhilNXa2Pf1qhk=\""
+          "Value": "/"/jxgvIh5ccTVuokOpnav51jQ8ub5/lhilNXa2Pf1qhk=/""
         },
         {
           "Name": "Last-Modified",
@@ -107,7 +107,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"z8OR40MowJ8GgK6P89Y+hiJK5+cclzFHzLhFQLL92bg=\""
+          "Value": "/"z8OR40MowJ8GgK6P89Y+hiJK5+cclzFHzLhFQLL92bg=/""
         },
         {
           "Name": "Last-Modified",
@@ -152,7 +152,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"z8OR40MowJ8GgK6P89Y+hiJK5+cclzFHzLhFQLL92bg=\""
+          "Value": "/"z8OR40MowJ8GgK6P89Y+hiJK5+cclzFHzLhFQLL92bg=/""
         },
         {
           "Name": "Last-Modified",
@@ -189,7 +189,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"gBwg2tmA0Ci2u54gMF1jNCVku6vznarkLS6D76htNNQ=\""
+          "Value": "/"gBwg2tmA0Ci2u54gMF1jNCVku6vznarkLS6D76htNNQ=/""
         },
         {
           "Name": "Last-Modified",
@@ -234,7 +234,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"gBwg2tmA0Ci2u54gMF1jNCVku6vznarkLS6D76htNNQ=\""
+          "Value": "/"gBwg2tmA0Ci2u54gMF1jNCVku6vznarkLS6D76htNNQ=/""
         },
         {
           "Name": "Last-Modified",
@@ -271,7 +271,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"jA4J4h/k76zVxbFKEaWwFKJccmO0voOQ1DbUW+5YNlI=\""
+          "Value": "/"jA4J4h/k76zVxbFKEaWwFKJccmO0voOQ1DbUW+5YNlI=/""
         },
         {
           "Name": "Last-Modified",
@@ -308,7 +308,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"jA4J4h/k76zVxbFKEaWwFKJccmO0voOQ1DbUW+5YNlI=\""
+          "Value": "/"jA4J4h/k76zVxbFKEaWwFKJccmO0voOQ1DbUW+5YNlI=/""
         },
         {
           "Name": "Last-Modified",
@@ -353,7 +353,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"aF5g/izareSj02F3MPSoTGNbcMBl9nmZKDe04zjU/ss=\""
+          "Value": "/"aF5g/izareSj02F3MPSoTGNbcMBl9nmZKDe04zjU/ss=/""
         },
         {
           "Name": "Last-Modified",
@@ -390,7 +390,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"aF5g/izareSj02F3MPSoTGNbcMBl9nmZKDe04zjU/ss=\""
+          "Value": "/"aF5g/izareSj02F3MPSoTGNbcMBl9nmZKDe04zjU/ss=/""
         },
         {
           "Name": "Last-Modified",
@@ -414,7 +414,7 @@
     },
     {
       "Route": "css/open-iconic/README.5bzwdl5l6x.md",
-      "AssetFile": "css/open-iconic/README.md",
+      "AssetFile": "css/open-iconic/readme.md",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -435,7 +435,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"waukoLqsiIAw/nXpsKkTHnhImmcPijcBEd2lzqzJNN0=\""
+          "Value": "/"waukoLqsiIAw/nXpsKkTHnhImmcPijcBEd2lzqzJNN0=/""
         },
         {
           "Name": "Last-Modified",
@@ -453,13 +453,13 @@
         },
         {
           "Name": "label",
-          "Value": "css/open-iconic/README.md"
+          "Value": "css/open-iconic/readme.md"
         }
       ]
     },
     {
-      "Route": "css/open-iconic/README.md",
-      "AssetFile": "css/open-iconic/README.md",
+      "Route": "css/open-iconic/readme.md",
+      "AssetFile": "css/open-iconic/readme.md",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -480,7 +480,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"waukoLqsiIAw/nXpsKkTHnhImmcPijcBEd2lzqzJNN0=\""
+          "Value": "/"waukoLqsiIAw/nXpsKkTHnhImmcPijcBEd2lzqzJNN0=/""
         },
         {
           "Name": "Last-Modified",
@@ -517,7 +517,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"BJ/G+e+y7bQdrYkS2RBTyNfBHpA9IuGaPmf9htub5MQ=\""
+          "Value": "/"BJ/G+e+y7bQdrYkS2RBTyNfBHpA9IuGaPmf9htub5MQ=/""
         },
         {
           "Name": "Last-Modified",
@@ -562,7 +562,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"BJ/G+e+y7bQdrYkS2RBTyNfBHpA9IuGaPmf9htub5MQ=\""
+          "Value": "/"BJ/G+e+y7bQdrYkS2RBTyNfBHpA9IuGaPmf9htub5MQ=/""
         },
         {
           "Name": "Last-Modified",
@@ -599,7 +599,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"OK3poGPgzKI2NzNgP07XMbJa3Dz6USoUh/chSkSvQpc=\""
+          "Value": "/"OK3poGPgzKI2NzNgP07XMbJa3Dz6USoUh/chSkSvQpc=/""
         },
         {
           "Name": "Last-Modified",
@@ -644,7 +644,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"OK3poGPgzKI2NzNgP07XMbJa3Dz6USoUh/chSkSvQpc=\""
+          "Value": "/"OK3poGPgzKI2NzNgP07XMbJa3Dz6USoUh/chSkSvQpc=/""
         },
         {
           "Name": "Last-Modified",
@@ -681,7 +681,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"cZPqVlRJfSNW0KaQ4+UPOXZ/v/QzXlejRDwUNdZIofI=\""
+          "Value": "/"cZPqVlRJfSNW0KaQ4+UPOXZ/v/QzXlejRDwUNdZIofI=/""
         },
         {
           "Name": "Last-Modified",
@@ -726,7 +726,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"p+RP8CV3vRK1YbIkNzq3rPo1jyETPnR07ULb+HVYL8w=\""
+          "Value": "/"p+RP8CV3vRK1YbIkNzq3rPo1jyETPnR07ULb+HVYL8w=/""
         },
         {
           "Name": "Last-Modified",
@@ -771,7 +771,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"sDUtuZAEzWZyv/U1xl/9D3ehyU69JE+FvAcu5HQ+/a0=\""
+          "Value": "/"sDUtuZAEzWZyv/U1xl/9D3ehyU69JE+FvAcu5HQ+/a0=/""
         },
         {
           "Name": "Last-Modified",
@@ -808,7 +808,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"+P1oQ5jPzOVJGC52E1oxGXIXxxCyMlqy6A9cNxGYzVk=\""
+          "Value": "/"+P1oQ5jPzOVJGC52E1oxGXIXxxCyMlqy6A9cNxGYzVk=/""
         },
         {
           "Name": "Last-Modified",
@@ -853,7 +853,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"+P1oQ5jPzOVJGC52E1oxGXIXxxCyMlqy6A9cNxGYzVk=\""
+          "Value": "/"+P1oQ5jPzOVJGC52E1oxGXIXxxCyMlqy6A9cNxGYzVk=/""
         },
         {
           "Name": "Last-Modified",
@@ -890,7 +890,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"p+RP8CV3vRK1YbIkNzq3rPo1jyETPnR07ULb+HVYL8w=\""
+          "Value": "/"p+RP8CV3vRK1YbIkNzq3rPo1jyETPnR07ULb+HVYL8w=/""
         },
         {
           "Name": "Last-Modified",
@@ -927,7 +927,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"sDUtuZAEzWZyv/U1xl/9D3ehyU69JE+FvAcu5HQ+/a0=\""
+          "Value": "/"sDUtuZAEzWZyv/U1xl/9D3ehyU69JE+FvAcu5HQ+/a0=/""
         },
         {
           "Name": "Last-Modified",
@@ -972,7 +972,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"cZPqVlRJfSNW0KaQ4+UPOXZ/v/QzXlejRDwUNdZIofI=\""
+          "Value": "/"cZPqVlRJfSNW0KaQ4+UPOXZ/v/QzXlejRDwUNdZIofI=/""
         },
         {
           "Name": "Last-Modified",
@@ -1009,7 +1009,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"Fx+c1youNLgejKLBM3S2fD6fcDOSv/D7tNQKm5gws6U=\""
+          "Value": "/"Fx+c1youNLgejKLBM3S2fD6fcDOSv/D7tNQKm5gws6U=/""
         },
         {
           "Name": "Last-Modified",
@@ -1046,7 +1046,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"Fx+c1youNLgejKLBM3S2fD6fcDOSv/D7tNQKm5gws6U=\""
+          "Value": "/"Fx+c1youNLgejKLBM3S2fD6fcDOSv/D7tNQKm5gws6U=/""
         },
         {
           "Name": "Last-Modified",
@@ -1091,7 +1091,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"4mWsDy3aHl36ZbGt8zByK7Pvd4kRUoNgTYzRnwmPHwg=\""
+          "Value": "/"4mWsDy3aHl36ZbGt8zByK7Pvd4kRUoNgTYzRnwmPHwg=/""
         },
         {
           "Name": "Last-Modified",
@@ -1136,7 +1136,7 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"4mWsDy3aHl36ZbGt8zByK7Pvd4kRUoNgTYzRnwmPHwg=\""
+          "Value": "/"4mWsDy3aHl36ZbGt8zByK7Pvd4kRUoNgTYzRnwmPHwg=/""
         },
         {
           "Name": "Last-Modified",

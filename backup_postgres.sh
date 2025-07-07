@@ -1,4 +1,5 @@
 #!/bin/bash
+source config/environment.sh
 
 # Error handling
 error_exit() {

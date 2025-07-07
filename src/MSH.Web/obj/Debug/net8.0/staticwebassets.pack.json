@@ -33,8 +33,8 @@
       "PackagePath": "staticwebassets/css/open-iconic"
     },
     {
-      "Id": "/home/chris/RiderProjects/MSH/src/MSH.Web/wwwroot/css/open-iconic/README.md",
-      "PackagePath": "staticwebassets/css/open-iconic/README.md"
+      "Id": "/home/chris/RiderProjects/MSH/src/MSH.Web/wwwroot/css/open-iconic/readme.md",
+      "PackagePath": "staticwebassets/css/open-iconic/readme.md"
     },
     {
       "Id": "/home/chris/RiderProjects/MSH/src/MSH.Web/wwwroot/css/open-iconic/font/css/open-iconic-bootstrap.min.css",
@@ -78,19 +78,19 @@
     },
     {
       "Id": "obj/Debug/net8.0/staticwebassets/msbuild.MSH.Web.Microsoft.AspNetCore.StaticWebAssets.props",
-      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+      "PackagePath": "build//Microsoft.AspNetCore.StaticWebAssets.props"
     },
     {
       "Id": "obj/Debug/net8.0/staticwebassets/msbuild.build.MSH.Web.props",
-      "PackagePath": "build\\MSH.Web.props"
+      "PackagePath": "build//MSH.Web.props"
     },
     {
       "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildMultiTargeting.MSH.Web.props",
-      "PackagePath": "buildMultiTargeting\\MSH.Web.props"
+      "PackagePath": "buildMultiTargeting//MSH.Web.props"
     },
     {
       "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.MSH.Web.props",
-      "PackagePath": "buildTransitive\\MSH.Web.props"
+      "PackagePath": "buildTransitive//MSH.Web.props"
     }
   ],
   "ElementsToRemove": []

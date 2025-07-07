@@ -1,13 +1,14 @@
 #!/bin/bash
+source config/environment.sh
 
 # MSH mDNS Test Script
 # This script tests the mDNS configuration
 
 # Colors for output
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-NC='\033[0m'
+GREEN='/033[0;32m'
+YELLOW='/033[1;33m'
+RED='/033[0;31m'
+NC='/033[0m'
 
 echo -e "${YELLOW}Testing MSH mDNS configuration...${NC}"
 

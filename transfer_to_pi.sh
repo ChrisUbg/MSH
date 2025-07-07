@@ -1,4 +1,5 @@
 #!/bin/bash
+source config/environment.sh
 
 # Matter SDK Transfer Script
 # Transfers built tools from development machine to Raspberry Pi
@@ -9,7 +10,7 @@ PI_PATH="~/connectedhomeip"
 
 echo "=== Matter SDK Transfer to Pi ==="
 echo "Transferring from: $(pwd)/out/python_lib/"
-echo "Transferring to: ${PI_USER}@${PI_HOST}:${PI_PATH}/out/python_lib/"
+echo "Transferring to: /${PI_USER}@${PI_HOST}:${PI_PATH}/out/python_lib/"
 echo ""
 
 # Check if build is complete
@@ -41,7 +42,7 @@ echo "✅ Pi is reachable"
 
 # Create remote directory if needed
 echo "=== Preparing Pi Directory ==="
-ssh ${PI_USER}@${PI_HOST} "mkdir -p ${PI_PATH}/out/python_lib/"
+ssh /${PI_USER}@${PI_HOST} "mkdir -p ${PI_PATH}/out/python_lib/"
 
 # Transfer files
 echo "=== Transferring Files ==="
@@ -49,7 +50,7 @@ echo "This may take a few minutes..."
 
 # Method 1: Transfer entire directory (recommended)
 echo "Transferring entire python_lib directory..."
-rsync -avz --progress out/python_lib/ ${PI_USER}@${PI_HOST}:${PI_PATH}/out/python_lib/
+rsync -avz --progress out/python_lib/ /${PI_USER}@${PI_HOST}:${PI_PATH}/out/python_lib/
 
 if [ $? -eq 0 ]; then
     echo "✅ Transfer completed successfully!"
@@ -58,8 +59,8 @@ else
     
     # Method 2: Transfer key files individually
     echo "Transferring key files individually..."
-    scp out/python_lib/chip-repl ${PI_USER}@${PI_HOST}:${PI_PATH}/out/python_lib/
-    scp out/python_lib/chip-tool ${PI_USER}@${PI_HOST}:${PI_PATH}/out/python_lib/
+    scp out/python_lib/chip-repl /${PI_USER}@${PI_HOST}:${PI_PATH}/out/python_lib/
+    scp out/python_lib/chip-tool /${PI_USER}@${PI_HOST}:${PI_PATH}/out/python_lib/
     
     if [ $? -eq 0 ]; then
         echo "✅ Individual file transfer completed!"
@@ -71,25 +72,25 @@ fi
 
 # Verify transfer
 echo "=== Verifying Transfer ==="
-ssh ${PI_USER}@${PI_HOST} "cd ${PI_PATH} && echo 'Checking transferred files:' && ls -la out/python_lib/chip-repl out/python_lib/chip-tool 2>/dev/null || echo 'Files not found'"
+ssh /${PI_USER}@${PI_HOST} "cd ${PI_PATH} && echo 'Checking transferred files:' && ls -la out/python_lib/chip-repl out/python_lib/chip-tool 2>/dev/null || echo 'Files not found'"
 
 # Make files executable on Pi
 echo "=== Setting Permissions ==="
-ssh ${PI_USER}@${PI_HOST} "cd ${PI_PATH} && chmod +x out/python_lib/chip-repl out/python_lib/chip-tool"
+ssh /${PI_USER}@${PI_HOST} "cd ${PI_PATH} && chmod +x out/python_lib/chip-repl out/python_lib/chip-tool"
 
 # Test tools on Pi
 echo "=== Testing Tools on Pi ==="
 echo "Testing chip-repl:"
-ssh ${PI_USER}@${PI_HOST} "cd ${PI_PATH} && ./out/python_lib/chip-repl --help | head -5"
+ssh /${PI_USER}@${PI_HOST} "cd ${PI_PATH} && ./out/python_lib/chip-repl --help | head -5"
 
 echo "Testing chip-tool:"
-ssh ${PI_USER}@${PI_HOST} "cd ${PI_PATH} && ./out/python_lib/chip-tool --help | head -5"
+ssh /${PI_USER}@${PI_HOST} "cd ${PI_PATH} && ./out/python_lib/chip-tool --help | head -5"
 
 echo ""
 echo "🎉 Transfer Complete! 🎉"
 echo ""
 echo "Next Steps on Pi:"
-echo "1. SSH to Pi: ssh ${PI_USER}@${PI_HOST}"
+echo "1. SSH to Pi: ssh /${PI_USER}@${PI_HOST}"
 echo "2. Navigate to: cd ${PI_PATH}"
 echo "3. Test commissioning: ./out/python_lib/chip-repl"
 echo "4. Test device control: ./out/python_lib/chip-tool"

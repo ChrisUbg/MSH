@@ -1,4 +1,5 @@
 #!/bin/bash
+source config/environment.sh
 
 # Pi IP Broadcast Script
 # Run this on the Pi to broadcast its IP address
@@ -48,7 +49,7 @@ cat > /tmp/pi-info.html << EOF
     </div>
     <h2>📊 Container Status</h2>
     <div class="info">
-        <pre>$(docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" 2>/dev/null || echo "Docker not available")</pre>
+        <pre>$(docker ps --format "table {{.Names}}/t{{.Status}}/t{{.Ports}}" 2>/dev/null || echo "Docker not available")</pre>
     </div>
 </body>
 </html>
@@ -59,4 +60,4 @@ echo "📡 IP broadcast server running at: http://$PI_IP:8080"
 echo "Press Ctrl+C to stop"
 
 # Run the server
-cd /tmp && python3 -m http.server 8080 2>/dev/null || python -m SimpleHTTPServer 8080 2>/dev/null || echo "Python not available, using netcat" && while true; do echo -e "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n$(cat pi-info.html)" | nc -l 8080; done 
+cd /tmp && python3 -m http.server 8080 2>/dev/null || python -m SimpleHTTPServer 8080 2>/dev/null || echo "Python not available, using netcat" && while true; do echo -e "HTTP/1.1 200 OK/r/nContent-Type: text/html/r/n/r/n$(cat pi-info.html)" | nc -l 8080; done 

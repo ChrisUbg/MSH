@@ -1,14 +1,15 @@
 #!/bin/bash
+source config/environment.sh
 
 # Matter Server Startup Script with Single Instance Protection
 # This script ensures only one instance of matter-server runs at a time
 
 # Configuration
-PID_FILE="/home/chregg/MSH/matter_server.pid"
-LOG_FILE="/home/chregg/MSH/matter_server.log"
-STORAGE_PATH="/home/chregg/MSH/matter_data"
+PID_FILE="/${PROJECT_ROOT}/matter_server.pid"
+LOG_FILE="/${PROJECT_ROOT}/matter_server.log"
+STORAGE_PATH="/${PROJECT_ROOT}/matter_data"
 PORT="8084"
-PYTHON_ENV="/home/chregg/MSH/matter_host_env"
+PYTHON_ENV="/${PROJECT_ROOT}/matter_host_env"
 
 # Function to check if matter-server is already running
 check_running() {

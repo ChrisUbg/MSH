@@ -54,28 +54,28 @@ cd connectedhomeip
 ### **2.2 Install Dependencies**
 ```bash
 # Install required packages
-sudo apt-get install -y \
-    g++ \
-    gcc \
-    git \
-    libavahi-client-dev \
-    libcairo2-dev \
-    libdbus-1-dev \
-    libgirepository1.0-dev \
-    libglib2.0-dev \
-    libssl-dev \
-    ninja-build \
-    pkg-config \
-    protobuf-compiler \
-    python3 \
-    python3-dev \
-    python3-venv \
+sudo apt-get install -y /
+    g++ /
+    gcc /
+    git /
+    libavahi-client-dev /
+    libcairo2-dev /
+    libdbus-1-dev /
+    libgirepository1.0-dev /
+    libglib2.0-dev /
+    libssl-dev /
+    ninja-build /
+    pkg-config /
+    protobuf-compiler /
+    python3 /
+    python3-dev /
+    python3-venv /
     unzip
 
 # Install additional ARM64 cross-compilation tools
-sudo apt-get install -y \
-    gcc-aarch64-linux-gnu \
-    g++-aarch64-linux-gnu \
+sudo apt-get install -y /
+    gcc-aarch64-linux-gnu /
+    g++-aarch64-linux-gnu /
     binutils-aarch64-linux-gnu
 ```
 
@@ -176,28 +176,38 @@ tar -czf matter-arm64-build.tar.gz matter-arm64-build/
 
 ## 🚀 **Step 6: Transfer to Raspberry Pi**
 
-### **6.1 Copy from WSL2 to Windows**
+### **6.1 Copy from WSL2 to Windows (Windows-specific)**
 ```powershell
 # In Windows PowerShell
+# Get WSL2 username (replace with your actual username)
+$wslUsername = "chris"  # Change this to your WSL2 username
+
 # Copy from WSL2 to Windows
-cp \\wsl$\Ubuntu-22.04\home\$env:USERNAME\matter-arm64-build.tar.gz C:\temp\
+cp "//wsl$/Ubuntu-22.04/home/$wslUsername/matter-arm64-build.tar.gz" "C:/temp/"
+
+# Alternative method using wsl command
+wsl cp ~/matter-arm64-build.tar.gz /mnt/c/temp/
 ```
 
-### **6.2 Transfer to Raspberry Pi**
+### **6.2 Transfer to Raspberry Pi (Cross-platform)**
 ```bash
 # On Raspberry Pi
 # Create directory
 mkdir -p ~/MSH/matter-arm64-tools
 
 # Transfer file (use your preferred method)
-# Option 1: SCP
-scp chris@your-dev-machine:/path/to/matter-arm64-build.tar.gz ~/MSH/
+# Option 1: SCP (from Windows or Linux)
+scp ${DEV_USER}@your-dev-machine:/path/to/matter-arm64-build.tar.gz ~/MSH/
 
 # Option 2: USB drive
 # Copy to USB drive on Windows, then to Pi
 
 # Option 3: Network share
 # Copy to shared folder accessible by Pi
+
+# Option 4: Direct WSL2 to Pi (if on same network)
+# From WSL2 terminal:
+scp ~/matter-arm64-build.tar.gz ${DEV_USER}@${PI_IP}:~/MSH/
 ```
 
 ### **6.3 Install on Raspberry Pi**
@@ -274,6 +284,27 @@ gn gen out/arm64 --args='target_cpu="arm64" target_os="linux" is_debug=false' --
 ninja -C out/arm64 -t targets | grep chip
 ```
 
+#### **WSL2 Path Issues**
+```bash
+# Check WSL2 username
+whoami
+
+# Verify WSL2 distribution name
+wsl -l -v
+
+# Access WSL2 from Windows (replace with your username)
+# In Windows PowerShell:
+# //wsl$/Ubuntu-22.04/home/YOUR_USERNAME/
+```
+
+#### **Windows File System Performance**
+```bash
+# For better performance, clone to WSL2 filesystem instead of Windows filesystem
+# In WSL2 terminal:
+cd /home/$USER  # Use WSL2 filesystem, not /mnt/c/
+git clone https://github.com/project-chip/connectedhomeip.git
+```
+
 ## 🎯 **Success Criteria**
 
 ✅ **ARM64 executables built successfully**
@@ -296,6 +327,88 @@ ninja -C out/arm64 -t targets | grep chip
 - **Network**: Ensure stable internet connection for submodule downloads
 - **Backup**: Keep the built package for future use
 - **Updates**: Rebuild when Matter SDK updates are needed
+- **WSL2 Performance**: Use WSL2 filesystem for better build performance
+- **Cross-platform**: Instructions work on both Windows/WSL2 and native Linux
+
+## 🔧 **Cross-Platform Configuration**
+
+### **IP Address Configuration**
+The project uses various IP addresses that may need to be updated for your environment:
+
+#### **Common IP Addresses in Project**
+- **Raspberry Pi IPs**: `${PI_IP}`, `${PI_IP}`, `192.168.0.106`
+- **Username**: `chregg` (Pi user), `chris` (development machine)
+
+#### **How to Update IP Addresses**
+```bash
+# Find your Pi's IP address
+ping msh.local  # If mDNS is working
+# OR
+nmap -sn 192.168.0.0/24 | grep -B2 -A1 "Raspberry Pi"
+
+# Update configuration files
+# Replace all instances of old IP with new IP
+find . -name "*.sh" -o -name "*.md" -o -name "*.yml" | xargs sed -i 's/${PI_IP}/YOUR_NEW_IP/g'
+```
+
+#### **Environment-Specific Configuration**
+```bash
+# Create environment-specific config
+export PI_IP="${PI_IP}"  # Your Pi's IP
+export PI_USER="chregg"        # Your Pi username
+export DEV_USER="chris"        # Your dev machine username
+
+# Use in scripts
+scp file.tar.gz $DEV_USER@$PI_IP:~/MSH/
+```
+
+### **Windows vs Linux Path Handling**
+
+#### **Windows PowerShell**
+```powershell
+# Windows-style paths
+$env:DOCKERFILE_PATH="C:/Users/Dev/source/repos/MSH/Docker/Dockerfile.prod"
+cp "//wsl$/Ubuntu-22.04/home/$wslUsername/file.tar.gz" "C:/temp/"
+```
+
+#### **Linux/WSL2**
+```bash
+# Unix-style paths
+export DOCKERFILE_PATH="$(pwd)/Docker/Dockerfile.prod"
+cp ~/file.tar.gz /mnt/c/temp/
+```
+
+#### **Cross-Platform Scripts**
+```bash
+# Detect OS and use appropriate paths
+if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
+    # Windows
+    DOCKERFILE_PATH="C:/Users/Dev/source/repos/MSH/Docker/Dockerfile.prod"
+else
+    # Linux/WSL2
+    DOCKERFILE_PATH="$(pwd)/Docker/Dockerfile.prod"
+fi
+```
+
+### **WSL2 Integration Best Practices**
+
+#### **File System Performance**
+```bash
+# Use WSL2 filesystem for builds (faster)
+cd /home/$USER/connectedhomeip  # Not /mnt/c/Users/...
+
+# Access Windows files when needed
+cp /mnt/c/Users/Dev/source/repos/MSH/config.json ~/MSH/
+```
+
+#### **Network Access**
+```bash
+# WSL2 can access Windows network
+# Windows can access WSL2 via //wsl$/Ubuntu-22.04/
+
+# Direct network access from WSL2
+scp file.tar.gz ${DEV_USER}@${PI_IP}:~/MSH/
+```
 
 ---
 

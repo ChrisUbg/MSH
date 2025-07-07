@@ -5,10 +5,10 @@ PostgreSQL Setup for Matter Smart Home
 ### 1. Development Environment Setup
 ```bash
 # Start PostgreSQL container
-docker run --name matter-dev-db-15 \
-  -e POSTGRES_PASSWORD=securepassword123 \
-  -p 5432:5432 \
-  -v ~/matter_db/dev_data:/var/lib/postgresql/data \
+docker run --name matter-dev-db-15 /
+  -e POSTGRES_PASSWORD=securepassword123 /
+  -p 5432:5432 /
+  -v ~/matter_db/dev_data:/var/lib/postgresql/data /
   -d postgres:15
 # matter_dev
 
@@ -48,7 +48,7 @@ sudo chmod 700 /backups
 Add these entries:
 ```cron
 # Daily full backups at 3 AM
-0 3 * * * pg_dump -U postgres matter_prod | gzip > /backups/daily/matter_prod_$(date +\%Y-\%m-\%d).sql.gz
+0 3 * * * pg_dump -U postgres matter_prod | gzip > /backups/daily/matter_prod_$(date +/%Y-/%m-/%d).sql.gz
 
 # WAL archiving
 * * * * * pg_archivecleanup /backups/wal/ $(ls -t /backups/wal/ | tail -n 1 | cut -d'.' -f1)
@@ -77,24 +77,24 @@ echo "localhost:5432:matter_prod:postgres:84jfapa0d8f09qzhf22t" > ~/.pgpass
 
 pg_dump -h localhost -U postgres postgres | gzip > matter_dev_backup.sql.gz
 
-pg_dump -h localhost -U postgres postgres | gzip > postgres_$(date +\%Y\%m\%d).sql.gz
+pg_dump -h localhost -U postgres postgres | gzip > postgres_$(date +/%Y/%m/%d).sql.gz
 
 
 
 # To Raspberry Pi:
-scp matter_dev_*.sql.gz chregg@192.168.0.104:/tmp/
-ssh chregg@192.168.0.104 "gunzip -c /tmp/matter_dev_backup.sql.gz | PGPASSWORD='84jfapa0d8f09qzhf22t' psql -U postgres matter_prod"
+scp matter_dev_*.sql.gz ${PI_USER}@${PI_IP}:/tmp/
+ssh ${PI_USER}@${PI_IP} "gunzip -c /tmp/matter_dev_backup.sql.gz | PGPASSWORD='84jfapa0d8f09qzhf22t' psql -U postgres matter_prod"
 
-ssh chregg@192.168.0.104 "gunzip -c /tmp/postgres_*.sql.gz | PGPASSWORD='84jfapa0d8f09qzhf22t' psql -U postgres matter_prod"
+ssh ${PI_USER}@${PI_IP} "gunzip -c /tmp/postgres_*.sql.gz | PGPASSWORD='84jfapa0d8f09qzhf22t' psql -U postgres matter_prod"
 
 # Verify migration
-ssh chregg@192.168.0.104 "sudo -u postgres psql -d matter_prod -c '\dt+'"
+ssh ${PI_USER}@${PI_IP} "sudo -u postgres psql -d matter_prod -c '/dt+'"
 ```
 
 ## Verification Steps
 1. [ ] Test local database connection
    ```bash
-   psql -h localhost -U postgres -c "\l"
+   psql -h localhost -U postgres -c "/l"
    ```
 2. [ ] Verify production DB accessibility
    ```bash
@@ -127,8 +127,8 @@ sudo -u postgres psql -c "VACUUM (VERBOSE, ANALYZE);"
 
 # script for update prod environment
 
-scp migrations.sql chregg@192.168.0.104:/tmp/
-ssh chregg@192.168.0.104 "docker exec -i matter-dev-db-15 psql -U postgres matter_prod < /tmp/migrations.sql"
+scp migrations.sql ${PI_USER}@${PI_IP}:/tmp/
+ssh ${PI_USER}@${PI_IP} "docker exec -i matter-dev-db-15 psql -U postgres matter_prod < /tmp/migrations.sql"
 
 ```
 # Entity Framework Commands

@@ -1,4 +1,5 @@
 #!/bin/bash
+source config/environment.sh
 
 # Network configuration script for MSH
 # This script handles both normal and commissioning modes
@@ -90,7 +91,7 @@ switch_to_client_commissioning_mode() {
     rm -f /etc/msh/auto_commissioning
     
     echo "Switched to client commissioning mode"
-    echo "Pi remains on main network (192.168.0.104) for safe BLE commissioning"
+    echo "Pi remains on main network (${PI_IP}) for safe BLE commissioning"
     echo "GUI remains accessible at msh.local:8083"
 }
 

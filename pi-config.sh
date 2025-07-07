@@ -4,7 +4,7 @@
 # This file centralizes Pi-related settings that can be sourced by other scripts
 
 # Pi IP Address - Update this when the Pi's IP changes
-export PI_IP="192.168.0.104"
+export PI_IP="${PI_IP}"
 
 # Pi SSH settings
 export PI_USER="chregg"

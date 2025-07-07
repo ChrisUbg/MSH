@@ -33,7 +33,7 @@ This document describes the network configuration system for the Smart Home proj
 You can switch network modes via:
 
 - **Web UI:** Use the Network Settings page to select and switch modes interactively.
-- **API:** Use the endpoint `POST /api/network/switch/{mode}` (see [API.md](API.md)).
+- **API:** Use the endpoint `POST /api/network/switch/{mode}` (see [api.md](api.md)).
 - **Direct Script Call:** Run the script manually on the device.
 
 ## Diagnostics & Status
@@ -65,5 +65,5 @@ Network Interfaces: (output of `ip addr show`)
 ```
 
 ## See Also
-- [API.md](API.md) — API documentation for network endpoints
-- [README.md](README.md) — Project overview and entry point 
+- [api.md](api.md) — API documentation for network endpoints
+- [readme.md](readme.md) — Project overview and entry point 

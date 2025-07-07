@@ -1,4 +1,5 @@
 #!/bin/bash
+source config/environment.sh
 
 # Deployment script for MSH to Raspberry Pi
 # Usage: ./deploy-to-pi.sh [pi-ip-address]
@@ -8,7 +9,7 @@ set -e
 # Default Pi IP (will be auto-detected if not provided)
 PI_IP=${1:-""}
 PI_USER="chregg"
-PROJECT_DIR="~/MSH"
+PROJECT_DIR="/${PROJECT_ROOT}"
 
 # Function to detect Pi IP automatically
 detect_pi_ip() {
@@ -16,8 +17,8 @@ detect_pi_ip() {
     
     # Try common Pi IP ranges
     local possible_ips=(
-        "192.168.0.102"  # Your current IP
-        "192.168.0.104"  # Previously seen
+        "${PI_IP}"  # Your current IP
+        "${PI_IP}"  # Previously seen
         "192.168.0.106"  # Previously seen
         "192.168.1.100"
         "192.168.1.101"
@@ -115,8 +116,8 @@ ssh $PI_USER@$PI_IP "mkdir -p $PROJECT_DIR"
 
 # Copy project files to Pi
 echo "📋 Copying project files to Pi..."
-rsync -avz --exclude='.git' --exclude='bin' --exclude='obj' --exclude='node_modules' \
-    --exclude='*.log' --exclude='.vs' --exclude='.vscode' \
+rsync -avz --exclude='.git' --exclude='bin' --exclude='obj' --exclude='node_modules' /
+    --exclude='*.log' --exclude='.vs' --exclude='.vscode' /
     ./ $PI_USER@$PI_IP:$PROJECT_DIR/
 
 # Stop any existing MSH containers on Pi

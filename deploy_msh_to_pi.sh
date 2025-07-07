@@ -1,8 +1,9 @@
 #!/bin/bash
+source config/environment.sh
 
 # Konfiguration
 PI_USER="chregg"
-PI_IP="192.168.0.104"
+PI_IP="${PI_IP}"
 APP_NAME="msh-app"
 IMAGE_NAME="msh-app-prod"
 DB_CONTAINER="matter-dev-db-15"
@@ -48,23 +49,23 @@ ssh $PI_USER@$PI_IP << EOF
 
     # PostgreSQL-Container starten
     echo "🐘 Starte PostgreSQL-Container..."
-    docker run -d \
-        --name $DB_CONTAINER \
-        -e POSTGRES_PASSWORD=$DB_PASSWORD \
-        -e POSTGRES_DB=$DB_NAME \
-        -p 5432:5432 \
-        -v ~/msh/postgres-data:/var/lib/postgresql/data \
+    docker run -d /
+        --name $DB_CONTAINER /
+        -e POSTGRES_PASSWORD=$DB_PASSWORD /
+        -e POSTGRES_DB=$DB_NAME /
+        -p 5432:5432 /
+        -v ~/msh/postgres-data:/var/lib/postgresql/data /
         postgres:15 || {
         echo "❌ PostgreSQL-Start fehlgeschlagen"; exit 1
     }
 
     # App-Container starten (Port 8080)
     echo "⚡ Starte MSH-App-Container..."
-    docker run -d \
-        --name $APP_NAME \
-        --network host \
-        -e ASPNETCORE_ENVIRONMENT=Production \
-        -e ConnectionStrings__DefaultConnection="Host=localhost;Port=5432;Database=$DB_NAME;Username=postgres;Password=$DB_PASSWORD" \
+    docker run -d /
+        --name $APP_NAME /
+        --network host /
+        -e ASPNETCORE_ENVIRONMENT=Production /
+        -e ConnectionStrings__DefaultConnection="Host=localhost;Port=5432;Database=$DB_NAME;Username=postgres;Password=$DB_PASSWORD" /
         $IMAGE_NAME || {
         echo "❌ App-Start fehlgeschlagen"; exit 1
     }
@@ -74,7 +75,7 @@ EOF
 
 # 5. Verifikation
 echo "🔍 Prüfe Container-Status..."
-ssh $PI_USER@$PI_IP "docker ps --filter 'name=$APP_NAME\|$DB_CONTAINER'"
+ssh $PI_USER@$PI_IP "docker ps --filter 'name=$APP_NAME/|$DB_CONTAINER'"
 
 echo "🌐 Teste App-Erreichbarkeit..."
 curl -v http://$PI_IP:$APP_PORT || {

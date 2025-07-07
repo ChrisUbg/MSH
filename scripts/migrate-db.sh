@@ -17,8 +17,8 @@ dotnet build src/MSH.Infrastructure/MSH.Infrastructure.csproj
 
 # Run the migration
 echo "Running database migration..."
-dotnet ef database update \
-    --project src/MSH.Infrastructure/MSH.Infrastructure.csproj \
+dotnet ef database update /
+    --project src/MSH.Infrastructure/MSH.Infrastructure.csproj /
     --startup-project src/MSH.Web/MSH.Web.csproj
 
 echo "Migration completed successfully!" 

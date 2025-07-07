@@ -32,7 +32,7 @@ source /home/chregg/.bash_profile
 - **Distribution**: Debian GNU/Linux 12 (bookworm)
 - **Architecture**: ARM64 (Raspberry Pi 4)
 - **Username**: chregg
-- **IP Address**: 192.168.0.104
+- **IP Address**: ${PI_IP}
 - **SSH Port**: 22
 
 ## Required Software
@@ -59,7 +59,7 @@ sudo ./dotnet-install.sh --channel 8.0 --install-dir /usr/share/dotnet
 # Add .NET to system-wide PATH (create a new file)
 sudo bash -c 'cat > /etc/profile.d/dotnet.sh << EOL
 export DOTNET_ROOT=/usr/share/dotnet
-export PATH=\$PATH:/usr/share/dotnet
+export PATH=/$PATH:/usr/share/dotnet
 EOL'
 sudo chmod +x /etc/profile.d/dotnet.sh
 
@@ -94,7 +94,7 @@ sudo /usr/share/dotnet/dotnet build
 sudo /usr/share/dotnet/dotnet run
 
 # Alternative: Add dotnet to sudo PATH
-sudo bash -c 'echo "export PATH=\$PATH:/usr/share/dotnet" >> /etc/sudoers.d/dotnet'
+sudo bash -c 'echo "export PATH=/$PATH:/usr/share/dotnet" >> /etc/sudoers.d/dotnet'
 sudo chmod 440 /etc/sudoers.d/dotnet
 ```
 
@@ -293,8 +293,8 @@ To verify that the Bluetooth device is connected, you can use:
 This documentation will help in setting up and troubleshooting Bluetooth on the Raspberry Pi 4 using the GeeekPi nRF52840 USB dongle. 
 
 ## Copying Files to Raspberry Pi
--PS C:\Users\Dev\source\repos\MSH> 
-scp -r ./publish/* chregg@192.168.0.104:/home/msh 
+-PS C:/Users/Dev/source/repos/MSH> 
+scp -r ./publish/* ${PI_USER}@${PI_IP}:/home/msh 
 
 ## Running the Application   
 - dotnet MSH.Web.dll --urls http://0.0.0.0:5001

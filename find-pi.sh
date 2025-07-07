@@ -1,4 +1,5 @@
 #!/bin/bash
+source config/environment.sh
 
 # Find Pi IP Address Script
 # This script helps discover the Pi's IP address
@@ -51,7 +52,7 @@ scan_network() {
         echo -n "  Testing SSH on $test_ip... "
         
         if ping -c 1 -W 1 "$test_ip" > /dev/null 2>&1; then
-            if ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=accept-new "chregg@$test_ip" "echo 'SSH test'" > /dev/null 2>&1; then
+            if ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=accept-new "/${PI_USER}@$test_ip" "echo 'SSH test'" > /dev/null 2>&1; then
                 echo "✅ Found Pi!"
                 echo "$test_ip"
                 return 0
@@ -71,7 +72,7 @@ if [ $? -eq 0 ]; then
     echo "🎯 Found Pi at: $PI_IP"
     echo ""
     echo "📋 Quick commands:"
-    echo "  SSH to Pi: ssh chregg@$PI_IP"
+    echo "  SSH to Pi: ssh /${PI_USER}@$PI_IP"
     echo "  Deploy MSH: ./deploy-to-pi.sh $PI_IP"
     echo "  Auto-deploy: ./deploy-to-pi.sh"
 else

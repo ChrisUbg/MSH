@@ -3420,7 +3420,7 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "README.md",
+        "readme.md",
         "lib/net6.0/Npgsql.dll",
         "lib/net6.0/Npgsql.xml",
         "lib/net7.0/Npgsql.dll",
@@ -3443,7 +3443,7 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "README.md",
+        "readme.md",
         "lib/net8.0/Npgsql.EntityFrameworkCore.PostgreSQL.dll",
         "lib/net8.0/Npgsql.EntityFrameworkCore.PostgreSQL.xml",
         "npgsql.entityframeworkcore.postgresql.8.0.2.nupkg.sha512",

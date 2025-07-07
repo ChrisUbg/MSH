@@ -11,7 +11,7 @@ mDNS allows you to access your MSH application using the hostname `msh.local` in
 - `msh-avahi.service` - Avahi service configuration file
 - `setup-mdns.sh` - Script to set up mDNS on the Raspberry Pi
 - `test-mdns.sh` - Script to test mDNS functionality
-- `MDNS_SETUP.md` - This documentation file
+- `mdns-setup.md` - This documentation file
 
 ## Automatic Setup
 
@@ -32,12 +32,12 @@ If you need to set up mDNS manually on the Raspberry Pi:
 
 1. **Copy the setup script to the Pi:**
    ```bash
-   scp setup-mdns.sh chregg@[pi-ip]:~/MSH/
+   scp setup-mdns.sh ${PI_USER}@[pi-ip]:~/MSH/
    ```
 
 2. **Run the setup script on the Pi:**
    ```bash
-   ssh chregg@[pi-ip]
+   ssh ${PI_USER}@[pi-ip]
    cd ~/MSH
    sudo ./setup-mdns.sh
    ```
@@ -81,29 +81,29 @@ curl http://msh.local:8083
 
 1. **Check Avahi daemon status:**
    ```bash
-   ssh chregg@[pi-ip] "sudo systemctl status avahi-daemon"
+   ssh ${PI_USER}@[pi-ip] "sudo systemctl status avahi-daemon"
    ```
 
 2. **Restart Avahi daemon:**
    ```bash
-   ssh chregg@[pi-ip] "sudo systemctl restart avahi-daemon"
+   ssh ${PI_USER}@[pi-ip] "sudo systemctl restart avahi-daemon"
    ```
 
 3. **Check service file:**
    ```bash
-   ssh chregg@[pi-ip] "cat /etc/avahi/services/msh.service"
+   ssh ${PI_USER}@[pi-ip] "cat /etc/avahi/services/msh.service"
    ```
 
 ### Application Not Accessible
 
 1. **Check if containers are running:**
    ```bash
-   ssh chregg@[pi-ip] "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml ps"
+   ssh ${PI_USER}@[pi-ip] "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml ps"
    ```
 
 2. **Check container logs:**
    ```bash
-   ssh chregg@[pi-ip] "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml logs web"
+   ssh ${PI_USER}@[pi-ip] "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml logs web"
    ```
 
 3. **Test direct IP access:**
@@ -116,7 +116,7 @@ curl http://msh.local:8083
 If you have a firewall on the Pi, ensure port 8083 is open:
 
 ```bash
-ssh chregg@[pi-ip] "sudo ufw allow 8083"
+ssh ${PI_USER}@[pi-ip] "sudo ufw allow 8083"
 ```
 
 ## Service Configuration Details

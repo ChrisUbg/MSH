@@ -1,4 +1,5 @@
 #!/bin/bash
+source config/environment.sh
 
 # Build and deploy Matter Bridge to Pi
 # Using simplified approach with Python Matter libraries instead of full SDK build
@@ -7,16 +8,16 @@ echo "=== MSH Matter Bridge Build & Deploy (Simplified) ==="
 
 # Copy network-config.sh to Matter directory for deployment
 echo "Copying network-config.sh to Matter directory..."
-cp network-config.sh Matter/
+cp network-config.sh /${MATTER_DIR}/
 
 # Build using simplified Dockerfile 
 echo "Building Matter Bridge image using simplified approach..."
 cd Matter
 
 # Build the image using simplified Dockerfile
-docker build --platform linux/amd64 \
-  -t msh-matter-bridge:latest \
-  -f Dockerfile.simple \
+docker build --platform linux/amd64 /
+  -t msh-matter-bridge:latest /
+  -f Dockerfile.simple /
   .
 
 # Check if build was successful
@@ -46,20 +47,20 @@ echo "Deploying to Pi using simplified Dockerfile..."
 echo "Transferring Matter files to Pi..."
 
 echo "Transferring Matter files to Pi..."
-scp -r . chregg@192.168.0.104:~/MSH/Matter/
-scp ../docker-compose.prod-msh.yml chregg@192.168.0.104:~/MSH/
+scp -r . /${PI_USER}@${PI_IP}:/${PROJECT_ROOT}//${MATTER_DIR}/
+scp ../docker-compose.prod-msh.yml /${PI_USER}@${PI_IP}:/${PROJECT_ROOT}/
 
 # Clean up the copied file
 rm -f network-config.sh
 
 echo "Stopping existing containers..."
-ssh chregg@192.168.0.104 "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml down"
+ssh /${PI_USER}@${PI_IP} "cd /${PROJECT_ROOT} && docker-compose -f docker-compose.prod-msh.yml down"
 
 echo "Building containers on Pi..."
 CACHE_BUSTER=$(date +%s)
-ssh chregg@192.168.0.104 "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml build --no-cache --build-arg CACHE_BUSTER=$CACHE_BUSTER"
+ssh /${PI_USER}@${PI_IP} "cd /${PROJECT_ROOT} && docker-compose -f docker-compose.prod-msh.yml build --no-cache --build-arg CACHE_BUSTER=$CACHE_BUSTER"
 
 echo "Starting containers..."
-ssh chregg@192.168.0.104 "cd ~/MSH && docker-compose -f docker-compose.prod-msh.yml up -d"
+ssh /${PI_USER}@${PI_IP} "cd /${PROJECT_ROOT} && docker-compose -f docker-compose.prod-msh.yml up -d"
 
 echo "=== Deployment complete! ===" 

@@ -1,4 +1,5 @@
 #!/bin/bash
+source config/environment.sh
 
 # Emergency Network Recovery Script for MSH
 # This script will ALWAYS restore the Pi to normal client mode

@@ -4,9 +4,9 @@ Whenever making a change that could significantly impact the architecture, stabi
 
 This ensures that all contributors are aware of potential risks and can make informed decisions before proceeding, regardless of their prior experience or knowledge.
 
-In addition to this BASIC_RULES.md file, read and understand following documents too: CursorAgent.md, TODO.md, NETWORDK-CONFIG.md, PROJECT_DEFINITION.md and PRODJECT_ROADMAP.md
+In addition to this basic-rules.md file, read and understand following documents too: CursorAgent.md, todo.md, NETWORDK-CONFIG.md, project-definition.md and PRODJECT_ROADMAP.md
 
-Enforce all rules in BASIC_RULES.md including the in this document above mentioned md files.
+Enforce all rules in basic-rules.md including the in this document above mentioned md files.
 
 
 ---
@@ -14,7 +14,7 @@ Enforce all rules in BASIC_RULES.md including the in this document above mention
 - if something releated at a process flow, the refere at 
 /home/chris/RiderProjects/DevelopmentRules/diagram-blueprint-instructions.md and ledata-backup-process-blueprint.drawio documentation.
 
-- The rules defined in this file or at the /home/chris/RiderProjects/DevelopmentRules superseeds all within this solution stated rules. Including the PROJECT_ROADMAP.md
+- The rules defined in this file or at the /home/chris/RiderProjects/DevelopmentRules superseeds all within this solution stated rules. Including the project-roadmap.md
 
 - The projcect should run at the mentioned Raspberry Pi, But in docker container. This should be refelcted at the current implementation state.
 
@@ -22,7 +22,7 @@ Enforce all rules in BASIC_RULES.md including the in this document above mention
 
 - Always use Blazor components and Bootstrap for UI elements where possible. This ensures consistency, maintainability, and a modern look and feel across the application.
 
-- The TODO.md is the backlog.  Which is to work on.
+- The todo.md is the backlog.  Which is to work on.
 - Standard apperiacne of cards: The style and the size of the cards should be the same. Best would we to calculate the max size of the all the cards. And then use this as the values for height and width.
 
 - When adding Microsoft packages or references, always use the same major version across all projects. For example, if using .NET 8, all Microsoft.* packages should be version 8.0.x. Never mix different major versions (e.g., 8.0.x with 9.0.x) as this will cause package downgrade conflicts.

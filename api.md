@@ -56,7 +56,7 @@
     "guiAccessible": true,
     "networkInfo": {
       "network": "Main network",
-      "ip": "192.168.0.104",
+      "ip": "${PI_IP}",
       "access": "GUI accessible, BLE commissioning active"
     },
     "availableModes": [

@@ -130,7 +130,7 @@ public class Device : BaseEntity
 - **Configuration Management** - Matter paths and URLs configurable
 
 #### **Python Matter Bridge (FastAPI + python-matter-server)**
-- **✅ Production Ready** at `http://192.168.0.102:8085`
+- **✅ Production Ready** at `http://${PI_IP}:8085`
 - **python-matter-server integration** - Official Home Assistant certified implementation
 - **NOUS A8M integration** - Complete API endpoints for real device control
 - **Device commissioning endpoint** - `/commission` (WebSocket based)
@@ -306,7 +306,7 @@ python3 -m uvicorn app.main_simple:app --host 0.0.0.0 --port 8085
 - **Architecture**: Host-based matter-server + Containerized bridge + Containerized web app
 
 ### **Network Mode Switching Docker Networking Fix (2024-01-21)**
-- **Issue**: Network mode switching worked via `http://192.168.0.102:8083` but failed via `http://localhost:8083`
+- **Issue**: Network mode switching worked via `http://${PI_IP}:8083` but failed via `http://localhost:8083`
 - **Root Cause**: HttpClient configured with hardcoded `http://localhost:8082/` base URL caused Docker networking conflicts
 - **Problem**: When accessing via `localhost:8083`, internal API calls to `localhost:8082` failed due to container network context differences
 - **Solution Applied**:
@@ -339,8 +339,8 @@ python3 -m uvicorn app.main_simple:app --host 0.0.0.0 --port 8085
 - **MSH Smart Home system**: ✅ Running on Raspberry Pi with Docker
 - **PostgreSQL database**: ✅ Working with proper user accounts and test data
 - **Matter integration**: ✅ Using lightweight python-matter-server (officially certified)
-- **Web application**: ✅ Accessible at `http://localhost:8083` and `http://192.168.0.102:8083`
-- **pgAdmin access**: ✅ Host `192.168.0.102`, Port `5435`, Username `postgres`, Password `postgres`
+- **Web application**: ✅ Accessible at `http://localhost:8083` and `http://${PI_IP}:8083`
+- **pgAdmin access**: ✅ Host `${PI_IP}`, Port `5435`, Username `postgres`, Password `postgres`
 - **Device commissioning**: ✅ Saves to both Matter bridge and main database
 - **Room management**: ✅ Fully functional
 - **Device assignment**: ✅ Fixed and deployed

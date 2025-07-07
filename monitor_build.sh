@@ -1,4 +1,5 @@
 #!/bin/bash
+source config/environment.sh
 
 # Matter SDK Build Monitor
 # This script monitors the build progress on the development machine
@@ -17,7 +18,7 @@ check_build() {
     
     # Check if build processes are running
     echo "--- Running Processes ---"
-    ps aux | grep -E "(ninja|gcc|g\+\+|build_python)" | grep -v grep | head -5
+    ps aux | grep -E "(ninja|gcc|g/+/+|build_python)" | grep -v grep | head -5
     
     # Check build directory
     echo "--- Build Directory ---"
@@ -67,14 +68,14 @@ show_transfer_instructions() {
     echo "Once build completes, transfer to Pi using:"
     echo ""
     echo "Method 1: SCP (Recommended)"
-    echo "scp -r out/python_lib/ chregg@192.168.0.106:~/connectedhomeip/out/"
+    echo "scp -r out/python_lib/ /${PI_USER}@192.168.0.106:~/connectedhomeip/out/"
     echo ""
     echo "Method 2: rsync (More efficient)"
-    echo "rsync -avz --progress out/python_lib/ chregg@192.168.0.106:~/connectedhomeip/out/python_lib/"
+    echo "rsync -avz --progress out/python_lib/ /${PI_USER}@192.168.0.106:~/connectedhomeip/out/python_lib/"
     echo ""
     echo "Method 3: Specific tools only"
-    echo "scp out/python_lib/chip-repl chregg@192.168.0.106:~/connectedhomeip/out/python_lib/"
-    echo "scp out/python_lib/chip-tool chregg@192.168.0.106:~/connectedhomeip/out/python_lib/"
+    echo "scp out/python_lib/chip-repl /${PI_USER}@192.168.0.106:~/connectedhomeip/out/python_lib/"
+    echo "scp out/python_lib/chip-tool /${PI_USER}@192.168.0.106:~/connectedhomeip/out/python_lib/"
     echo ""
 }
 

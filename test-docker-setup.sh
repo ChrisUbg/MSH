@@ -1,4 +1,5 @@
 #!/bin/bash
+source config/environment.sh
 
 # Test script for MSH Docker setup
 

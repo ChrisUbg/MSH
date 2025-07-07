@@ -1442,12 +1442,12 @@
       "OriginalItemSpec": "wwwroot/css/open-iconic/ICON-LICENSE"
     },
     {
-      "Identity": "/home/chris/RiderProjects/MSH/src/MSH.Web/wwwroot/css/open-iconic/README.md",
+      "Identity": "/home/chris/RiderProjects/MSH/src/MSH.Web/wwwroot/css/open-iconic/readme.md",
       "SourceId": "MSH.Web",
       "SourceType": "Discovered",
       "ContentRoot": "/home/chris/RiderProjects/MSH/src/MSH.Web/wwwroot/",
       "BasePath": "/",
-      "RelativePath": "css/open-iconic/README.md",
+      "RelativePath": "css/open-iconic/readme.md",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -1458,7 +1458,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot/css/open-iconic/README.md"
+      "OriginalItemSpec": "wwwroot/css/open-iconic/readme.md"
     },
     {
       "Identity": "/home/chris/RiderProjects/MSH/src/MSH.Web/wwwroot/css/site.css",

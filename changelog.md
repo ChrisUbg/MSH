@@ -86,7 +86,7 @@
 ```
 - **Purpose**: Standard client mode on main network
 - **Network**: Connected to "08-TvM6xr-FQ" WiFi
-- **IP**: Dynamic from main network (192.168.0.104)
+- **IP**: Dynamic from main network (${PI_IP})
 - **GUI Access**: Available at msh.local:8083
 - **Use Case**: Standard operation and device control
 
@@ -1214,7 +1214,7 @@ python3 -m uvicorn app.main_simple:app --host 0.0.0.0 --port 8085
 #### **Docker Bridge Networking**
 - **C# App** → **FastAPI Bridge**: Uses Docker bridge IP `172.17.0.1:8085`
 - **FastAPI Bridge** → **python-matter-server**: Uses host networking `localhost:8084`
-- **External Access**: Uses Pi's IP address `192.168.0.102:8083`
+- **External Access**: Uses Pi's IP address `${PI_IP}:8083`
 
 ### 🧪 **Testing Results**
 

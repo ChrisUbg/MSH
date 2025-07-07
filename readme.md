@@ -21,8 +21,8 @@ Blazor UI → HTTP API → FastAPI Bridge → WebSocket → python-matter-server
 
 ## Documentation
 
-- [Network Configuration](NETWORK-CONFIG.md): Details on network modes, configuration script, switching, and troubleshooting.
-- [API Documentation](API.md): REST API endpoints for network and device management.
+- [Network Configuration](network-config.md): Details on network modes, configuration script, switching, and troubleshooting.
+- [API Documentation](api.md): REST API endpoints for network and device management.
 
 ... (rest of your README) 
 

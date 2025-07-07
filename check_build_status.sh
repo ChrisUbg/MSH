@@ -1,4 +1,5 @@
 #!/bin/bash
+source config/environment.sh
 
 # Quick Build Status Check
 echo "=== Matter SDK Build Status ==="
@@ -7,7 +8,7 @@ echo ""
 
 # Check build processes
 echo "--- Build Processes ---"
-BUILD_PROCESSES=$(ps aux | grep -E "(ninja|gcc|g\+\+|build_python)" | grep -v grep)
+BUILD_PROCESSES=$(ps aux | grep -E "(ninja|gcc|g/+/+|build_python)" | grep -v grep)
 if [ -n "$BUILD_PROCESSES" ]; then
     echo "✅ Build is running:"
     echo "$BUILD_PROCESSES" | head -3
