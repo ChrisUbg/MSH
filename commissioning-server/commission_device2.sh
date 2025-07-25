@@ -1,0 +1,1 @@
+curl -X POST http://localhost:8888/commission -H "Content-Type: application/json" -d '{"device_name": "office-socket-2", "device_type": "NOUS A8M Socket", "qr_code": "3096-783-6060", "network_ssid": "08-TvM6xr-FQ", "network_password": "Kartoffelernte", "pi_ip": "192.168.0.107"}' | python3 -m json.tool

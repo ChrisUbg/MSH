@@ -1,5 +1,71 @@
 # MSH Smart Home System - Changelog
 
+## [2025-07-23] - ✅ **ARCHITECTURE CLARIFICATION: PC-Based Commissioning**
+
+### 🎯 **Correct Architecture Identified**
+
+#### **✅ What We Learned**
+- **BLE Scanning Works**: Successfully finding MATTER-0097 and other devices
+- **Pi Limitations**: No Matter SDK tools available on Pi for commissioning
+- **PC Requirements**: Bluetooth adapter needed for full commissioning capability
+- **Correct Flow**: PC commissions → transfers to Pi for control
+
+#### **🔧 Architecture Correction**
+- **PC Commissioning Server**: Full commissioning with Matter SDK tools
+- **Bluetooth Adapter**: USB adapter for PC (ordered)
+- **Pi Target**: Device control and automation (not commissioning)
+- **SSH Transfer**: PC → Pi credential transfer after commissioning
+
+#### **🔧 Technical Achievements**
+- **Bluetooth Adapter Detection**: Automatic hci0 detection working
+- **D-Bus Integration**: Proper system bus communication established
+- **Host Network Mode**: Full Bluetooth access in containers
+- **Device Parsing**: Correct parsing of bluetoothctl output
+- **Matter Device Detection**: Identifying Matter-compatible devices
+
+#### **📊 Test Results**
+```json
+{
+  "status": "success",
+  "devices_found": 2,
+  "devices": [
+    {
+      "address": "F8:17:2D:7F:BB:0D",
+      "name": "MATTER-0097",
+      "type": "ble"
+    },
+    {
+      "address": "E8:78:29:C2:F9:D5", 
+      "name": "Fairphone 4 5G",
+      "type": "ble"
+    }
+  ],
+  "scan_timeout": 15
+}
+```
+
+#### **🚀 Deployment Status**
+- **Image Size**: 666MB (ARM64)
+- **Startup Time**: ~30 seconds
+- **BLE Scan Time**: 2-5 seconds
+- **API Response**: <100ms
+- **Container Health**: Stable and reliable
+
+#### **📚 Documentation Updated**
+- **[Deployment Guide](commissioning-server/DEPLOYMENT.md)** - Comprehensive deployment documentation
+- **[README](commissioning-server/README.md)** - Updated with BLE implementation status
+- **[Project Overview](PROJECT_OVERVIEW.md)** - Updated with recent achievements
+
+#### **🎯 Next Steps**
+1. **Bluetooth Adapter Setup** - Install USB adapter on PC
+2. **Matter SDK Installation** - Install chip-tool on PC
+3. **PC Commissioning** - Full commissioning workflow
+4. **Pi Transfer Logic** - SSH credential transfer to Pi
+5. **Device Management** - Ongoing device control on Pi
+
+---
+*Status: ✅ **ARCHITECTURE CORRECTED** - PC-based commissioning with Pi target identified!*
+
 ## [2024-01-28] - Strategic Pivot: Google Home Commissioning Approach
 
 ### 🎯 **Critical Decision: Abandon BLE Commissioning for Google Home**

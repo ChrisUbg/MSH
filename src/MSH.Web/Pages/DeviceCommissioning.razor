@@ -19,7 +19,7 @@
     <div class="row">
         <div class="col-12">
             <h1>Device Commissioning</h1>
-            <p class="lead">Add new Matter devices to your smart home</p>
+            <p class="lead">Add new Matter devices to your smart home using PC Commissioning Server</p>
         </div>
     </div>
 
@@ -29,64 +29,111 @@
                 <div class="card-body">
                     <h5 class="card-title">Commission New Device</h5>
                     <form>
-                        <div class="mb-3">
-                            <label for="deviceName" class="form-label">Device Name</label>
-                            <input type="text" class="form-control" id="deviceName" @bind="deviceName" required>
+                        <!-- Server Configuration Section -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="oi oi-cog"></i> Server Configuration</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="pcServerIp" class="form-label">PC Commissioning Server IP *</label>
+                                    <input type="text" class="form-control" id="pcServerIp" @bind="pcServerIp" required 
+                                           placeholder="192.168.0.100">
+                                    <div class="form-text">IP address of your PC running the commissioning server</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="pcServerPort" class="form-label">PC Server Port</label>
+                                    <input type="number" class="form-control" id="pcServerPort" @bind="pcServerPort" 
+                                           placeholder="8080">
+                                    <div class="form-text">Port for PC commissioning server (default: 8080)</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="piIp" class="form-label">Raspberry Pi IP *</label>
+                                    <input type="text" class="form-control" id="piIp" @bind="piIp" required 
+                                           placeholder="192.168.0.107">
+                                    <div class="form-text">IP address of your Raspberry Pi control hub</div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="deviceType" class="form-label">Device Type</label>
-                            <select class="form-select" id="deviceType" @bind="selectedDeviceTypeId" required>
-                                <option value="">Select a device type...</option>
-                                @foreach (var type in deviceTypes)
-                                {
-                                    <option value="@type.Id">@type.Name</option>
-                                }
-                            </select>
+
+                        <!-- Device Information Section -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="oi oi-device-hdd"></i> Device Information</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="deviceName" class="form-label">Device Name</label>
+                                    <input type="text" class="form-control" id="deviceName" @bind="deviceName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="deviceType" class="form-label">Device Type</label>
+                                    <select class="form-select" id="deviceType" @bind="selectedDeviceTypeId" required>
+                                        <option value="">Select a device type...</option>
+                                        @foreach (var type in deviceTypes)
+                                        {
+                                            <option value="@type.Id">@type.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="room" class="form-label">Room (Optional)</label>
+                                    <select class="form-select" id="room" @bind="selectedRoomId">
+                                        <option value="">-- No Room --</option>
+                                        @foreach (var room in rooms)
+                                        {
+                                            <option value="@room.Id">@room.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="room" class="form-label">Room (Optional)</label>
-                            <select class="form-select" id="room" @bind="selectedRoomId">
-                                <option value="">-- No Room --</option>
-                                @foreach (var room in rooms)
-                                {
-                                    <option value="@room.Id">@room.Name</option>
-                                }
-                            </select>
+
+                        <!-- Commissioning Details Section -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="oi oi-bluetooth"></i> Commissioning Details</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label for="qrCode" class="form-label">QR Code *</label>
+                                    <input type="text" class="form-control" id="qrCode" @bind="qrCode" required 
+                                           placeholder="MT:... (full QR code string from device)">
+                                    <div class="form-text">Enter the complete QR code string from your Matter device</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="networkSsid" class="form-label">WiFi Network Name (SSID) *</label>
+                                    <input type="text" class="form-control" id="networkSsid" @bind="networkSsid" required 
+                                           placeholder="Your WiFi network name">
+                                    <div class="form-text">The WiFi network the device should connect to</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="networkPassword" class="form-label">WiFi Password *</label>
+                                    <input type="password" class="form-control" id="networkPassword" @bind="networkPassword" required 
+                                           placeholder="Your WiFi password">
+                                    <div class="form-text">The password for the WiFi network</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="pin" class="form-label">Commissioning PIN (Optional)</label>
+                                    <input type="text" class="form-control" id="pin" @bind="pin" placeholder="Default: 20202021">
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="qrCode" class="form-label">QR Code *</label>
-                            <input type="text" class="form-control" id="qrCode" @bind="qrCode" required 
-                                   placeholder="MT:... (full QR code string from device)">
-                            <div class="form-text">Enter the complete QR code string from your Matter device</div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="networkSsid" class="form-label">WiFi Network Name (SSID) *</label>
-                            <input type="text" class="form-control" id="networkSsid" @bind="networkSsid" required 
-                                   placeholder="Your WiFi network name">
-                            <div class="form-text">The WiFi network the device should connect to</div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="networkPassword" class="form-label">WiFi Password *</label>
-                            <input type="password" class="form-control" id="networkPassword" @bind="networkPassword" required 
-                                   placeholder="Your WiFi password">
-                            <div class="form-text">The password for the WiFi network</div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="pin" class="form-label">Commissioning PIN (Optional)</label>
-                            <input type="text" class="form-control" id="pin" @bind="pin" placeholder="Default: 20202021">
-                        </div>
+
                         <div class="alert alert-info">
-                            <strong>Instructions:</strong>
+                            <strong>New Commissioning Workflow:</strong>
                             <ol>
+                                <li>Ensure PC commissioning server is running</li>
                                 <li>Put your device in pairing mode</li>
                                 <li>Scan the QR code on your device or enter it manually</li>
                                 <li>Enter your WiFi network details</li>
-                                <li>Click "Start Commissioning"</li>
-                                <li>Follow any on-screen instructions</li>
+                                <li>Click "Start Commissioning" - PC server will handle BLE commissioning</li>
+                                <li>After successful commissioning, credentials will be transferred to Pi</li>
                             </ol>
                         </div>
-                        <button type="button" class="btn btn-secondary me-2" @onclick="TestButtonClick">
-                            Test Button
+                        
+                        <button type="button" class="btn btn-secondary me-2" @onclick="TestConnection">
+                            Test Connection
                         </button>
                         <button type="button" class="btn btn-primary" @onclick="HandleCommissioning" disabled="@isCommissioning">
                             @if (isCommissioning)
@@ -129,11 +176,46 @@
                                 </div>
                                 <div>
                                     <strong>Commissioning in progress...</strong>
-                                    <p class="mb-0">Please wait while we connect to your device.</p>
+                                    <p class="mb-0">PC server is handling BLE commissioning and credential transfer to Pi.</p>
                                 </div>
                             </div>
                         </div>
                     }
+                    
+                    <!-- Connection Status -->
+                    <div class="mt-3">
+                        <h6>Connection Status</h6>
+                        <div class="row">
+                            <div class="col-6">
+                                <small class="text-muted">PC Server:</small>
+                                <div class="d-flex align-items-center">
+                                    @if (pcServerConnected)
+                                    {
+                                        <span class="badge bg-success me-2">Connected</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger me-2">Disconnected</span>
+                                    }
+                                    <small>@pcServerUrl</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">Pi Hub:</small>
+                                <div class="d-flex align-items-center">
+                                    @if (piConnected)
+                                    {
+                                        <span class="badge bg-success me-2">Connected</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger me-2">Disconnected</span>
+                                    }
+                                    <small>@piUrl</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -146,9 +228,16 @@
     private string qrCode = "";
     private string networkSsid = "";
     private string networkPassword = "";
+    private string pcServerIp = "192.168.0.100";
+    private int pcServerPort = 8080;
+    private string piIp = "192.168.0.107";
     private bool isCommissioning = false;
     private string errorMessage = "";
     private string successMessage = "";
+    private bool pcServerConnected = false;
+    private bool piConnected = false;
+    private string pcServerUrl = "";
+    private string piUrl = "";
     
     private List<DeviceType> deviceTypes = new();
     private List<Room> rooms = new();
@@ -158,6 +247,7 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadData();
+        await TestConnections();
     }
 
     private async Task LoadData()
@@ -195,9 +285,58 @@
         }
     }
 
-    private async Task TestButtonClick()
+    private async Task TestConnections()
     {
-        errorMessage = "Test button clicked at " + DateTime.Now.ToString();
+        await TestPCServerConnection();
+        await TestPiConnection();
+        StateHasChanged();
+    }
+
+    private async Task TestPCServerConnection()
+    {
+        try
+        {
+            pcServerUrl = $"http://{pcServerIp}:{pcServerPort}";
+            var client = HttpClientFactory.CreateClient();
+            client.Timeout = TimeSpan.FromSeconds(5);
+            
+            var response = await client.GetAsync($"{pcServerUrl}/api/status");
+            pcServerConnected = response.IsSuccessStatusCode;
+        }
+        catch
+        {
+            pcServerConnected = false;
+        }
+    }
+
+    private async Task TestPiConnection()
+    {
+        try
+        {
+            piUrl = $"http://{piIp}:8083";
+            var client = HttpClientFactory.CreateClient();
+            client.Timeout = TimeSpan.FromSeconds(5);
+            
+            var response = await client.GetAsync($"{piUrl}/");
+            piConnected = response.IsSuccessStatusCode;
+        }
+        catch
+        {
+            piConnected = false;
+        }
+    }
+
+    private async Task TestConnection()
+    {
+        await TestConnections();
+        if (pcServerConnected && piConnected)
+        {
+            successMessage = "✅ Both PC server and Pi hub are connected!";
+        }
+        else
+        {
+            errorMessage = "❌ Connection issues detected. Please check server IPs and ensure both servers are running.";
+        }
         StateHasChanged();
     }
 
@@ -211,6 +350,14 @@
             successMessage = "";
             StateHasChanged(); // Force UI update
 
+            // Test connections first
+            await TestConnections();
+            if (!pcServerConnected)
+            {
+                errorMessage = "PC commissioning server is not accessible. Please check the IP address and ensure the server is running.";
+                return;
+            }
+
             // Get selected device type
             var selectedDeviceType = deviceTypes.FirstOrDefault(dt => dt.Id == selectedDeviceTypeId);
             if (selectedDeviceType == null)
@@ -222,7 +369,10 @@
 
             Console.WriteLine($"Selected device type: {selectedDeviceType.Name}"); // Debug
 
-            // Commission device through Matter bridge
+            // Debug: Log the QR code being sent
+            Console.WriteLine($"QR Code from UI: '{qrCode}' (length: {qrCode?.Length ?? 0})");
+
+            // Commission device through PC commissioning server
             var request = new
             {
                 device_name = deviceName,
@@ -230,13 +380,15 @@
                 qr_code = qrCode,
                 network_ssid = networkSsid,
                 network_password = networkPassword,
-                pin = string.IsNullOrEmpty(pin) ? "20202021" : pin
+                pin = string.IsNullOrEmpty(pin) ? "20202021" : pin,
+                pi_ip = piIp,
+                pi_user = "chregg"
             };
 
-            Console.WriteLine($"Sending request to MatterBridge: {System.Text.Json.JsonSerializer.Serialize(request)}"); // Debug
+            Console.WriteLine($"Sending request to PC Commissioning Server: {System.Text.Json.JsonSerializer.Serialize(request)}"); // Debug
 
-            var client = HttpClientFactory.CreateClient("MatterBridge");
-            var response = await client.PostAsJsonAsync("/commission", request);
+            var client = HttpClientFactory.CreateClient();
+            var response = await client.PostAsJsonAsync($"http://{pcServerIp}:{pcServerPort}/api/devices/commission", request);
             
             Console.WriteLine($"Response status: {response.StatusCode}"); // Debug
             
@@ -249,7 +401,7 @@
                     // Save device to database with user selections
                     await SaveCommissionedDevice(result, selectedDeviceType);
                     
-                    successMessage = $"Device commissioned successfully! Device ID: {result.device_id}";
+                    successMessage = $"Device commissioned successfully! Device ID: {result.device_id}. Credentials transferred to Pi hub.";
                     // Reset form
                     deviceName = "";
                     selectedDeviceTypeId = Guid.Empty;
@@ -294,7 +446,7 @@
             {
                 // Update existing device with user selections
                 existingDevice.Name = deviceName;
-                existingDevice.Description = $"Commissioned {deviceType.Name}";
+                existingDevice.Description = $"Commissioned {deviceType.Name} via PC server";
                 existingDevice.DeviceTypeId = deviceType.Id;
                 existingDevice.RoomId = selectedRoomId;
                 existingDevice.Status = "commissioned";
@@ -308,7 +460,9 @@
                 var properties = new Dictionary<string, object>
                 {
                     ["commissioned_at"] = DateTime.UtcNow.ToString("O"),
-                    ["commissioning_method"] = "python-matter-server",
+                    ["commissioning_method"] = "pc-commissioning-server",
+                    ["pc_server_ip"] = pcServerIp,
+                    ["pi_ip"] = piIp,
                     ["node_id"] = result.node_id?.ToString() ?? "unknown"
                 };
                 existingDevice.Properties = System.Text.Json.JsonDocument.Parse(
@@ -323,7 +477,7 @@
                 var device = new Device
                 {
                     Name = deviceName,
-                    Description = $"Commissioned {deviceType.Name}",
+                    Description = $"Commissioned {deviceType.Name} via PC server",
                     MatterDeviceId = result.device_id,
                     DeviceTypeId = deviceType.Id,
                     RoomId = selectedRoomId,
@@ -333,7 +487,9 @@
                     LastStateChange = DateTime.UtcNow,
                     Properties = System.Text.Json.JsonDocument.Parse(@"{
                         ""commissioned_at"": """ + DateTime.UtcNow.ToString("O") + @""",
-                        ""commissioning_method"": ""python-matter-server"",
+                        ""commissioning_method"": ""pc-commissioning-server"",
+                        ""pc_server_ip"": """ + pcServerIp + @""",
+                        ""pi_ip"": """ + piIp + @""",
                         ""node_id"": """ + (result.node_id?.ToString() ?? "unknown") + @"""
                     }"),
                     Configuration = System.Text.Json.JsonDocument.Parse("{}"),

@@ -1,0 +1,16 @@
+{
+  "jlink": {
+    "path": "/opt/JLink_Linux_V818_x86_64",
+    "version": "8.18",
+    "libraries": [
+      "/opt/JLink_Linux_V818_x86_64/libjlinkarm.so",
+      "/opt/JLink_Linux_V818_x86_64/libjlinkarm.so.8",
+      "/opt/JLink_Linux_V818_x86_64/libjlinkarm.so.8.18.0"
+    ],
+    "executables": {
+      "JLinkExe": "/opt/JLink_Linux_V818_x86_64/JLinkExe",
+      "JLinkGDBServer": "/opt/JLink_Linux_V818_x86_64/JLinkGDBServerExe",
+      "JFlashExe": "/opt/JLink_Linux_V818_x86_64/JFlashExe"
+    }
+  }
+} 

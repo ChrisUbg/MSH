@@ -146,16 +146,12 @@ class RealMatterCommissioner:
                     logger.info("Using original QR code for alternative format")
                     result = await self.matter_server.commission_device(
                         qr_code=qr_code,  # Pass original QR code
-                        ssid=ssid,
-                        password=password,
                         method="ble"
                     )
                 else:
                     # For standard format, we can use parsed data
                     result = await self.matter_server.commission_device(
                         qr_code=qr_code,
-                        ssid=ssid,
-                        password=password,
                         method="ble"
                     )
                 
@@ -256,7 +252,7 @@ class RealMatterCommissioner:
             
             # Wait for device to connect to Pi's network
             logger.info("Waiting for device to connect to Pi's network...")
-            await asyncio.sleep(5)  # Give device time to connect
+            await asyncio.sleep(5)
             
             # Use the matter server's commissioning method if available
             if self.matter_server and hasattr(self.matter_server, 'commission_device'):
@@ -267,16 +263,12 @@ class RealMatterCommissioner:
                     logger.info("Using original QR code for alternative format")
                     result = await self.matter_server.commission_device(
                         qr_code=qr_code,  # Pass original QR code
-                        ssid=ssid,
-                        password=password,
                         method="wifi"
                     )
                 else:
                     # For standard format, we can use parsed data
                     result = await self.matter_server.commission_device(
                         qr_code=qr_code,
-                        ssid=ssid,
-                        password=password,
                         method="wifi"
                     )
                 

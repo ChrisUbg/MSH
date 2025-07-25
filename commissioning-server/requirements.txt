@@ -1,0 +1,35 @@
+# MSH Commissioning Server Requirements
+
+# Web Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# Data Validation
+pydantic==2.5.0
+
+# Configuration
+pyyaml==6.0.1
+
+# Database
+aiosqlite==0.19.0
+
+# WebSocket Support
+websockets==12.0
+
+# HTTP Client
+httpx==0.25.2
+
+# Security (updated for Python 3.12 compatibility)
+cryptography>=42.0.0
+
+# Development Tools
+pytest==7.4.3
+pytest-asyncio==0.21.1
+black==23.11.0
+flake8==6.1.0
+
+# Build Tools
+pyinstaller==6.2.0
+
+# Cross-platform
+platformdirs==4.1.0 

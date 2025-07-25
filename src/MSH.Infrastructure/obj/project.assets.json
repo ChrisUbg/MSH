@@ -741,10 +741,14 @@
           "Microsoft.Extensions.FileProviders.Abstractions": "8.0.0"
         },
         "compile": {
-          "lib/net8.0/Microsoft.Extensions.FileProviders.Embedded.dll": {}
+          "lib/net8.0/Microsoft.Extensions.FileProviders.Embedded.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "lib/net8.0/Microsoft.Extensions.FileProviders.Embedded.dll": {}
+          "lib/net8.0/Microsoft.Extensions.FileProviders.Embedded.dll": {
+            "related": ".xml"
+          }
         },
         "build": {
           "build/netstandard2.0/_._": {}
@@ -2811,7 +2815,6 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "readme.md",
         "lib/net6.0/Npgsql.dll",
         "lib/net6.0/Npgsql.xml",
         "lib/net7.0/Npgsql.dll",
@@ -2824,7 +2827,8 @@
         "lib/netstandard2.1/Npgsql.xml",
         "npgsql.8.0.2.nupkg.sha512",
         "npgsql.nuspec",
-        "postgresql.png"
+        "postgresql.png",
+        "readme.md"
       ]
     },
     "Npgsql.EntityFrameworkCore.PostgreSQL/8.0.2": {
@@ -2834,12 +2838,12 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "readme.md",
         "lib/net8.0/Npgsql.EntityFrameworkCore.PostgreSQL.dll",
         "lib/net8.0/Npgsql.EntityFrameworkCore.PostgreSQL.xml",
         "npgsql.entityframeworkcore.postgresql.8.0.2.nupkg.sha512",
         "npgsql.entityframeworkcore.postgresql.nuspec",
-        "postgresql.png"
+        "postgresql.png",
+        "readme.md"
       ]
     },
     "System.Buffers/4.5.0": {
@@ -3462,7 +3466,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.411/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.412/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

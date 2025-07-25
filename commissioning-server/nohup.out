@@ -1,0 +1,29 @@
+/home/chris/RiderProjects/MSH/commissioning-server/main.py:71: DeprecationWarning: 
+        on_event is deprecated, use lifespan event handlers instead.
+
+        Read more about it in the
+        [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+        
+  @app.on_event("startup")
+/home/chris/RiderProjects/MSH/commissioning-server/main.py:89: DeprecationWarning: 
+        on_event is deprecated, use lifespan event handlers instead.
+
+        Read more about it in the
+        [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+        
+  @app.on_event("shutdown")
+INFO:     Started server process [49767]
+INFO:     Waiting for application startup.
+INFO:__main__:Starting MSH Commissioning Server...
+INFO:commissioning_server.core.credential_store:Credential store initialized successfully
+INFO:commissioning_server.core.matter_client:Initialized chip-tool with fabric 1, node 112233
+INFO:commissioning_server.core.matter_client:Matter SDK client initialized successfully
+INFO:__main__:Matter SDK initialized successfully
+INFO:__main__:MSH Commissioning Server started successfully
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8888 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:__main__:Shutting down MSH Commissioning Server...
+INFO:     Application shutdown complete.
+INFO:     Finished server process [49767]

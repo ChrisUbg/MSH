@@ -1,4 +1,5 @@
 {
     "workbench.colorTheme": "Visual Studio Light",
-    "chat.editor.fontSize": 18
+    "chat.editor.fontSize": 18,
+    "git.ignoreLimitWarning": true
 }

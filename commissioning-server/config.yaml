@@ -1,0 +1,47 @@
+bluetooth:
+  adapter: hci0
+  scan_duration: 10
+  timeout: 30
+  # Nordic nRF52840 specific optimizations
+  nordic_optimizations:
+    enable_high_power: true
+    enable_extended_advertising: true
+    scan_interval: 100  # ms - faster scanning
+    scan_window: 50     # ms - longer scan window
+    advertising_interval: 100  # ms - faster advertising
+    connection_interval: 15   # ms - faster connection updates
+  # Advanced scanning options
+  advanced_scanning:
+    enable_duplicate_filtering: true
+    enable_whitelist: false
+    scan_type: "active"  # active vs passive
+    filter_rssi: -80     # dBm - filter weak signals
+matter:
+  chip_repl_path: /usr/local/bin/chip-repl
+  chip_tool_path: /usr/local/bin/chip-tool
+  fabric_id: '1'
+  node_id: '112233'
+  sdk_path: /usr/local/matter-sdk
+  optional: true  # Allow running without Matter SDK tools
+  # Nordic-specific Matter commissioning
+  nordic_commissioning:
+    enable_high_power_mode: true
+    extended_scan_timeout: 60  # seconds
+    retry_attempts: 3
+    connection_timeout: 30
+pi:
+  default_ip: 192.168.0.104
+  default_user: chregg
+  ssh_key_path: ~/.ssh/id_ed25519
+security:
+  allowed_hosts:
+  - 192.168.0.0/24
+  api_key_required: false
+  encrypt_credentials: true
+server:
+  debug: false
+  host: 0.0.0.0
+  port: 8888
+storage:
+  path: ./credentials.db
+  type: sqlite

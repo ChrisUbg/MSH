@@ -107,7 +107,7 @@ builder.Services.AddHttpClient("API", client =>
 // Add Matter bridge HTTP client
 builder.Services.AddHttpClient("MatterBridge", client =>
 {
-    var matterBridgeUrl = builder.Configuration["MatterBridge:BaseUrl"] ?? "http://192.168.0.102:8085";
+    var matterBridgeUrl = builder.Configuration["MatterBridge:BaseUrl"] ?? "http://192.168.0.107:8085";
     client.BaseAddress = new Uri(matterBridgeUrl);
     client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 });
