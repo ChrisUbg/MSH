@@ -18,7 +18,7 @@
 **MSH (Matter Smart Home)** is a comprehensive smart home system built on the Matter protocol, designed to provide seamless device commissioning, management, and control capabilities.
 
 ### **Core Components:**
-- **Commissioning Server**: ✅ **BLE scanning fully functional** - Device discovery working
+- **Commissioning Server**: ✅ **FULLY FUNCTIONAL** - BLE scanning, device commissioning, and control working
 - **Web Application**: User interface for device management
 - **Database**: PostgreSQL for device and credential storage
 - **Matter SDK Integration**: ARM64 build support
@@ -27,8 +27,12 @@
 ### **✅ Recent Achievements:**
 - **BLE Device Discovery**: Successfully finding MATTER-0097 and other devices
 - **Docker Deployment**: ARM64 container deployment to Raspberry Pi working
-- **API Integration**: RESTful BLE scanning endpoints functional
+- **API Integration**: RESTful BLE scanning and commissioning endpoints functional
 - **Hardware Compatibility**: Nordic nRF52 USB dongle integration verified
+- **✅ Device Commissioning**: Both NOUS A8M devices successfully commissioned with unique Node IDs
+- **✅ Device Control**: Both devices independently controllable via API and chip-tool
+- **✅ API Improvements**: Enhanced commissioning process with reliable BLE-WiFi method
+- **✅ Dynamic Node ID Generation**: Unique 64-bit Node IDs preventing conflicts
 
 ---
 
@@ -56,6 +60,8 @@
 ### **📱 Commissioning & Hardware**
 - **[Commissioning Server](commissioning-server/README.md)** - Main commissioning server documentation
 - **[Deployment Guide](commissioning-server/DEPLOYMENT.md)** - ✅ **FULLY FUNCTIONAL** BLE scanning and Docker deployment
+- **[NOUS A8M Commissioning Guide](commissioning-server/NOUS_A8M_COMMISSIONING_GUIDE.md)** - ✅ **SUCCESSFUL** device commissioning and control
+- **[API Improvements](commissioning-server/API_IMPROVEMENTS.md)** - Enhanced API commissioning process
 - **[Hardware Setup](commissioning-server/hardware-setup.md)** - Hardware configuration guide
 - **[Nordic Dongle Integration](commissioning-server/NORDIC_DONGLE_INTEGRATION.md)** - Enhanced BLE capabilities
 - **[Nordic Dongle Solution](commissioning-server/NORDIC_DONGLE_SOLUTION.md)** - Troubleshooting and alternatives
@@ -119,6 +125,7 @@
 # Test your setup:
 1. [Real Commissioning Test Guide](real-commissioning-test-guide.md)
 2. [PC Commissioning Server](PC_COMMISSIONING_SERVER.md)
+3. [NOUS A8M Commissioning Guide](commissioning-server/NOUS_A8M_COMMISSIONING_GUIDE.md) - ✅ **WORKING**
 ```
 
 ---
@@ -133,7 +140,7 @@
 
 ### **Testing Cycle**
 1. **Hardware Testing**: [Hardware Setup](commissioning-server/hardware-setup.md)
-2. **Commissioning Testing**: [Real Commissioning Test Guide](real-commissioning-test-guide.md)
+2. **Commissioning Testing**: [NOUS A8M Commissioning Guide](commissioning-server/NOUS_A8M_COMMISSIONING_GUIDE.md) - ✅ **VERIFIED**
 3. **Integration Testing**: [PC Commissioning Server](PC_COMMISSIONING_SERVER.md)
 
 ### **Deployment Process**
@@ -166,21 +173,28 @@
 ## 🧪 Testing & Commissioning
 
 ### **Commissioning Process**
-1. **Device Discovery**: mDNS and BLE scanning
-2. **Authentication**: QR code or manual code input
-3. **Network Provisioning**: WiFi credentials transfer
-4. **Device Registration**: Database storage and management
+1. **Device Discovery**: mDNS and BLE scanning ✅ **WORKING**
+2. **Authentication**: QR code or manual code input ✅ **WORKING**
+3. **Network Provisioning**: WiFi credentials transfer ✅ **WORKING**
+4. **Device Registration**: Database storage and management ✅ **WORKING**
 
 ### **Testing Resources**
 - **[Real Commissioning Test Guide](real-commissioning-test-guide.md)** - Complete testing workflow
 - **[PC Commissioning Server](PC_COMMISSIONING_SERVER.md)** - Alternative testing setup
+- **[NOUS A8M Commissioning Guide](commissioning-server/NOUS_A8M_COMMISSIONING_GUIDE.md)** - ✅ **VERIFIED WORKING**
 - **[Hardware Setup](commissioning-server/hardware-setup.md)** - Hardware validation
 
 ### **Supported Devices**
-- **NOUS A8M**: Primary target device
+- **NOUS A8M**: ✅ **SUCCESSFULLY COMMISSIONED** - Both devices working
 - **Philips Hue**: Compatible devices
 - **IKEA TRÅDFRI**: Compatible devices
 - **Other Matter Devices**: General compatibility
+
+### **✅ Commissioning Success**
+- **Device 1 (Office-Socket 1)**: Node ID `4328ED19954E9DC0` - ✅ **WORKING**
+- **Device 2 (Office-Socket 2)**: Node ID `4328ED19954E9DC1` - ✅ **WORKING**
+- **API Commissioning**: Enhanced with BLE-WiFi method - ✅ **WORKING**
+- **Device Control**: Both devices independently controllable - ✅ **WORKING**
 
 ---
 
@@ -191,6 +205,7 @@
 2. **Network Issues**: [Network Configuration](network-config.md)
 3. **Database Problems**: [PostgreSQL Setup](postgres-setup.md)
 4. **Build Issues**: [Matter SDK ARM64 Build](Matter-SDK-ARM64-Build-Instructions.md)
+5. **Commissioning Issues**: [NOUS A8M Commissioning Guide](commissioning-server/NOUS_A8M_COMMISSIONING_GUIDE.md) - ✅ **SOLVED**
 
 ### **Platform-Specific Fixes**
 - **[Cross-Platform Fix Summary](cross-platform-fix-summary.md)** - General fixes
@@ -210,12 +225,13 @@
 - **Active Development**: See [TODO](todo.md) for current tasks
 - **Recent Changes**: Check [Changelog](changelog.md) for updates
 - **Project Goals**: Review [Project Roadmap](project-roadmap.md)
+- **✅ Commissioning**: Both devices successfully commissioned and controllable
 
 ### **Architecture Overview**
-- **Commissioning Server**: Python-based BLE/WiFi commissioning
+- **Commissioning Server**: Python-based BLE/WiFi commissioning ✅ **WORKING**
 - **Web Application**: ASP.NET Core with Blazor
 - **Database**: PostgreSQL with Entity Framework
-- **Matter Integration**: ARM64 SDK with custom commissioning
+- **Matter Integration**: ARM64 SDK with custom commissioning ✅ **WORKING**
 
 ### **Integration Points**
 - **[TASMODA](tasmoda.md)** - External system integration
@@ -230,12 +246,14 @@
 1. **Review [TODO](todo.md)** for current priorities
 2. **Check [Changelog](changelog.md)** for recent updates
 3. **Follow [Development Process](dev-process.md)** for new features
+4. **Test API commissioning**: Use [commission_via_api.sh](commissioning-server/commission_via_api.sh)
 
 ### **Long-term Goals**
 1. **Complete [Project Roadmap](project-roadmap.md)** milestones
 2. **Enhance [Nordic Dongle Integration](commissioning-server/NORDIC_DONGLE_INTEGRATION.md)**
 3. **Expand [API Documentation](api.md)** with new endpoints
 4. **Optimize [Database Schema](database/schema.md)** for performance
+5. **Integrate commissioned devices into web application**
 
 ---
 
@@ -255,6 +273,7 @@
 - **[Real Commissioning Test Guide](real-commissioning-test-guide.md)** - Testing procedures
 - **[Hardware Setup](commissioning-server/hardware-setup.md)** - Hardware validation
 - **[PC Commissioning Server](PC_COMMISSIONING_SERVER.md)** - Alternative testing
+- **[NOUS A8M Commissioning Guide](commissioning-server/NOUS_A8M_COMMISSIONING_GUIDE.md)** - ✅ **VERIFIED WORKING**
 
 ---
 

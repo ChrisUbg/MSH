@@ -6,9 +6,10 @@ msh-app-prod.tar
 *.tar.gz
 *.tgz
 
-# Matter SDK build artifacts
+# Matter SDK build artifacts and third-party dependencies
 dev_connectedhomeip/
 connectedhomeip/
+ot-br-posix/
 matter_data/
 matter_host_env/
 fastapi_env/
@@ -49,3 +50,19 @@ obj/
 bin/
 *.AssemblyInfo.cs
 *.AssemblyInfoInputs.cache
+
+# Python virtual environments
+venv/
+**/venv/
+commissioning-server/venv/
+
+# History folder (contains large files and old repositories)
+History/
+
+# Docker image files
+*.tar
+*.tar.gz
+*.tgz
+
+# Published files
+publish/

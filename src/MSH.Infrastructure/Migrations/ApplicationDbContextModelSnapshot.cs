@@ -35,7 +35,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("DevicesId");
 
-                    b.ToTable("DeviceDeviceGroup");
+                    b.ToTable("DeviceDeviceGroup", (string)null);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.Device", b =>
@@ -110,7 +110,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("Devices");
+                    b.ToTable("Devices", (string)null);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceEvent", b =>
@@ -153,7 +153,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("DeviceEvents");
+                    b.ToTable("DeviceEvents", (string)null);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceGroup", b =>
@@ -196,45 +196,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("DeviceGroups");
-                });
-
-            modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceGroupMember", b =>
-                {
-                    b.Property<Guid>("DeviceId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("DeviceGroupId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Comment")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CreatedById")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("text");
-
-                    b.HasKey("DeviceId", "DeviceGroupId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("DeviceGroupId");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("DeviceGroupMembers");
+                    b.ToTable("DeviceGroups", (string)null);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceHistory", b =>
@@ -283,7 +245,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("DeviceHistory");
+                    b.ToTable("DeviceHistory", (string)null);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceState", b =>
@@ -330,7 +292,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("DeviceStates");
+                    b.ToTable("DeviceStates", (string)null);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceType", b =>
@@ -375,7 +337,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("DeviceTypes");
+                    b.ToTable("DeviceTypes", (string)null);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.EnvironmentalSettings", b =>
@@ -446,7 +408,7 @@ namespace MSH.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("EnvironmentalSettings");
+                    b.ToTable("EnvironmentalSettings", (string)null);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.Group", b =>
@@ -484,7 +446,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("Groups");
+                    b.ToTable("Groups", (string)null);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.GroupMember", b =>
@@ -532,7 +494,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("GroupMembers");
+                    b.ToTable("GroupMembers", (string)null);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.GroupState", b =>
@@ -572,7 +534,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("GroupStates");
+                    b.ToTable("GroupStates", (string)null);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.GroupStateHistory", b =>
@@ -624,7 +586,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("GroupStateHistory");
+                    b.ToTable("GroupStateHistory", (string)null);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.Notification", b =>
@@ -675,7 +637,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.Room", b =>
@@ -716,7 +678,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("Rooms");
+                    b.ToTable("Rooms", (string)null);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.Rule", b =>
@@ -765,7 +727,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("Rules");
+                    b.ToTable("Rules", (string)null);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.RuleAction", b =>
@@ -813,7 +775,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("RuleActions");
+                    b.ToTable("RuleActions", (string)null);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.RuleCondition", b =>
@@ -861,7 +823,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("RuleConditions");
+                    b.ToTable("RuleConditions", (string)null);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.RuleExecutionHistory", b =>
@@ -914,7 +876,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("RuleExecutionHistory");
+                    b.ToTable("RuleExecutionHistory", (string)null);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.RuleTrigger", b =>
@@ -969,7 +931,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("RuleTriggers");
+                    b.ToTable("RuleTriggers", (string)null);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.User", b =>
@@ -1024,7 +986,7 @@ namespace MSH.Infrastructure.Migrations
                     b.HasIndex("UserName")
                         .IsUnique();
 
-                    b.ToTable("ApplicationUsers");
+                    b.ToTable("                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             s", (string)null);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.UserDevicePermission", b =>
@@ -1070,7 +1032,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserDevicePermissions");
+                    b.ToTable("UserDevicePermissions", (string)null);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.UserRoomPermission", b =>
@@ -1116,7 +1078,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRoomPermissions");
+                    b.ToTable("UserRoomPermissions", (string)null);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.UserSettings", b =>
@@ -1206,7 +1168,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("UserId1");
 
-                    b.ToTable("UserSettings");
+                    b.ToTable("UserSettings", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1497,39 +1459,6 @@ namespace MSH.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("CreatedBy");
-
-                    b.Navigation("UpdatedBy");
-                });
-
-            modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceGroupMember", b =>
-                {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.DeviceGroup", "DeviceGroup")
-                        .WithMany("DeviceGroupMembers")
-                        .HasForeignKey("DeviceGroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.Device", "Device")
-                        .WithMany("DeviceGroupMembers")
-                        .HasForeignKey("DeviceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById");
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("Device");
-
-                    b.Navigation("DeviceGroup");
 
                     b.Navigation("UpdatedBy");
                 });
@@ -2101,16 +2030,9 @@ namespace MSH.Infrastructure.Migrations
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.Device", b =>
                 {
-                    b.Navigation("DeviceGroupMembers");
-
                     b.Navigation("Events");
 
                     b.Navigation("States");
-                });
-
-            modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceGroup", b =>
-                {
-                    b.Navigation("DeviceGroupMembers");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceType", b =>

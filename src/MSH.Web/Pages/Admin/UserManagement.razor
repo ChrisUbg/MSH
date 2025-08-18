@@ -164,7 +164,7 @@
 
                 return new UserViewModel
                 {
-                    Id = Guid.Parse(u.Id),
+                    Id = u.Id,
                     UserName = u.UserName,
                     Email = u.Email,
                     Role = role,
@@ -315,7 +315,7 @@
 
     private class UserViewModel
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; } = "";
         public string UserName { get; set; } = "";
         public string Email { get; set; } = "";
         // Role is only for display and UI, not persisted in ApplicationUser

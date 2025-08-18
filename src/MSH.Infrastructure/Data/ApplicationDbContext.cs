@@ -30,7 +30,6 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<DeviceType> DeviceTypes { get; set; } = null!;
     public DbSet<Device> Devices { get; set; } = null!;
     public DbSet<DeviceGroup> DeviceGroups { get; set; } = null!;
-    public DbSet<DeviceGroupMember> DeviceGroupMembers { get; set; } = null!;
     public DbSet<DeviceState> DeviceStates { get; set; } = null!;
     public DbSet<DeviceEvent> DeviceEvents { get; set; } = null!;
     public DbSet<Rule> Rules { get; set; } = null!;
@@ -115,20 +114,48 @@ public class ApplicationDbContext : IdentityDbContext
             .HasForeignKey(d => d.RoomId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<DeviceGroupMember>()
-            .HasKey(dgm => new { dgm.DeviceId, dgm.DeviceGroupId });
+        // Configure DeviceGroup and DeviceType relationship
+        modelBuilder.Entity<DeviceType>()
+            .HasOne(dt => dt.DeviceGroup)
+            .WithMany(dg => dg.DeviceTypes)
+            .HasForeignKey(dt => dt.DeviceGroupId)
+            .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<DeviceGroupMember>()
-            .HasOne(dgm => dgm.Device)
-            .WithMany(d => d.DeviceGroupMembers)
-            .HasForeignKey(dgm => dgm.DeviceId)
-            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<DeviceGroup>()
+            .Property(dg => dg.DefaultCapabilities)
+            .HasColumnType("jsonb");
 
-        modelBuilder.Entity<DeviceGroupMember>()
-            .HasOne(dgm => dgm.DeviceGroup)
-            .WithMany(dg => dg.DeviceGroupMembers)
-            .HasForeignKey(dgm => dgm.DeviceGroupId)
-            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<DeviceType>()
+            .Property(dt => dt.Capabilities)
+            .HasColumnType("jsonb");
+
+        // modelBuilder.Entity<DeviceGroupMember>()
+        //     .HasKey(dgm => new { dgm.DeviceId, dgm.DeviceGroupId });
+
+        // modelBuilder.Entity<DeviceGroupMember>()
+        //     .HasOne(dgm => dgm.Device)
+        //     .WithMany(d => d.DeviceGroupMembers)
+        //     .HasForeignKey(dgm => dgm.DeviceId)
+        //     .OnDelete(DeleteBehavior.Cascade);
+
+        // modelBuilder.Entity<DeviceGroupMember>()
+        //     .HasOne(dgm => dgm.DeviceGroup)
+        //     .WithMany(dg => dg.DeviceGroupMembers)
+        //     .HasForeignKey(dgm => dgm.DeviceGroupId)
+        //     .OnDelete(DeleteBehavior.Cascade);
+
+        // Configure DeviceGroupMember navigation properties
+        // modelBuilder.Entity<DeviceGroupMember>()
+        //     .HasOne(dgm => dgm.CreatedBy)
+        //     .WithMany()
+        //     .HasForeignKey(dgm => dgm.CreatedById)
+        //     .OnDelete(DeleteBehavior.Restrict);
+
+        // modelBuilder.Entity<DeviceGroupMember>()
+        //     .HasOne(dgm => dgm.UpdatedBy)
+        //     .WithMany()
+        //     .HasForeignKey(dgm => dgm.UpdatedById)
+        //     .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<EnvironmentalSettings>(entity =>
         {
@@ -145,6 +172,12 @@ public class ApplicationDbContext : IdentityDbContext
         modelBuilder.Entity<Device>()
             .Property(d => d.Properties)
             .HasColumnType("jsonb");
+
+        // Configure many-to-many relationship between Device and DeviceGroup
+        modelBuilder.Entity<Device>()
+            .HasMany(d => d.DeviceGroups)
+            .WithMany(dg => dg.Devices)
+            .UsingEntity(j => j.ToTable("DeviceDeviceGroup"));
 
         // Configure DeviceHistory
         modelBuilder.Entity<DeviceHistory>()

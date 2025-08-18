@@ -25,6 +25,7 @@ public class DeviceService : IDeviceService
         return await _context.Devices
             .Include(d => d.DeviceType)
             .Include(d => d.Room)
+            .AsNoTracking()
             .ToListAsync();
     }
 
@@ -33,6 +34,7 @@ public class DeviceService : IDeviceService
         return await _context.Devices
             .Where(d => d.RoomId == null)
             .Include(d => d.DeviceType)
+            .AsNoTracking()
             .ToListAsync();
     }
 
@@ -41,6 +43,7 @@ public class DeviceService : IDeviceService
         return await _context.Devices
             .Include(d => d.DeviceType)
             .Include(d => d.Room)
+            .AsNoTracking()
             .FirstOrDefaultAsync(d => d.MatterDeviceId == deviceId);
     }
 
@@ -49,6 +52,7 @@ public class DeviceService : IDeviceService
         return await _context.Devices
             .Include(d => d.DeviceType)
             .Include(d => d.Room)
+            .AsNoTracking()
             .FirstOrDefaultAsync(d => d.Id == deviceId);
     }
 

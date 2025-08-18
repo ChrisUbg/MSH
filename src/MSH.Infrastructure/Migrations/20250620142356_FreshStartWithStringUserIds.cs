@@ -93,6 +93,9 @@ namespace MSH.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
+                    Icon = table.Column<string>(type: "text", nullable: false),
+                    PreferredCommissioningMethod = table.Column<string>(type: "text", nullable: false),
+                    DeviceGroupId = table.Column<Guid>(type: "uuid", nullable: true),
                     Capabilities = table.Column<JsonDocument>(type: "jsonb", nullable: false),
                     IsSimulated = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -114,6 +117,12 @@ namespace MSH.Infrastructure.Migrations
                         name: "FK_DeviceTypes_ApplicationUsers_UpdatedById",
                         column: x => x.UpdatedById,
                         principalTable: "ApplicationUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_DeviceTypes_DeviceGroups_DeviceGroupId",
+                        column: x => x.DeviceGroupId,
+                        principalTable: "DeviceGroups",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -545,7 +554,12 @@ namespace MSH.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
+                    Icon = table.Column<string>(type: "text", nullable: false),
+                    PreferredCommissioningMethod = table.Column<string>(type: "text", nullable: false),
+                    SortOrder = table.Column<int>(type: "integer", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     RoomId = table.Column<Guid>(type: "uuid", nullable: true),
+                    DefaultCapabilities = table.Column<JsonDocument>(type: "jsonb", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
@@ -909,46 +923,7 @@ namespace MSH.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "DeviceGroupMembers",
-                columns: table => new
-                {
-                    DeviceId = table.Column<Guid>(type: "uuid", nullable: false),
-                    DeviceGroupId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<string>(type: "text", nullable: false),
-                    UpdatedById = table.Column<string>(type: "text", nullable: true),
-                    Comment = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DeviceGroupMembers", x => new { x.DeviceId, x.DeviceGroupId });
-                    table.ForeignKey(
-                        name: "FK_DeviceGroupMembers_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_DeviceGroupMembers_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_DeviceGroupMembers_DeviceGroups_DeviceGroupId",
-                        column: x => x.DeviceGroupId,
-                        principalTable: "DeviceGroups",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_DeviceGroupMembers_Devices_DeviceId",
-                        column: x => x.DeviceId,
-                        principalTable: "Devices",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+
 
             migrationBuilder.CreateTable(
                 name: "DeviceHistory",
@@ -1205,20 +1180,7 @@ namespace MSH.Infrastructure.Migrations
                 table: "DeviceEvents",
                 column: "UpdatedById");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_DeviceGroupMembers_CreatedById",
-                table: "DeviceGroupMembers",
-                column: "CreatedById");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_DeviceGroupMembers_DeviceGroupId",
-                table: "DeviceGroupMembers",
-                column: "DeviceGroupId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DeviceGroupMembers_UpdatedById",
-                table: "DeviceGroupMembers",
-                column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceGroups_CreatedById",
@@ -1573,8 +1535,7 @@ namespace MSH.Infrastructure.Migrations
             migrationBuilder.DropTable(
                 name: "DeviceEvents");
 
-            migrationBuilder.DropTable(
-                name: "DeviceGroupMembers");
+
 
             migrationBuilder.DropTable(
                 name: "DeviceHistory");

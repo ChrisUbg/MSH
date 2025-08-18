@@ -33,10 +33,10 @@ else
                             <button class="btn btn-sm btn-secondary" @onclick="() => ShowEditGroupModal(group)">Edit</button>
                             <button class="btn btn-sm btn-info" @onclick="async () => await ShowAssignDevicesModal(group)">Assign Devices</button>
                             <button class="btn btn-sm btn-danger" @onclick="() => ConfirmDeleteGroup(group.Id)">Delete</button>
-                            @if (group.Devices.Any(d => d.DeviceType?.Name == "Light"))
+                            @* @if (group.DeviceGroupMembers.Any(dgm => dgm.Device.DeviceType?.Name == "Light"))
                             {
                                 <button class="btn btn-sm btn-primary" @onclick="async () => await ShowGroupControlModal(group)">Control</button>
-                            }
+                            } *@
                         </div>
                     </div>
                     <div class="card-body">
@@ -46,11 +46,12 @@ else
                         
                         <div class="mt-3">
                             <h6>Devices</h6>
-                            @if (group.Devices.Any())
+                            @* @if (group.DeviceGroupMembers.Any())
                             {
                                 <ul class="list-unstyled mb-0">
-                                    @foreach (var device in group.Devices)
+                                    @foreach (var deviceGroupMember in group.DeviceGroupMembers)
                                     {
+                                        var device = deviceGroupMember.Device;
                                         <li>
                                             <strong>@device.Name</strong>
                                             (@device.DeviceType?.Name)
@@ -65,7 +66,8 @@ else
                             else
                             {
                                 <span>No devices</span>
-                            }
+                            } *@
+                            <span>No devices</span>
                         </div>
                     </div>
                 </div>
@@ -183,7 +185,7 @@ else
                     <div class="mb-3">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" 
-                                   checked="@groupState.ContainsKey("isOn") && (bool)groupState["isOn"]"
+                                   checked="@groupState.ContainsKey("isOn") && (bool)groupState[isOn]"
                                    @onchange="(e) => OnGroupToggle(e)" />
                             <label class="form-check-label">Power</label>
                         </div>
@@ -291,7 +293,8 @@ else
     private async Task ShowAssignDevicesModal(DeviceGroup group)
     {
         selectedGroup = group;
-        selectedDeviceIds = new HashSet<Guid>(group.Devices.Select(d => d.Id));
+        // selectedDeviceIds = new HashSet<Guid>(group.DeviceGroupMembers.Select(dgm => dgm.Device.Id));
+        selectedDeviceIds = new HashSet<Guid>();
         showAssignDevicesModal = true;
         await LoadAvailableDevices();
     }

@@ -1,5 +1,80 @@
 # MSH Smart Home System - Changelog
 
+## [2025-01-07] - ✅ **SUCCESSFUL DEVICE COMMISSIONING: Both NOUS A8M Devices Working**
+
+### 🎯 **Major Achievement: Complete Commissioning Success**
+
+#### **✅ Both Devices Successfully Commissioned**
+- **Device 1 (Office-Socket 1)**: Node ID `4328ED19954E9DC0` - ✅ **WORKING**
+- **Device 2 (Office-Socket 2)**: Node ID `4328ED19954E9DC1` - ✅ **WORKING**
+- **Independent Control**: Both devices respond to individual toggle commands
+- **LED Status**: Both devices show solid LED (not blinking) - commissioning complete
+
+#### **🔧 Technical Breakthroughs**
+- **Dynamic Node ID Generation**: Unique 64-bit Node IDs preventing conflicts
+- **Correct Factory Reset**: 6-second button hold (not 10-15 seconds)
+- **BLE-WiFi Method**: Direct `chip-tool pairing ble-wifi` commands working
+- **Discriminator Detection**: Automatic BLE scan for actual device discriminators
+- **Attestation Bypass**: `--bypass-attestation-verifier true` for NOUS devices
+
+#### **📊 Commissioning Parameters**
+```json
+{
+  "device_1": {
+    "name": "Office-Socket 1",
+    "qr_code": "0150-175-1910",
+    "passcode": "85064361",
+    "discriminator": "97",
+    "node_id": "4328ED19954E9DC0",
+    "status": "✅ WORKING"
+  },
+  "device_2": {
+    "name": "Office-Socket 2", 
+    "qr_code": "3096-783-6060",
+    "passcode": "59090382",
+    "discriminator": "3078",
+    "node_id": "4328ED19954E9DC1",
+    "status": "✅ WORKING"
+  }
+}
+```
+
+#### **🚀 API Improvements**
+- **Simplified Commissioning Logic**: Removed unreliable fallback methods
+- **Enhanced Error Handling**: Specific error messages for troubleshooting
+- **Automatic Discriminator Detection**: BLE scan for actual device discriminators
+- **Better Device Tracking**: Consistent device IDs and persistent storage
+- **Enhanced Response Format**: Detailed commissioning results and Node IDs
+
+#### **🧪 Testing Tools Created**
+- **`commission_via_api.sh`**: Shell script for API commissioning testing
+- **`test_api_commissioning.py`**: Python script for comprehensive API testing
+- **`toggle_devices.sh`**: Script for testing device control
+- **`commission_device1.sh`** / **`commission_device2.sh`**: Individual device commissioning
+
+#### **📚 Documentation Updates**
+- **[NOUS A8M Commissioning Guide](commissioning-server/NOUS_A8M_COMMISSIONING_GUIDE.md)** - Complete working guide
+- **[API Improvements](commissioning-server/API_IMPROVEMENTS.md)** - Enhanced API documentation
+- **[Project Overview](PROJECT_OVERVIEW.md)** - Updated with commissioning success
+- **[Changelog](changelog.md)** - This entry documenting achievements
+
+#### **🔍 Key Success Factors Identified**
+1. **Correct Factory Reset**: 6-second button hold (not 10-15 seconds)
+2. **BLE-WiFi Method**: Must use `chip-tool pairing ble-wifi` (not code-based)
+3. **Discriminator Handling**: Use actual discriminator from BLE scan, not QR code
+4. **Attestation Bypass**: Always use `--bypass-attestation-verifier true` for NOUS devices
+5. **Unique Node IDs**: Each device must have a unique 64-bit Node ID
+
+#### **🎯 Next Steps**
+1. **Test API Commissioning**: Use `./commission_via_api.sh both`
+2. **Integrate with Web Application**: Add commissioned devices to web UI
+3. **Database Integration**: Store commissioning data in PostgreSQL
+4. **Automation**: Develop automated commissioning workflows
+5. **Device Management**: Implement ongoing device control and monitoring
+
+---
+*Status: ✅ **COMMISSIONING SUCCESSFUL** - Both devices working and controllable!*
+
 ## [2025-07-23] - ✅ **ARCHITECTURE CLARIFICATION: PC-Based Commissioning**
 
 ### 🎯 **Correct Architecture Identified**

@@ -71,7 +71,7 @@
                             <p class="card-text small">Standard operation on main network</p>
                             <button class="btn btn-primary btn-sm" 
                                     @onclick="@(() => HandleModeSelected("normal"))" 
-                                    disabled="@isLoading || currentMode == "normal"">
+                                    disabled="@isLoading || @currentMode == 'normal'">
                                 Switch to Normal
                             </button>
                         </div>
@@ -85,7 +85,7 @@
                             <p class="card-text small">GUI-driven commissioning workflow (Recommended)</p>
                             <button class="btn btn-success btn-sm" 
                                     @onclick="@(() => HandleModeSelected("auto-commissioning"))" 
-                                    disabled="@isLoading || currentMode == "auto-commissioning"">
+                                    disabled="@isLoading || currentMode == 'auto-commissioning'">
                                 Start Auto Commissioning
                             </button>
                         </div>
@@ -101,7 +101,7 @@
                             <p class="card-text small">Safe BLE commissioning (maintains connectivity)</p>
                             <button class="btn btn-info btn-sm" 
                                     @onclick="@(() => HandleModeSelected("commissioning-client"))" 
-                                    disabled="@isLoading || currentMode == "commissioning-client"">
+                                    disabled="@isLoading || currentMode == 'commissioning-client'">
                                 Switch to Client Commissioning
                             </button>
                         </div>
@@ -115,7 +115,7 @@
                             <p class="card-text small">AP mode for device control (GUI unavailable)</p>
                             <button class="btn btn-warning btn-sm" 
                                     @onclick="@(() => HandleModeSelected("commissioning-ap"))" 
-                                    disabled="@isLoading || currentMode == "commissioning-ap"">
+                                    disabled="@isLoading || currentMode == 'commissioning-ap'">
                                 Switch to AP Mode
                             </button>
                         </div>

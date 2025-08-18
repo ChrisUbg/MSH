@@ -5,13 +5,8 @@ class Program
 {
     static void Main()
     {
-        var passwordHasher = new PasswordHasher<IdentityUser>();
-        var user = new IdentityUser { UserName = "admin@msh.local" };
-        
-        string password = "Admin123!";
-        string hash = passwordHasher.HashPassword(user, password);
-        
-        Console.WriteLine($"Password: {password}");
-        Console.WriteLine($"Hash: {hash}");
+        var hasher = new PasswordHasher<IdentityUser>();
+        var hash = hasher.HashPassword(null, "password123");
+        Console.WriteLine($"Password hash for 'password123': {hash}");
     }
 } 

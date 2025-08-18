@@ -10,7 +10,7 @@ public class RuleTrigger : BaseEntity
     [Required]
     public Guid RuleId { get; set; }
 
-    [Required]
+    [Required, MaxLength(500)]
     public string TriggerType { get; set; } = null!;
 
     [Required]

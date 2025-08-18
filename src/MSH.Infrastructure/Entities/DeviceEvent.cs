@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 
 namespace MSH.Infrastructure.Entities;
@@ -5,7 +6,10 @@ namespace MSH.Infrastructure.Entities;
 public class DeviceEvent : BaseEntity
 {
     public Guid DeviceId { get; set; }
+    
+    [MaxLength(150)]
     public string EventType { get; set; } = null!;
+    
     public JsonDocument? EventData { get; set; }
     
     // Navigation property

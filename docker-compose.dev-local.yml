@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  web:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8082
+      - WEB_PORT=8083
+      - DB_PORT=5435
+      - MATTER_BRIDGE_PORT=8085
+      # Connect to Pi's PostgreSQL database
+      - ConnectionStrings__DefaultConnection=Host=192.168.0.107;Port=5435;Database=matter_dev;Username=postgres;Password=postgres;TrustServerCertificate=true;Include Error Detail=true;
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    ports:
+      - "${WEB_PORT:-8083}:8082"
+    volumes:
+      - msh_dataprotection:/root/.aspnet/DataProtection-Keys
+      # Mount source code for development
+      - ./src:/src:ro
+    networks:
+      - msh-network
+    # No depends_on since we're using external database
+
+networks:
+  msh-network:
+    driver: bridge
+
+volumes:
+  msh_dataprotection:
+    driver: local

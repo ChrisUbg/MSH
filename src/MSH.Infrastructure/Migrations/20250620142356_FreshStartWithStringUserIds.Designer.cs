@@ -202,43 +202,7 @@ namespace MSH.Infrastructure.Migrations
                     b.ToTable("DeviceGroups");
                 });
 
-            modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceGroupMember", b =>
-                {
-                    b.Property<Guid>("DeviceId")
-                        .HasColumnType("uuid");
 
-                    b.Property<Guid>("DeviceGroupId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Comment")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CreatedById")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("text");
-
-                    b.HasKey("DeviceId", "DeviceGroupId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("DeviceGroupId");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("DeviceGroupMembers");
-                });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceHistory", b =>
                 {
@@ -1021,13 +985,13 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("Email")
                         .IsUnique();
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
                     b.HasIndex("UpdatedById");
 
                     b.HasIndex("UserName")
                         .IsUnique();
 
-                    b.ToTable("ApplicationUsers");
+                    b.ToTable("                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             s");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.UserDevicePermission", b =>
@@ -1504,38 +1468,7 @@ namespace MSH.Infrastructure.Migrations
                     b.Navigation("UpdatedBy");
                 });
 
-            modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceGroupMember", b =>
-                {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
-                    b.HasOne("MSH.Infrastructure.Entities.DeviceGroup", "DeviceGroup")
-                        .WithMany("DeviceGroupMembers")
-                        .HasForeignKey("DeviceGroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.Device", "Device")
-                        .WithMany("DeviceGroupMembers")
-                        .HasForeignKey("DeviceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById");
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("Device");
-
-                    b.Navigation("DeviceGroup");
-
-                    b.Navigation("UpdatedBy");
-                });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceHistory", b =>
                 {
@@ -2104,8 +2037,6 @@ namespace MSH.Infrastructure.Migrations
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.Device", b =>
                 {
-                    b.Navigation("DeviceGroupMembers");
-
                     b.Navigation("Events");
 
                     b.Navigation("States");
@@ -2113,7 +2044,6 @@ namespace MSH.Infrastructure.Migrations
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceGroup", b =>
                 {
-                    b.Navigation("DeviceGroupMembers");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceType", b =>

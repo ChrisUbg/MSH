@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  msh_web:
+    image: msh-web:latest
+    container_name: msh_web
+    ports:
+      - "8083:8082"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=msh_db;Port=5432;Database=matter_dev;Username=postgres;Password=postgres
+    depends_on:
+      - msh_db
+    volumes:
+      - ./src/MSH.Web:/app
+    networks:
+      - msh_network
+
+  msh_db:
+    image: postgres:16
+    container_name: msh_db
+    environment:
+      - POSTGRES_DB=matter_dev
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - msh_network
+
+  chip_tool:
+    image: arduino/chip-tool:latest
+    container_name: chip_tool
+    platform: linux/arm64
+    network_mode: host
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb
+      - ./chip-tool-config:/chip-tool-config
+    environment:
+      - CHIP_TOOL_CONFIG_PATH=/chip-tool-config
+    command: ["sleep", "infinity"]
+
+  otbr-border-router:
+    image: openthread/otbr:latest
+    container_name: otbr-border-router
+    network_mode: host
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb
+    environment:
+      - OTBR_DOCKER_ARGS=--network host
+
+networks:
+  msh_network:
+    driver: bridge
+
+volumes:
+  postgres_data:

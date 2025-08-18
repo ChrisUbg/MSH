@@ -607,14 +607,10 @@
           "Microsoft.Extensions.FileProviders.Abstractions": "8.0.0"
         },
         "compile": {
-          "lib/net8.0/Microsoft.Extensions.FileProviders.Embedded.dll": {
-            "related": ".xml"
-          }
+          "lib/net8.0/Microsoft.Extensions.FileProviders.Embedded.dll": {}
         },
         "runtime": {
-          "lib/net8.0/Microsoft.Extensions.FileProviders.Embedded.dll": {
-            "related": ".xml"
-          }
+          "lib/net8.0/Microsoft.Extensions.FileProviders.Embedded.dll": {}
         },
         "build": {
           "build/netstandard2.0/_._": {}
@@ -1541,11 +1537,11 @@
         ".nupkg.metadata",
         ".signature.p7s",
         "ASL - Apache Software Foundation License.txt",
-        "changelog.md",
         "LICENSE",
         "castle-logo.png",
         "castle.core.5.1.1.nupkg.sha512",
         "castle.core.nuspec",
+        "changelog.md",
         "lib/net462/Castle.Core.dll",
         "lib/net462/Castle.Core.xml",
         "lib/net6.0/Castle.Core.dll",
@@ -3288,7 +3284,6 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "readme.md",
         "lib/net6.0/Npgsql.dll",
         "lib/net6.0/Npgsql.xml",
         "lib/net7.0/Npgsql.dll",
@@ -3301,7 +3296,8 @@
         "lib/netstandard2.1/Npgsql.xml",
         "npgsql.8.0.2.nupkg.sha512",
         "npgsql.nuspec",
-        "postgresql.png"
+        "postgresql.png",
+        "readme.md"
       ]
     },
     "Npgsql.EntityFrameworkCore.PostgreSQL/8.0.2": {
@@ -3311,12 +3307,12 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "readme.md",
         "lib/net8.0/Npgsql.EntityFrameworkCore.PostgreSQL.dll",
         "lib/net8.0/Npgsql.EntityFrameworkCore.PostgreSQL.xml",
         "npgsql.entityframeworkcore.postgresql.8.0.2.nupkg.sha512",
         "npgsql.entityframeworkcore.postgresql.nuspec",
-        "postgresql.png"
+        "postgresql.png",
+        "readme.md"
       ]
     },
     "NuGet.Frameworks/6.5.0": {
@@ -3326,12 +3322,12 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "readme.md",
         "icon.png",
         "lib/net472/NuGet.Frameworks.dll",
         "lib/netstandard2.0/NuGet.Frameworks.dll",
         "nuget.frameworks.6.5.0.nupkg.sha512",
-        "nuget.frameworks.nuspec"
+        "nuget.frameworks.nuspec",
+        "readme.md"
       ]
     },
     "Swashbuckle.AspNetCore/6.5.0": {
@@ -3710,8 +3706,8 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "_content/readme.md",
         "_content/logo-128-transparent.png",
+        "_content/readme.md",
         "xunit.2.6.6.nupkg.sha512",
         "xunit.nuspec"
       ]
@@ -3741,8 +3737,8 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "_content/readme.md",
         "_content/logo-128-transparent.png",
+        "_content/readme.md",
         "analyzers/dotnet/roslyn3.11/cs/xunit.analyzers.dll",
         "analyzers/dotnet/roslyn3.11/cs/xunit.analyzers.fixes.dll",
         "analyzers/dotnet/roslyn4.2/cs/xunit.analyzers.dll",
@@ -3766,8 +3762,8 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "_content/readme.md",
         "_content/logo-128-transparent.png",
+        "_content/readme.md",
         "lib/net6.0/xunit.assert.dll",
         "lib/net6.0/xunit.assert.xml",
         "lib/netstandard1.1/xunit.assert.dll",
@@ -3783,8 +3779,8 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "_content/readme.md",
         "_content/logo-128-transparent.png",
+        "_content/readme.md",
         "build/xunit.core.props",
         "build/xunit.core.targets",
         "buildMultiTargeting/xunit.core.props",
@@ -3800,8 +3796,8 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "_content/readme.md",
         "_content/logo-128-transparent.png",
+        "_content/readme.md",
         "lib/net452/xunit.core.dll",
         "lib/net452/xunit.core.dll.tdnet",
         "lib/net452/xunit.core.xml",
@@ -3820,8 +3816,8 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "_content/readme.md",
         "_content/logo-128-transparent.png",
+        "_content/readme.md",
         "lib/net452/xunit.execution.desktop.dll",
         "lib/net452/xunit.execution.desktop.xml",
         "lib/netstandard1.1/xunit.execution.dotnet.dll",
@@ -3837,8 +3833,8 @@
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "_content/readme.md",
         "_content/logo-128-transparent.png",
+        "_content/readme.md",
         "build/net462/xunit.abstractions.dll",
         "build/net462/xunit.runner.reporters.net452.dll",
         "build/net462/xunit.runner.utility.net452.dll",
@@ -3903,6 +3899,7 @@
         "net8.0"
       ],
       "sources": {
+        "/usr/share/dotnet/library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -3981,7 +3978,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.411/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.412/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

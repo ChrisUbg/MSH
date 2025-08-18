@@ -1,0 +1,127 @@
+version: '3.8'
+
+services:
+  # MSH Database
+  msh_db:
+    image: postgres:16
+    container_name: msh_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: msh
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - msh_postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+    networks:
+      - msh-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d matter_dev"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # MSH Web Application
+  msh_web:
+    image: msh_web
+    container_name: msh_web
+    restart: unless-stopped
+    depends_on:
+      msh_db:
+        condition: service_healthy
+    ports:
+      - "8083:8082"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Host=msh_db;Database=matter_dev;Username=postgres;Password=postgres
+    networks:
+      - msh-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # OpenThread Border Router
+  otbr:
+    image: openthread/otbr:latest
+    container_name: otbr-border-router
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    devices:
+      # Nordic nRF52840 dongle for Thread
+      - /dev/bus/usb:/dev/bus/usb
+    volumes:
+      # Persistent storage for Thread network data
+      - otbr_data:/var/lib/thread
+    environment:
+      # Disable firewall and NAT64 to avoid kernel module issues
+      - FIREWALL=0
+      - NAT64=0
+      - OTBR_FIREWALL=OFF
+      - OTBR_NAT64=OFF
+      # Basic Thread configuration
+      - OTBR_INFRA_IF_NAME=wlan0
+      - OTBR_DBUS=ON
+      - OTBR_WEB=ON
+      - OTBR_REST=ON
+      # Port configuration - bind to all interfaces
+      - OTBR_WEB_PORT=80
+      - OTBR_REST_PORT=8081
+      - OTBR_WEB_BIND=0.0.0.0
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    security_opt:
+      - seccomp:unconfined
+
+  # Haustagebuch Web Application
+  haustagebuch_web:
+    image: haustagebuch_web
+    container_name: haustagebuch_web
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__DefaultConnection=Host=haustagebuch_db;Database=haustagebuch;Username=postgres;Password=postgres
+    networks:
+      - haustagebuch_app-network
+
+  # Haustagebuch Database
+  haustagebuch_db:
+    image: postgres:16
+    container_name: haustagebuch_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: haustagebuch
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - haustagebuch_postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5436:5432"
+    networks:
+      - haustagebuch_app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d haustagebuch"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  msh-network:
+    driver: bridge
+  haustagebuch_app-network:
+    driver: bridge
+
+volumes:
+  msh_postgres_data:
+    external: true
+  otbr_data:
+    driver: local
+  haustagebuch_postgres_data:
+    external: true 

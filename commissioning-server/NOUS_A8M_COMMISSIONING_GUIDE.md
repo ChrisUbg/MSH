@@ -1,9 +1,10 @@
 # NOUS A8M Matter Socket Commissioning Guide
 
 ## Device Information
-- **Model**: NOUS A8M Matter Socket
+- **Device Type**: NOUS A8M Matter Socket
 - **Commissioning Method**: BLE-WiFi (required)
 - **Factory Reset**: 6-second button hold (not 10-15 seconds)
+- **QR Code Format**: `0150-XXX-XXXX` or `3096-XXX-XXXX`
 
 ## Successful Commissioning Parameters
 
@@ -14,6 +15,7 @@
 - **Network SSID**: `08-TvM6xr-FQ`
 - **Network Password**: `Kartoffelernte`
 - **Node ID**: `4328ED19954E9DC0`
+- **Status**: ✅ Successfully commissioned and controllable
 
 ### Device 2 (Office-Socket 2)
 - **QR Code**: `3096-783-6060`
@@ -22,126 +24,127 @@
 - **Network SSID**: `08-TvM6xr-FQ`
 - **Network Password**: `Kartoffelernte`
 - **Node ID**: `4328ED19954E9DC1`
+- **Status**: ✅ Successfully commissioned and controllable
 
 ## Key Success Factors
 
-### 1. Factory Reset Procedure
-**CORRECT METHOD**: Hold the power button for exactly **6 seconds** (not 10-15 seconds)
-- Unplug the device
-- Plug it back in
-- Hold the power button for exactly 6 seconds
-- LED should flash rapidly, indicating it's ready to be paired
-
-### 2. Commissioning Method
-**USE BLE-WiFi METHOD**: Direct `chip-tool pairing ble-wifi` command
-- QR code method fails with "Discovery timed out"
-- API-based commissioning times out
-- BLE-WiFi method works reliably
-
-### 3. Discriminator Handling
-- QR code discriminator often doesn't match actual device discriminator
-- Use discriminator from BLE scan (e.g., `97` vs `12`, `3078` vs `12`)
-- Extract from device name: `MATTER-0097` → discriminator `97`
-
-### 4. Attestation Bypass
-- Always use `--bypass-attestation-verifier true` for NOUS devices
-- Required for successful commissioning
+1. **Correct Factory Reset**: Hold button for exactly 6 seconds (not 10-15 seconds)
+2. **BLE-WiFi Method**: Must use `chip-tool pairing ble-wifi` (not code-based)
+3. **Discriminator Handling**: Use actual discriminator from BLE scan, not QR code
+4. **Attestation Bypass**: Always use `--bypass-attestation-verifier true` for NOUS devices
+5. **Unique Node IDs**: Each device must have a unique 64-bit Node ID
 
 ## Step-by-Step Commissioning Process
 
 ### 1. Factory Reset Device
 ```bash
-# Physical reset procedure
-1. Unplug the device
-2. Plug it back in
-3. Hold power button for exactly 6 seconds
-4. Wait for LED to flash rapidly
+# Hold the power button for exactly 6 seconds
+# LED should flash rapidly, indicating pairing mode
 ```
 
-### 2. Commission via BLE-WiFi
+### 2. Direct chip-tool Commissioning (Recommended)
 ```bash
-# For Device 1
+# Device 1
 /usr/local/bin/chip-tool pairing ble-wifi 0x4328ED19954E9DC0 08-TvM6xr-FQ Kartoffelernte 85064361 97 --bypass-attestation-verifier true
 
-# For Device 2
+# Device 2  
 /usr/local/bin/chip-tool pairing ble-wifi 0x4328ED19954E9DC1 08-TvM6xr-FQ Kartoffelernte 59090382 3078 --bypass-attestation-verifier true
 ```
 
-### 3. Verify Commissioning
+### 3. Test Device Control
 ```bash
-# Test device control
+# Toggle Device 1
 /usr/local/bin/chip-tool onoff toggle 0x4328ED19954E9DC0 1
+
+# Toggle Device 2
 /usr/local/bin/chip-tool onoff toggle 0x4328ED19954E9DC1 1
+```
+
+## API Commissioning Process (Improved)
+
+The API now uses the same reliable BLE-WiFi method with enhanced error handling:
+
+### API Endpoint
+```
+POST http://localhost:8888/commission
+```
+
+### Request Format
+```json
+{
+    "device_name": "office-socket-1",
+    "device_type": "NOUS A8M Socket",
+    "qr_code": "0150-175-1910",
+    "network_ssid": "08-TvM6xr-FQ",
+    "network_password": "Kartoffelernte",
+    "pi_ip": "192.168.0.107"
+}
+```
+
+### API Features
+- **Automatic Discriminator Detection**: Scans BLE for actual discriminator
+- **Dynamic Node ID Generation**: Creates unique 64-bit Node IDs
+- **Enhanced Error Handling**: Provides specific error messages
+- **Device Control Testing**: Automatically tests control after commissioning
+- **Persistent Storage**: Saves device-to-Node-ID mappings
+
+### Testing API Commissioning
+```bash
+# Test both devices via API
+./commission_via_api.sh both
+
+# Test individual devices
+./commission_via_api.sh device1
+./commission_via_api.sh device2
+
+# Python test script
+python3 test_api_commissioning.py
 ```
 
 ## Troubleshooting
 
-### LED Still Blinking
-- **Cause**: Commissioning not completed
-- **Solution**: Use BLE-WiFi method, not QR code method
+### Common Issues
+1. **LED keeps blinking**: Commissioning not completed - check discriminator and passcode
+2. **"Failed to verify peer's MAC"**: Wrong discriminator - use BLE scan result
+3. **"Invalid argument destination-id"**: Node ID format issue - use 64-bit hex with 0x prefix
+4. **Device not responding**: Wrong Node ID - clear storage and re-commission
 
-### "Discovery timed out"
-- **Cause**: Wrong commissioning method
-- **Solution**: Use `chip-tool pairing ble-wifi` instead of `chip-tool pairing code`
-
-### "Failed to verify peer's MAC"
-- **Cause**: Wrong passcode or discriminator
-- **Solution**: Use correct passcode from QR code and discriminator from BLE scan
-
-### "Device discriminator does not match"
-- **Cause**: QR code discriminator doesn't match actual device
-- **Solution**: Use discriminator from BLE scan (e.g., `97` instead of `12`)
+### Solutions
+1. **Factory Reset**: Use 6-second button hold, not 10-15 seconds
+2. **Discriminator**: Always use BLE scan result, not QR code discriminator
+3. **Node IDs**: Ensure unique 64-bit Node IDs for each device
+4. **Network**: Verify SSID and password are correct
 
 ## Device-Specific Notes
 
-### NOUS A8M Characteristics
-- Requires BLE-WiFi commissioning method
-- QR code discriminator often incorrect
-- 6-second factory reset (not 10-15 seconds)
-- Attestation bypass required
-- LED stops blinking when commissioning successful
+- **NOUS A8M**: Requires BLE-WiFi method, cannot use code-based commissioning
+- **Attestation**: Always bypass attestation verification
+- **Discriminator**: QR code discriminator is incorrect, use BLE scan result
+- **Factory Reset**: 6-second hold, not 10-15 seconds as commonly documented
 
-### Network Requirements
-- WiFi network must be 2.4GHz (not 5GHz)
-- Network password case-sensitive
-- Device must be within BLE range during commissioning
+## Network Requirements
+
+- **SSID**: `08-TvM6xr-FQ`
+- **Password**: `Kartoffelernte`
+- **Security**: WPA2/WPA3
+- **Band**: 2.4GHz (required for Matter)
 
 ## Data Capture Requirements
 
-### Commissioning Data to Store
-- Device name/ID
-- Node ID (64-bit hexadecimal)
-- IP address (after commissioning)
-- QR code and parsed parameters
-- Actual discriminator from BLE scan
-- Network credentials used
+For successful commissioning, capture and store:
+- Device name and type
+- QR code
+- Actual discriminator (from BLE scan)
+- Passcode (from QR code parsing)
+- Network credentials
+- Generated Node ID
+- Commissioning method used
 
-### Example Data Structure
-```json
-{
-  "device_1753473411": {
-    "name": "Office-Socket 1",
-    "node_id": "4328ED19954E9DC0",
-    "ip_address": "192.168.0.106",
-    "qr_code": "0150-175-1910",
-    "passcode": "85064361",
-    "discriminator": "97",
-    "network_ssid": "08-TvM6xr-FQ",
-    "commissioning_method": "ble-wifi"
-  }
-}
-```
+## Implementation Status
 
-## Success Indicators
-
-### ✅ Commissioning Successful
-- LED stops blinking
-- Device responds to control commands
-- Device appears in network with IP address
-- `chip-tool` commands return success
-
-### ❌ Commissioning Failed
-- LED continues blinking
-- Device doesn't respond to commands
-- Commissioning commands timeout
-- Device not found on network 
+- ✅ **Direct chip-tool commissioning**: Working reliably
+- ✅ **API commissioning**: Improved with BLE-WiFi method
+- ✅ **Device control**: Both devices independently controllable
+- ✅ **Unique Node IDs**: Dynamic generation and persistence
+- ✅ **Error handling**: Enhanced with specific error messages
+- ✅ **Documentation**: Complete and up-to-date 

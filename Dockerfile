@@ -8,6 +8,11 @@ COPY ["src/MSH.Core/MSH.Core.csproj", "src/MSH.Core/"]
 COPY ["src/MSH.Matter/MSH.Matter.csproj", "src/MSH.Matter/"]
 RUN dotnet restore "src/MSH.Web/MSH.Web.csproj"
 
+# Copy libman.json and restore client-side libraries
+COPY ["src/MSH.Web/libman.json", "src/MSH.Web/"]
+RUN dotnet tool install -g Microsoft.Web.LibraryManager.Cli
+RUN ~/.dotnet/tools/libman restore --root src/MSH.Web/
+
 # Copy the rest of the code
 COPY . .
 
@@ -22,14 +27,19 @@ RUN dotnet publish "src/MSH.Web/MSH.Web.csproj" -c Release -o /app/publish
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 
-# Install curl for healthcheck and PostgreSQL client tools
-RUN apt-get update && apt-get install -y curl gnupg2 lsb-release wget && \
+# Install curl for healthcheck, PostgreSQL client tools, and Docker CLI
+RUN apt-get update && apt-get install -y curl gnupg2 lsb-release wget ca-certificates && \
     sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' && \
     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
     apt-get update && \
     apt-get install -y postgresql-client-16 && \
     apt-get update && \
     apt-get install -y gn && \
+    # Install Docker CLI
+    curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    apt-get update && \
+    apt-get install -y docker-ce-cli && \
     rm -rf /var/lib/apt/lists/*
 
 # Install gn (Google build tool)
@@ -54,7 +64,4 @@ ENV ASPNETCORE_URLS=http://+:8082
 EXPOSE 8082
 
 # Start the application
-CMD ["dotnet", "MSH.Web.dll"]
-
-RUN cd dev_connectedhomeip && \
-    bash ./scripts/bootstrap.sh 
+CMD ["dotnet", "MSH.Web.dll"] 

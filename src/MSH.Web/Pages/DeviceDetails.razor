@@ -6,10 +6,12 @@
 @using MSH.Web.Services
 @using MSH.Web.Hubs
 @using System.Text.Json
+@using Microsoft.Extensions.Configuration
 @inject IDeviceService DeviceService
+@inject IMatterDeviceControlService MatterDeviceControlService
 @inject NavigationManager NavigationManager
 @inject IHubContext<DeviceHub> HubContext
-@inject IHttpClientFactory HttpClientFactory
+@inject IConfiguration Configuration
 
 <PageTitle>Device Details</PageTitle>
 
@@ -46,7 +48,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Type</label>
-                            <input type="text" class="form-control" value="@device.DeviceType?.Name" readonly />
+                            <input type="text" class="form-control" value="@(device.DeviceType?.Name ?? "Unknown")" readonly />
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Status</label>
@@ -58,7 +60,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Room</label>
-                            <input type="text" class="form-control" value="@device.Room?.Name" readonly />
+                            <input type="text" class="form-control" value="@(device.Room?.Name ?? "No Room")" readonly />
                         </div>
                     </div>
                     <div class="card-footer">
@@ -69,7 +71,7 @@
                 </div>
 
                 <!-- Device Controls Card -->
-                @if (device.DeviceType?.Name?.ToLower().Contains("socket") == true || device.DeviceType?.Name?.ToLower().Contains("plug") == true)
+                @if (IsSocketDevice())
                 {
                     <div class="card mt-4">
                         <div class="card-header">
@@ -131,7 +133,7 @@
                 </div>
 
                 <!-- Power Consumption Card -->
-                @if (device.DeviceType?.Name?.ToLower().Contains("socket") == true || device.DeviceType?.Name?.ToLower().Contains("plug") == true)
+                @if (IsSocketDevice())
                 {
                     <div class="card mt-4">
                         <div class="card-header d-flex justify-content-between align-items-center">
@@ -266,23 +268,42 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadDeviceDetails();
-        
-        // Load initial power state and metrics for socket devices
-        if (device?.DeviceType?.Name?.ToLower().Contains("socket") == true || 
-            device?.DeviceType?.Name?.ToLower().Contains("plug") == true)
+        try
         {
-            await LoadPowerState();
-            await RefreshPowerMetrics();
+            await LoadDeviceDetails();
+            
+            // Load initial power state and metrics for socket devices
+            if (IsSocketDevice())
+            {
+                await LoadPowerState();
+                await RefreshPowerMetrics();
+            }
         }
+        catch (Exception ex)
+        {
+            controlMessage = $"Error initializing device details: {ex.Message}";
+        }
+    }
+
+    private bool IsSocketDevice()
+    {
+        return device?.DeviceType?.Name?.ToLower().Contains("socket") == true || 
+               device?.DeviceType?.Name?.ToLower().Contains("plug") == true;
     }
 
     private async Task LoadDeviceDetails()
     {
-        device = await DeviceService.GetDeviceByIdAsync(DeviceId);
-        if (device != null)
+        try
         {
-            history = await DeviceService.GetDeviceHistoryAsync(DeviceId);
+            device = await DeviceService.GetDeviceByIdAsync(DeviceId);
+            if (device != null)
+            {
+                history = await DeviceService.GetDeviceHistoryAsync(DeviceId);
+            }
+        }
+        catch (Exception ex)
+        {
+            controlMessage = $"Error loading device details: {ex.Message}";
         }
     }
 
@@ -290,8 +311,15 @@
     {
         if (device != null)
         {
-            await DeviceService.UpdateDeviceAsync(device);
-            await LoadDeviceDetails();
+            try
+            {
+                await DeviceService.UpdateDeviceAsync(device);
+                await LoadDeviceDetails();
+            }
+            catch (Exception ex)
+            {
+                controlMessage = $"Error saving device: {ex.Message}";
+            }
         }
     }
 
@@ -322,34 +350,21 @@
         try
         {
             isControlsDisabled = true;
-            var httpClient = HttpClientFactory.CreateClient("MatterBridge");
             
-            var response = await httpClient.PostAsync($"/device/{device.MatterDeviceId}/power", null);
+            // Use the Matter device control service to toggle the device
+            var success = await MatterDeviceControlService.ToggleDeviceAsync(device.MatterDeviceId);
             
-            if (response.IsSuccessStatusCode)
+            if (success)
             {
-                var content = await response.Content.ReadAsStringAsync();
-                var result = JsonSerializer.Deserialize<PowerControlResponse>(content, new JsonSerializerOptions 
-                { 
-                    PropertyNameCaseInsensitive = true 
-                });
+                isPowerOn = !isPowerOn; // Toggle the state
+                controlMessage = $"Device turned {(isPowerOn ? "ON" : "OFF")} successfully";
                 
-                if (result?.Success == true)
-                {
-                    isPowerOn = result.PowerState == "on";
-                    controlMessage = $"Device turned {(isPowerOn ? "ON" : "OFF")} successfully";
-                    
-                    // Refresh power metrics after state change
-                    await RefreshPowerMetrics();
-                }
-                else
-                {
-                    controlMessage = $"Failed to control device: {result?.Message ?? "Unknown error"}";
-                }
+                // Refresh power metrics after state change
+                await RefreshPowerMetrics();
             }
             else
             {
-                controlMessage = $"API Error: {response.StatusCode} - {response.ReasonPhrase}";
+                controlMessage = "Failed to toggle device. Check if device is online and accessible.";
             }
         }
         catch (Exception ex)
@@ -370,32 +385,34 @@
         try
         {
             isLoadingPowerMetrics = true;
-            var httpClient = HttpClientFactory.CreateClient("MatterBridge");
             
-            var response = await httpClient.GetAsync($"/device/{device.MatterDeviceId}/power-metrics");
+            // Use the Matter device control service to get device state
+            var state = await MatterDeviceControlService.GetDeviceStateAsync(device.MatterDeviceId);
             
-            if (response.IsSuccessStatusCode)
+            if (!string.IsNullOrEmpty(state))
             {
-                var content = await response.Content.ReadAsStringAsync();
-                powerMetrics = JsonSerializer.Deserialize<PowerMetrics>(content, new JsonSerializerOptions 
-                { 
-                    PropertyNameCaseInsensitive = true 
-                });
+                powerMetrics = new PowerMetrics
+                {
+                    DeviceId = device.MatterDeviceId,
+                    PowerState = state,
+                    PowerConsumption = 0, // Not available from basic onoff cluster
+                    Voltage = 230.0m, // Default voltage
+                    Current = 0, // Not available from basic onoff cluster
+                    LastUpdated = DateTime.UtcNow.ToString("O")
+                };
                 
                 // Update power state from metrics
-                if (powerMetrics != null)
-                {
-                    isPowerOn = powerMetrics.PowerState == "on";
-                }
+                isPowerOn = powerMetrics.PowerState == "on";
             }
             else
             {
                 powerMetrics = null;
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             powerMetrics = null;
+            controlMessage = $"Error refreshing power metrics: {ex.Message}";
         }
         finally
         {
@@ -411,6 +428,14 @@
         public string? Message { get; set; }
         public string? PowerState { get; set; }
         public string? DeviceId { get; set; }
+    }
+
+    public class DeviceStateResponse
+    {
+        public string? DeviceId { get; set; }
+        public string? State { get; set; }
+        public decimal? PowerConsumption { get; set; }
+        public string? Message { get; set; }
     }
 
     public class PowerMetrics

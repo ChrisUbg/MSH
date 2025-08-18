@@ -47,5 +47,5 @@ COPY --from=build /app/publish .
 # ENV MATTER_ROOT=/matter-sdk
 # ENV PATH="${PATH}:/matter-sdk/examples/chip-tool/out"
 
-# Entrypoint with migration support
+# Entrypoint with migration
 ENTRYPOINT ["dotnet", "MSH.Web.dll", "--migrate"]

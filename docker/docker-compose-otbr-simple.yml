@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  otbr:
+    image: openthread/otbr:latest
+    container_name: otbr-border-router-simple
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    devices:
+      # Nordic nRF52840 dongle for Thread
+      - /dev/bus/usb:/dev/bus/usb
+    volumes:
+      # Persistent storage for Thread network data
+      - otbr_data:/var/lib/thread
+    environment:
+      # Disable firewall and NAT64 to avoid kernel module issues
+      - FIREWALL=0
+      - NAT64=0
+      - OTBR_FIREWALL=OFF
+      - OTBR_NAT64=OFF
+      # Basic Thread configuration
+      - OTBR_INFRA_IF_NAME=wlan0
+      - OTBR_DBUS=ON
+      - OTBR_WEB=ON
+      - OTBR_REST=ON
+      # Port configuration - bind to all interfaces
+      - OTBR_WEB_PORT=80
+      - OTBR_REST_PORT=8081
+      - OTBR_WEB_BIND=0.0.0.0
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    security_opt:
+      - seccomp:unconfined
+
+volumes:
+  otbr_data:
+    driver: local 

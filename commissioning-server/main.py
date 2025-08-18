@@ -135,9 +135,9 @@ async def scan_ble_devices(request: BLEScanRequest):
 
 @app.post("/commission")
 async def commission_device(request: CommissioningRequest):
-    """Commission a Matter device"""
+    """Commission a Matter device using the reliable BLE-WiFi method"""
     try:
-        logger.info(f"Commissioning request received: {request}")
+        logger.info(f"Commissioning request received for device: {request.device_name}")
         
         # Validate request
         if not request.qr_code:
@@ -147,8 +147,12 @@ async def commission_device(request: CommissioningRequest):
         if not request.network_password:
             raise HTTPException(status_code=400, detail="Network password is required")
         
-        # Generate device ID
-        device_id = f"device_{int(time.time())}"
+        # Generate device ID using device name for better tracking
+        device_id = request.device_name.lower().replace(" ", "-").replace("_", "-")
+        if not device_id:
+            device_id = f"device_{int(time.time())}"
+        
+        logger.info(f"Using device ID: {device_id}")
         
         # Prepare commissioning data
         commissioning_data = {
@@ -160,7 +164,7 @@ async def commission_device(request: CommissioningRequest):
         }
         
         # Perform commissioning
-        logger.info(f"Starting commissioning for device {device_id}")
+        logger.info(f"Starting BLE-WiFi commissioning for device {device_id}")
         commissioning_result = await matter_client.commission_device(
             device_id=device_id,
             commissioning_type="ble",
@@ -201,21 +205,39 @@ async def commission_device(request: CommissioningRequest):
             return {
                 "success": True,
                 "device_id": device_id,
-                "message": "Device commissioned successfully",
-                "commissioning_result": commissioning_result
+                "device_name": request.device_name,
+                "message": "Device commissioned successfully using BLE-WiFi method",
+                "commissioning_result": commissioning_result,
+                "method_used": "ble-wifi",
+                "node_id": commissioning_result.get("node_id"),
+                "discriminator_used": commissioning_result.get("discriminator_used")
             }
         else:
-            logger.error(f"Commissioning failed for device {device_id}: {commissioning_result}")
+            error_msg = commissioning_result.get("error", "Unknown commissioning error")
+            logger.error(f"Commissioning failed for device {device_id}: {error_msg}")
+            
+            # Provide more specific error messages
+            if "discriminator" in error_msg.lower():
+                error_detail = "Could not determine device discriminator. Please ensure the device is in pairing mode and try again."
+            elif "passcode" in error_msg.lower():
+                error_detail = "Could not extract passcode from QR code. Please verify the QR code is correct."
+            elif "network" in error_msg.lower():
+                error_detail = "Network credentials are required for BLE-WiFi commissioning."
+            elif "timeout" in error_msg.lower():
+                error_detail = "Commissioning timed out. Please ensure the device is in pairing mode and try again."
+            else:
+                error_detail = error_msg
+            
             raise HTTPException(
                 status_code=500, 
-                detail=f"Commissioning failed: {commissioning_result.get('message', 'Unknown error')}"
+                detail=f"Commissioning failed: {error_detail}"
             )
             
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error during commissioning: {e}")
-        raise HTTPException(status_code=500, detail=f"Commissioning failed: {str(e)}")
+        logger.error(f"Unexpected error during commissioning: {e}")
+        raise HTTPException(status_code=500, detail=f"Unexpected error during commissioning: {str(e)}")
 
 @app.get("/api/devices/credentials")
 async def get_all_credentials():

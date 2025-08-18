@@ -90,23 +90,10 @@ public class DevicesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetDevices([FromServices] IHttpClientFactory httpClientFactory)
+    public async Task<IActionResult> GetDevices()
     {
         try
         {
-            // Test MatterBridge connection
-            try
-            {
-                var client = httpClientFactory.CreateClient("MatterBridge");
-                var response = await client.GetAsync("/health");
-                var content = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation($"MatterBridge test: Status={response.StatusCode}, Content={content}");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "MatterBridge connection test failed");
-            }
-
             var devices = await _deviceService.GetDevicesAsync();
             return Ok(devices.Select(d => new
             {
@@ -127,18 +114,13 @@ public class DevicesController : ControllerBase
     }
 
     [HttpGet("test-matter-bridge")]
-    public async Task<IActionResult> TestMatterBridge([FromServices] IHttpClientFactory httpClientFactory)
+    public async Task<IActionResult> TestMatterBridge()
     {
         try
         {
-            var client = httpClientFactory.CreateClient("MatterBridge");
-            var response = await client.GetAsync("/health");
-            var content = await response.Content.ReadAsStringAsync();
-            
             return Ok(new { 
-                statusCode = (int)response.StatusCode,
-                content = content,
-                baseAddress = client.BaseAddress?.ToString()
+                message = "MatterBridge removed - device control now handled directly via chip-tool on Pi",
+                status = "success"
             });
         }
         catch (Exception ex)

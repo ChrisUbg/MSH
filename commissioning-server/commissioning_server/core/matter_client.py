@@ -225,13 +225,18 @@ class MatterClient:
             }
     
     async def _commission_ble(self, device_id: str, commissioning_data: Dict) -> Dict:
-        """Commission device via BLE"""
+        """Commission device via BLE using the reliable BLE-WiFi method"""
         try:
             qr_code = commissioning_data.get("qr_code")
+            network_ssid = commissioning_data.get("network_ssid")
+            network_password = commissioning_data.get("network_password")
+            
             if not qr_code:
                 raise Exception("No QR code provided")
+            if not network_ssid or not network_password:
+                raise Exception("Network SSID and password are required for BLE-WiFi commissioning")
             
-            # Parse QR code to get passcode and discriminator
+            # Parse QR code to get passcode
             parse_cmd = [
                 self.chip_tool_path,
                 "payload", "parse-setup-payload",
@@ -244,31 +249,27 @@ class MatterClient:
             if parse_result["return_code"] != 0:
                 raise Exception(f"Failed to parse QR code: {parse_result['stderr']}")
             
-            # Extract passcode and discriminator from parse output
+            # Extract passcode from parse output
             stdout = parse_result["stdout"]
             passcode = None
-            qr_discriminator = None
             for line in stdout.split('\n'):
                 if "Passcode:" in line:
                     passcode = line.split("Passcode:")[1].strip()
-                if "Short discriminator:" in line:
-                    qr_discriminator = line.split("Short discriminator:")[1].split(" ")[0].strip()
+                    break
             
             if not passcode:
                 raise Exception("Could not extract passcode from QR code")
             
-            logger.info(f"QR code parsing - passcode: {passcode}, discriminator: {qr_discriminator}")
+            logger.info(f"QR code parsing - passcode: {passcode}")
             
             # For NOUS devices, we need to detect the actual discriminator via BLE scan
-            # and override the QR code discriminator
-            actual_discriminator = qr_discriminator  # Default to QR code discriminator
-            
             # Check if this is a NOUS device (based on device type or QR code pattern)
             is_nous_device = (
                 commissioning_data.get("device_type", "").lower().find("nous") != -1 or
                 qr_code.startswith("0150-")  # NOUS QR code pattern
             )
             
+            discriminator = None
             if is_nous_device:
                 logger.info("Detected NOUS device - scanning for actual discriminator")
                 # Scan for Matter devices to find actual discriminator
@@ -280,95 +281,71 @@ class MatterClient:
                             name = device.get("name", "")
                             if "-" in name:
                                 try:
-                                    actual_discriminator = name.split("-")[-1]
-                                    logger.info(f"Found NOUS device with actual discriminator: {actual_discriminator}")
+                                    discriminator = name.split("-")[-1]
+                                    logger.info(f"Found NOUS device with actual discriminator: {discriminator}")
                                     break
                                 except (ValueError, IndexError):
                                     continue
             
-            logger.info(f"Using discriminator: {actual_discriminator} (QR: {qr_discriminator})")
+            if not discriminator:
+                # Fallback: try to extract from QR code parsing
+                for line in stdout.split('\n'):
+                    if "Short discriminator:" in line:
+                        discriminator = line.split("Short discriminator:")[1].split(" ")[0].strip()
+                        break
+            
+            if not discriminator:
+                raise Exception("Could not determine discriminator for device")
+            
+            logger.info(f"Using discriminator: {discriminator}")
             
             # Get or generate Node ID for this device
             node_id = self._get_node_id_for_device(device_id)
+            logger.info(f"Using Node ID: {node_id}")
             
-            # Try BLE-WiFi commissioning first (for WiFi-capable devices)
-            if "network_ssid" in commissioning_data and "network_password" in commissioning_data:
-                try:
-                    cmd = [
-                        self.chip_tool_path,
-                        "pairing", "ble-wifi",
-                        node_id,
-                        commissioning_data["network_ssid"],
-                        commissioning_data["network_password"],
-                        passcode,
-                        actual_discriminator,  # Use actual discriminator
-                        "--bypass-attestation-verifier", "true"  # Always bypass for NOUS devices
-                    ]
-                    
-                    logger.info(f"Trying BLE-WiFi commissioning with command: {' '.join(cmd)}")
-                    result = await self._run_command(cmd, timeout=300)
-                    
-                    if result["return_code"] == 0:
-                        credentials = self._parse_commissioning_output(result["stdout"])
-                        logger.info(f"BLE-WiFi commissioning successful! Credentials: {credentials}")
-                        return {
-                            "success": True,
-                            "credentials": credentials,
-                            "method": "ble-wifi",
-                            "discriminator_used": actual_discriminator,
-                            "qr_discriminator": qr_discriminator,
-                            "is_nous_device": is_nous_device
-                        }
-                    else:
-                        logger.warning(f"BLE-WiFi commissioning failed: {result['stderr']}, trying fallback")
-                        
-                except Exception as e:
-                    logger.warning(f"BLE-WiFi commissioning failed: {e}, trying fallback")
-            
-            # Fallback to regular code-based commissioning
+            # Use the reliable BLE-WiFi commissioning method
             cmd = [
                 self.chip_tool_path,
-                "pairing", "code",
+                "pairing", "ble-wifi",
                 node_id,
+                network_ssid,
+                network_password,
                 passcode,
-                "--bypass-attestation-verifier", "true"
+                discriminator,
+                "--bypass-attestation-verifier", "true"  # Always bypass for NOUS devices
             ]
             
-            logger.info(f"Trying fallback commissioning with command: {' '.join(cmd)}")
+            logger.info(f"Starting BLE-WiFi commissioning with command: {' '.join(cmd)}")
             result = await self._run_command(cmd, timeout=300)
             
-            logger.info(f"Command result - return_code: {result['return_code']}, stderr: {result['stderr']}")
+            logger.info(f"Commissioning result - return_code: {result['return_code']}")
+            if result["stderr"]:
+                logger.warning(f"Commissioning stderr: {result['stderr']}")
             
             if result["return_code"] == 0:
                 credentials = self._parse_commissioning_output(result["stdout"])
-                logger.info(f"Commissioning successful! Credentials: {credentials}")
+                logger.info(f"BLE-WiFi commissioning successful! Credentials: {credentials}")
                 return {
                     "success": True,
                     "credentials": credentials,
-                    "method": "code",
-                    "discriminator_used": actual_discriminator,
-                    "qr_discriminator": qr_discriminator,
+                    "method": "ble-wifi",
+                    "discriminator_used": discriminator,
+                    "passcode_used": passcode,
+                    "node_id": node_id,
                     "is_nous_device": is_nous_device
                 }
             else:
-                # Check if it's a timeout (which might actually be successful)
-                if "timeout" in result["stderr"].lower() or result["return_code"] == 124:
-                    logger.info("Commissioning timed out, but this might indicate successful device discovery")
-                    return {
-                        "success": True,
-                        "credentials": {"status": "timeout_but_discovered"},
-                        "message": "Device discovery successful, commissioning may have completed",
-                        "method": "code",
-                        "discriminator_used": actual_discriminator,
-                        "qr_discriminator": qr_discriminator,
-                        "is_nous_device": is_nous_device
-                    }
-                else:
-                    raise Exception(f"Commissioning failed: {result['stderr']}")
+                error_msg = result.get("stderr", "Unknown error")
+                logger.error(f"BLE-WiFi commissioning failed: {error_msg}")
+                raise Exception(f"Commissioning failed: {error_msg}")
                 
         except Exception as e:
-            logger.error(f"BLE commissioning failed: {e}")
-            raise
+            logger.error(f"Error in BLE commissioning: {e}")
+            return {
+                "success": False,
+                "error": str(e),
+                "method": "ble-wifi"
+            }
 
     async def _scan_for_matter_devices(self) -> Dict:
         """Scan for Matter devices to detect actual discriminators"""
