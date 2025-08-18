@@ -109,10 +109,16 @@ The application uses PostgreSQL with the following key entities:
 
 ## 📚 Documentation
 
+### Core Documentation
 - **Deployment Guide**: `Deployment/README.md`
 - **API Documentation**: `api.md`
 - **Basic Rules**: `basic-rules.md`
 - **Changelog**: `changelog.md`
+
+### 🔧 Technical Documentation
+- **[Database Schema Issues](DATABASE_SCHEMA_ISSUES.md)** - **CRITICAL**: EF Core schema mismatch fixes and manual database corrections
+- **[Commissioning Process](COMMISSIONING_PROCESS_DOCUMENTATION.md)** - **IMPORTANT**: Non-standard device commissioning for NOUS A8M devices
+- **[Migration Guide](migration.md)** - Database migration commands and procedures
 
 ## 🔍 Troubleshooting
 
