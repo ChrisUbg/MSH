@@ -8,47 +8,40 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MSH.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class FreshStartWithStringUserIds : Migration
+    public partial class InitialDbSchemaBaseline : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.EnsureSchema(
+                name: "db");
+
             migrationBuilder.CreateTable(
                 name: "ApplicationUsers",
+                schema: "db",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    UserName = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: true),
-                    FirstName = table.Column<string>(type: "text", nullable: true),
-                    LastName = table.Column<string>(type: "text", nullable: true),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    LastLogin = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Id = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<string>(type: "text", nullable: false),
-                    UpdatedById = table.Column<string>(type: "text", nullable: true)
+                    CreatedById = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    UpdatedById = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    UserName = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    Email = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: true),
+                    FirstName = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: true),
+                    LastName = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    LastLogin = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ApplicationUsers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ApplicationUsers_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ApplicationUsers_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
+                schema: "db",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
@@ -63,6 +56,7 @@ namespace MSH.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUsers",
+                schema: "db",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
@@ -87,17 +81,31 @@ namespace MSH.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DeviceTypes",
+                name: "FirmwareUpdate",
+                schema: "db",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Icon = table.Column<string>(type: "text", nullable: false),
-                    PreferredCommissioningMethod = table.Column<string>(type: "text", nullable: false),
-                    DeviceGroupId = table.Column<Guid>(type: "uuid", nullable: true),
-                    Capabilities = table.Column<JsonDocument>(type: "jsonb", nullable: false),
-                    IsSimulated = table.Column<bool>(type: "boolean", nullable: false),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    CurrentVersion = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    TargetVersion = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    DownloadUrl = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    FileName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    FileSize = table.Column<long>(type: "bigint", nullable: true),
+                    Checksum = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    Status = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    DownloadStartedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DownloadCompletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    InstallationStartedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    InstallationCompletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ErrorMessage = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    UpdateMetadata = table.Column<JsonDocument>(type: "jsonb", nullable: true),
+                    IsCompatible = table.Column<bool>(type: "boolean", nullable: false),
+                    RequiresConfirmation = table.Column<bool>(type: "boolean", nullable: false),
+                    IsConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    ConfirmedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ConfirmedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
@@ -106,33 +114,100 @@ namespace MSH.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DeviceTypes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DeviceTypes_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_DeviceTypes_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_DeviceTypes_DeviceGroups_DeviceGroupId",
-                        column: x => x.DeviceGroupId,
-                        principalTable: "DeviceGroups",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                    table.PrimaryKey("PK_FirmwareUpdate", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "EnvironmentalSettings",
+                name: "Groups",
+                schema: "db",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Groups", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Notifications",
+                schema: "db",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<string>(type: "text", nullable: false),
+                    Message = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Severity = table.Column<int>(type: "integer", nullable: true),
+                    IsRead = table.Column<bool>(type: "boolean", nullable: false),
+                    ReadAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Rooms",
+                schema: "db",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: true),
+                    Floor = table.Column<int>(type: "integer", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Rooms", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Rules",
+                schema: "db",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    Description = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: true),
+                    Condition = table.Column<JsonDocument>(type: "jsonb", nullable: false),
+                    Action = table.Column<JsonDocument>(type: "jsonb", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Rules", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EnvironmentalSettings",
+                schema: "db",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: true),
                     IndoorTemperatureMin = table.Column<double>(type: "double precision", nullable: false),
                     IndoorTemperatureMax = table.Column<double>(type: "double precision", nullable: false),
                     OutdoorTemperatureMin = table.Column<double>(type: "double precision", nullable: false),
@@ -154,162 +229,24 @@ namespace MSH.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_EnvironmentalSettings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EnvironmentalSettings_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_EnvironmentalSettings_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_EnvironmentalSettings_ApplicationUsers_UserId",
                         column: x => x.UserId,
+                        principalSchema: "db",
                         principalTable: "ApplicationUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Groups",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<string>(type: "text", nullable: false),
-                    UpdatedById = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Groups", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Groups_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Groups_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Notifications",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    Message = table.Column<string>(type: "text", nullable: false),
-                    Type = table.Column<int>(type: "integer", nullable: false),
-                    Severity = table.Column<int>(type: "integer", nullable: true),
-                    IsRead = table.Column<bool>(type: "boolean", nullable: false),
-                    ReadAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<string>(type: "text", nullable: false),
-                    UpdatedById = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Notifications", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Notifications_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Notifications_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Rooms",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Floor = table.Column<int>(type: "integer", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<string>(type: "text", nullable: false),
-                    UpdatedById = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Rooms", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Rooms_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Rooms_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Rules",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Condition = table.Column<JsonDocument>(type: "jsonb", nullable: false),
-                    Action = table.Column<JsonDocument>(type: "jsonb", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<string>(type: "text", nullable: false),
-                    UpdatedById = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Rules", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Rules_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Rules_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "UserSettings",
+                schema: "db",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    Theme = table.Column<string>(type: "text", nullable: false),
-                    Language = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    Theme = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    Language = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
                     ShowOfflineDevices = table.Column<bool>(type: "boolean", nullable: false),
-                    DefaultView = table.Column<string>(type: "text", nullable: false),
+                    DefaultView = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
                     DashboardLayout = table.Column<JsonDocument>(type: "jsonb", nullable: true),
                     FavoriteDevices = table.Column<JsonDocument>(type: "jsonb", nullable: true),
                     QuickActions = table.Column<JsonDocument>(type: "jsonb", nullable: true),
@@ -322,7 +259,6 @@ namespace MSH.Infrastructure.Migrations
                     ShowEmptyRooms = table.Column<bool>(type: "boolean", nullable: false),
                     ShowAutomationSuggestions = table.Column<bool>(type: "boolean", nullable: false),
                     AutomationPreferences = table.Column<JsonDocument>(type: "jsonb", nullable: true),
-                    UserId1 = table.Column<string>(type: "text", nullable: false),
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -334,26 +270,9 @@ namespace MSH.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_UserSettings", x => x.UserId);
                     table.ForeignKey(
-                        name: "FK_UserSettings_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_UserSettings_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_UserSettings_ApplicationUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserSettings_ApplicationUsers_UserId1",
-                        column: x => x.UserId1,
+                        principalSchema: "db",
                         principalTable: "ApplicationUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -361,6 +280,7 @@ namespace MSH.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
+                schema: "db",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -375,6 +295,7 @@ namespace MSH.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
+                        principalSchema: "db",
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -382,6 +303,7 @@ namespace MSH.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
+                schema: "db",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -396,6 +318,7 @@ namespace MSH.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetUserClaims_AspNetUsers_UserId",
                         column: x => x.UserId,
+                        principalSchema: "db",
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -403,6 +326,7 @@ namespace MSH.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserLogins",
+                schema: "db",
                 columns: table => new
                 {
                     LoginProvider = table.Column<string>(type: "text", nullable: false),
@@ -416,6 +340,7 @@ namespace MSH.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetUserLogins_AspNetUsers_UserId",
                         column: x => x.UserId,
+                        principalSchema: "db",
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -423,6 +348,7 @@ namespace MSH.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserRoles",
+                schema: "db",
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "text", nullable: false),
@@ -434,12 +360,14 @@ namespace MSH.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
                         column: x => x.RoleId,
+                        principalSchema: "db",
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
+                        principalSchema: "db",
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -447,6 +375,7 @@ namespace MSH.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserTokens",
+                schema: "db",
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "text", nullable: false),
@@ -460,6 +389,7 @@ namespace MSH.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
+                        principalSchema: "db",
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -467,14 +397,14 @@ namespace MSH.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "GroupStateHistory",
+                schema: "db",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     GroupId = table.Column<Guid>(type: "uuid", nullable: false),
-                    GroupId1 = table.Column<Guid>(type: "uuid", nullable: false),
                     OldState = table.Column<JsonDocument>(type: "jsonb", nullable: false),
                     NewState = table.Column<JsonDocument>(type: "jsonb", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
@@ -485,26 +415,9 @@ namespace MSH.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_GroupStateHistory", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_GroupStateHistory_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_GroupStateHistory_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_GroupStateHistory_Groups_GroupId",
                         column: x => x.GroupId,
-                        principalTable: "Groups",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_GroupStateHistory_Groups_GroupId1",
-                        column: x => x.GroupId1,
+                        principalSchema: "db",
                         principalTable: "Groups",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -512,6 +425,7 @@ namespace MSH.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "GroupStates",
+                schema: "db",
                 columns: table => new
                 {
                     GroupId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -528,20 +442,9 @@ namespace MSH.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_GroupStates", x => x.GroupId);
                     table.ForeignKey(
-                        name: "FK_GroupStates_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_GroupStates_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_GroupStates_Groups_GroupId",
                         column: x => x.GroupId,
+                        principalSchema: "db",
                         principalTable: "Groups",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -549,17 +452,18 @@ namespace MSH.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "DeviceGroups",
+                schema: "db",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    Icon = table.Column<string>(type: "text", nullable: false),
-                    PreferredCommissioningMethod = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: true),
+                    Icon = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    PreferredCommissioningMethod = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    DefaultCapabilities = table.Column<JsonDocument>(type: "jsonb", nullable: true),
                     SortOrder = table.Column<int>(type: "integer", nullable: false),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     RoomId = table.Column<Guid>(type: "uuid", nullable: true),
-                    DefaultCapabilities = table.Column<JsonDocument>(type: "jsonb", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
@@ -570,36 +474,203 @@ namespace MSH.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_DeviceGroups", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DeviceGroups_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_DeviceGroups_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_DeviceGroups_Rooms_RoomId",
                         column: x => x.RoomId,
+                        principalSchema: "db",
                         principalTable: "Rooms",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "Devices",
+                name: "UserRoomPermissions",
+                schema: "db",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    MatterDeviceId = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    RoomId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Permission = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserRoomPermissions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserRoomPermissions_ApplicationUsers_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "db",
+                        principalTable: "ApplicationUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserRoomPermissions_Rooms_RoomId",
+                        column: x => x.RoomId,
+                        principalSchema: "db",
+                        principalTable: "Rooms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RuleActions",
+                schema: "db",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    RuleId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Action = table.Column<JsonDocument>(type: "jsonb", nullable: false),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RuleActions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RuleActions_Rules_RuleId",
+                        column: x => x.RuleId,
+                        principalSchema: "db",
+                        principalTable: "Rules",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RuleConditions",
+                schema: "db",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    RuleId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Condition = table.Column<JsonDocument>(type: "jsonb", nullable: false),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RuleConditions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RuleConditions_Rules_RuleId",
+                        column: x => x.RuleId,
+                        principalSchema: "db",
+                        principalTable: "Rules",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RuleExecutionHistory",
+                schema: "db",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    RuleId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Success = table.Column<bool>(type: "boolean", nullable: false),
+                    Result = table.Column<JsonDocument>(type: "jsonb", nullable: true),
+                    ErrorMessage = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    ExecutionTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RuleExecutionHistory", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RuleExecutionHistory_Rules_RuleId",
+                        column: x => x.RuleId,
+                        principalSchema: "db",
+                        principalTable: "Rules",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RuleTriggers",
+                schema: "db",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    RuleId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TriggerType = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    Trigger = table.Column<JsonDocument>(type: "jsonb", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    LastTriggered = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RuleTriggers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RuleTriggers_Rules_RuleId",
+                        column: x => x.RuleId,
+                        principalSchema: "db",
+                        principalTable: "Rules",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DeviceTypes",
+                schema: "db",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: true),
+                    Capabilities = table.Column<JsonDocument>(type: "jsonb", nullable: false),
+                    IsSimulated = table.Column<bool>(type: "boolean", nullable: false),
+                    Icon = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    PreferredCommissioningMethod = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    DeviceGroupId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DeviceTypes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DeviceTypes_DeviceGroups_DeviceGroupId",
+                        column: x => x.DeviceGroupId,
+                        principalSchema: "db",
+                        principalTable: "DeviceGroups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Devices",
+                schema: "db",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: true),
+                    MatterDeviceId = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: true),
                     DeviceTypeId = table.Column<Guid>(type: "uuid", nullable: false),
                     RoomId = table.Column<Guid>(type: "uuid", nullable: true),
                     Properties = table.Column<JsonDocument>(type: "jsonb", nullable: false),
-                    Status = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Configuration = table.Column<JsonDocument>(type: "jsonb", nullable: true),
                     LastStateChange = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     IsOnline = table.Column<bool>(type: "boolean", nullable: false),
@@ -614,256 +685,24 @@ namespace MSH.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Devices", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Devices_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Devices_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_Devices_DeviceTypes_DeviceTypeId",
                         column: x => x.DeviceTypeId,
+                        principalSchema: "db",
                         principalTable: "DeviceTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Devices_Rooms_RoomId",
                         column: x => x.RoomId,
+                        principalSchema: "db",
                         principalTable: "Rooms",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserRoomPermissions",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    RoomId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Permission = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<string>(type: "text", nullable: false),
-                    UpdatedById = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserRoomPermissions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserRoomPermissions_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_UserRoomPermissions_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_UserRoomPermissions_ApplicationUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserRoomPermissions_Rooms_RoomId",
-                        column: x => x.RoomId,
-                        principalTable: "Rooms",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RuleActions",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    RuleId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RuleId1 = table.Column<Guid>(type: "uuid", nullable: false),
-                    Action = table.Column<JsonDocument>(type: "jsonb", nullable: false),
-                    Order = table.Column<int>(type: "integer", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<string>(type: "text", nullable: false),
-                    UpdatedById = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RuleActions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_RuleActions_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_RuleActions_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_RuleActions_Rules_RuleId",
-                        column: x => x.RuleId,
-                        principalTable: "Rules",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_RuleActions_Rules_RuleId1",
-                        column: x => x.RuleId1,
-                        principalTable: "Rules",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RuleConditions",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    RuleId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RuleId1 = table.Column<Guid>(type: "uuid", nullable: false),
-                    Condition = table.Column<JsonDocument>(type: "jsonb", nullable: false),
-                    Order = table.Column<int>(type: "integer", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<string>(type: "text", nullable: false),
-                    UpdatedById = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RuleConditions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_RuleConditions_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_RuleConditions_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_RuleConditions_Rules_RuleId",
-                        column: x => x.RuleId,
-                        principalTable: "Rules",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_RuleConditions_Rules_RuleId1",
-                        column: x => x.RuleId1,
-                        principalTable: "Rules",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RuleExecutionHistory",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    RuleId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RuleId1 = table.Column<Guid>(type: "uuid", nullable: false),
-                    Success = table.Column<bool>(type: "boolean", nullable: false),
-                    Result = table.Column<JsonDocument>(type: "jsonb", nullable: true),
-                    ErrorMessage = table.Column<string>(type: "text", nullable: true),
-                    ExecutionTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<string>(type: "text", nullable: false),
-                    UpdatedById = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RuleExecutionHistory", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_RuleExecutionHistory_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_RuleExecutionHistory_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_RuleExecutionHistory_Rules_RuleId",
-                        column: x => x.RuleId,
-                        principalTable: "Rules",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_RuleExecutionHistory_Rules_RuleId1",
-                        column: x => x.RuleId1,
-                        principalTable: "Rules",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RuleTriggers",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    RuleId = table.Column<Guid>(type: "uuid", nullable: false),
-                    TriggerType = table.Column<string>(type: "text", nullable: false),
-                    Trigger = table.Column<JsonDocument>(type: "jsonb", nullable: false),
-                    IsEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    LastTriggered = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    RuleId1 = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    CreatedById = table.Column<string>(type: "text", nullable: false),
-                    UpdatedById = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RuleTriggers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_RuleTriggers_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_RuleTriggers_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_RuleTriggers_Rules_RuleId",
-                        column: x => x.RuleId,
-                        principalTable: "Rules",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_RuleTriggers_Rules_RuleId1",
-                        column: x => x.RuleId1,
-                        principalTable: "Rules",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "DeviceDeviceGroup",
+                schema: "db",
                 columns: table => new
                 {
                     DeviceGroupsId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -875,12 +714,49 @@ namespace MSH.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_DeviceDeviceGroup_DeviceGroups_DeviceGroupsId",
                         column: x => x.DeviceGroupsId,
+                        principalSchema: "db",
                         principalTable: "DeviceGroups",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_DeviceDeviceGroup_Devices_DevicesId",
                         column: x => x.DevicesId,
+                        principalSchema: "db",
+                        principalTable: "Devices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DeviceEventLogs",
+                schema: "db",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    DeviceId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Event = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    EventType = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    Severity = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    EventData = table.Column<JsonDocument>(type: "jsonb", nullable: true),
+                    OldState = table.Column<JsonDocument>(type: "jsonb", nullable: true),
+                    NewState = table.Column<JsonDocument>(type: "jsonb", nullable: true),
+                    Source = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    UserId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DeviceEventLogs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DeviceEventLogs_Devices_DeviceId",
+                        column: x => x.DeviceId,
+                        principalSchema: "db",
                         principalTable: "Devices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -888,11 +764,12 @@ namespace MSH.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "DeviceEvents",
+                schema: "db",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     DeviceId = table.Column<Guid>(type: "uuid", nullable: false),
-                    EventType = table.Column<string>(type: "text", nullable: false),
+                    EventType = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
                     EventData = table.Column<JsonDocument>(type: "jsonb", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -904,37 +781,76 @@ namespace MSH.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_DeviceEvents", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DeviceEvents_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_DeviceEvents_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_DeviceEvents_Devices_DeviceId",
                         column: x => x.DeviceId,
+                        principalSchema: "db",
                         principalTable: "Devices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
-
-
             migrationBuilder.CreateTable(
-                name: "DeviceHistory",
+                name: "DeviceFirmwareUpdate",
+                schema: "db",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     DeviceId = table.Column<Guid>(type: "uuid", nullable: false),
-                    EventType = table.Column<string>(type: "text", nullable: false),
+                    FirmwareUpdateId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CurrentVersion = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    TargetVersion = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Status = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    DownloadStartedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DownloadCompletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    InstallationStartedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    InstallationCompletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    TestCompletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    TestPassed = table.Column<bool>(type: "boolean", nullable: false),
+                    ErrorMessage = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    TestResults = table.Column<JsonDocument>(type: "jsonb", nullable: true),
+                    IsConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    ConfirmedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ConfirmedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    IsRollbackAvailable = table.Column<bool>(type: "boolean", nullable: false),
+                    RollbackCompletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    RollbackReason = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    UpdateLog = table.Column<JsonDocument>(type: "jsonb", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DeviceFirmwareUpdate", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DeviceFirmwareUpdate_Devices_DeviceId",
+                        column: x => x.DeviceId,
+                        principalSchema: "db",
+                        principalTable: "Devices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DeviceFirmwareUpdate_FirmwareUpdate_FirmwareUpdateId",
+                        column: x => x.FirmwareUpdateId,
+                        principalSchema: "db",
+                        principalTable: "FirmwareUpdate",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DeviceHistory",
+                schema: "db",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    DeviceId = table.Column<Guid>(type: "uuid", nullable: false),
+                    EventType = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
                     OldState = table.Column<JsonDocument>(type: "jsonb", nullable: true),
                     NewState = table.Column<JsonDocument>(type: "jsonb", nullable: true),
-                    Description = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
@@ -945,20 +861,43 @@ namespace MSH.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_DeviceHistory", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DeviceHistory_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_DeviceHistory_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_DeviceHistory_Devices_DeviceId",
                         column: x => x.DeviceId,
+                        principalSchema: "db",
+                        principalTable: "Devices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DevicePropertyChange",
+                schema: "db",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    DeviceId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PropertyName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    OldValue = table.Column<JsonDocument>(type: "jsonb", nullable: true),
+                    NewValue = table.Column<JsonDocument>(type: "jsonb", nullable: true),
+                    ChangeType = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Reason = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    ChangeTimestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IsConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    ConfirmedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ConfirmedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedById = table.Column<string>(type: "text", nullable: false),
+                    UpdatedById = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DevicePropertyChange", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DevicePropertyChange_Devices_DeviceId",
+                        column: x => x.DeviceId,
+                        principalSchema: "db",
                         principalTable: "Devices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -966,11 +905,12 @@ namespace MSH.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "DeviceStates",
+                schema: "db",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     DeviceId = table.Column<Guid>(type: "uuid", nullable: false),
-                    StateType = table.Column<string>(type: "text", nullable: false),
+                    StateType = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
                     StateValue = table.Column<JsonDocument>(type: "jsonb", nullable: false),
                     RecordedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -983,20 +923,9 @@ namespace MSH.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_DeviceStates", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DeviceStates_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_DeviceStates_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_DeviceStates_Devices_DeviceId",
                         column: x => x.DeviceId,
+                        principalSchema: "db",
                         principalTable: "Devices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -1004,12 +933,11 @@ namespace MSH.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "GroupMembers",
+                schema: "db",
                 columns: table => new
                 {
                     GroupId = table.Column<Guid>(type: "uuid", nullable: false),
                     DeviceId = table.Column<Guid>(type: "uuid", nullable: false),
-                    GroupId1 = table.Column<Guid>(type: "uuid", nullable: false),
-                    DeviceId1 = table.Column<Guid>(type: "uuid", nullable: false),
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -1021,38 +949,16 @@ namespace MSH.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_GroupMembers", x => new { x.GroupId, x.DeviceId });
                     table.ForeignKey(
-                        name: "FK_GroupMembers_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_GroupMembers_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_GroupMembers_Devices_DeviceId",
                         column: x => x.DeviceId,
-                        principalTable: "Devices",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_GroupMembers_Devices_DeviceId1",
-                        column: x => x.DeviceId1,
+                        principalSchema: "db",
                         principalTable: "Devices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_GroupMembers_Groups_GroupId",
                         column: x => x.GroupId,
-                        principalTable: "Groups",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_GroupMembers_Groups_GroupId1",
-                        column: x => x.GroupId1,
+                        principalSchema: "db",
                         principalTable: "Groups",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -1060,12 +966,13 @@ namespace MSH.Infrastructure.Migrations
 
             migrationBuilder.CreateTable(
                 name: "UserDevicePermissions",
+                schema: "db",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     DeviceId = table.Column<Guid>(type: "uuid", nullable: false),
-                    PermissionLevel = table.Column<string>(type: "text", nullable: false),
+                    PermissionLevel = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
@@ -1076,154 +983,148 @@ namespace MSH.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_UserDevicePermissions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserDevicePermissions_ApplicationUsers_CreatedById",
-                        column: x => x.CreatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_UserDevicePermissions_ApplicationUsers_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "ApplicationUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_UserDevicePermissions_ApplicationUsers_UserId",
                         column: x => x.UserId,
+                        principalSchema: "db",
                         principalTable: "ApplicationUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UserDevicePermissions_Devices_DeviceId",
                         column: x => x.DeviceId,
+                        principalSchema: "db",
                         principalTable: "Devices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ApplicationUsers_CreatedById",
-                table: "ApplicationUsers",
-                column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ApplicationUsers_Email",
+                schema: "db",
                 table: "ApplicationUsers",
                 column: "Email",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ApplicationUsers_UpdatedById",
-                table: "ApplicationUsers",
-                column: "UpdatedById");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ApplicationUsers_UserName",
+                schema: "db",
                 table: "ApplicationUsers",
                 column: "UserName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
+                schema: "db",
                 table: "AspNetRoleClaims",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
+                schema: "db",
                 table: "AspNetRoles",
                 column: "NormalizedName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
+                schema: "db",
                 table: "AspNetUserClaims",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserLogins_UserId",
+                schema: "db",
                 table: "AspNetUserLogins",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserRoles_RoleId",
+                schema: "db",
                 table: "AspNetUserRoles",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
+                schema: "db",
                 table: "AspNetUsers",
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
+                schema: "db",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceDeviceGroup_DevicesId",
+                schema: "db",
                 table: "DeviceDeviceGroup",
                 column: "DevicesId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeviceEvents_CreatedById",
-                table: "DeviceEvents",
-                column: "CreatedById");
+                name: "IX_DeviceEventLogs_DeviceId",
+                schema: "db",
+                table: "DeviceEventLogs",
+                column: "DeviceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DeviceEventLogs_EventType",
+                schema: "db",
+                table: "DeviceEventLogs",
+                column: "EventType");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DeviceEventLogs_Timestamp",
+                schema: "db",
+                table: "DeviceEventLogs",
+                column: "Timestamp");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceEvents_DeviceId",
+                schema: "db",
                 table: "DeviceEvents",
                 column: "DeviceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeviceEvents_UpdatedById",
-                table: "DeviceEvents",
-                column: "UpdatedById");
-
-
+                name: "IX_DeviceFirmwareUpdate_DeviceId",
+                schema: "db",
+                table: "DeviceFirmwareUpdate",
+                column: "DeviceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeviceGroups_CreatedById",
-                table: "DeviceGroups",
-                column: "CreatedById");
+                name: "IX_DeviceFirmwareUpdate_FirmwareUpdateId",
+                schema: "db",
+                table: "DeviceFirmwareUpdate",
+                column: "FirmwareUpdateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceGroups_RoomId",
+                schema: "db",
                 table: "DeviceGroups",
                 column: "RoomId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeviceGroups_UpdatedById",
-                table: "DeviceGroups",
-                column: "UpdatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DeviceHistory_CreatedById",
-                table: "DeviceHistory",
-                column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_DeviceHistory_DeviceId",
+                schema: "db",
                 table: "DeviceHistory",
                 column: "DeviceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeviceHistory_UpdatedById",
-                table: "DeviceHistory",
-                column: "UpdatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Devices_CreatedById",
-                table: "Devices",
-                column: "CreatedById");
+                name: "IX_DevicePropertyChange_DeviceId",
+                schema: "db",
+                table: "DevicePropertyChange",
+                column: "DeviceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Devices_DeviceTypeId",
+                schema: "db",
                 table: "Devices",
                 column: "DeviceTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Devices_MatterDeviceId",
+                schema: "db",
                 table: "Devices",
                 column: "MatterDeviceId",
                 unique: true,
@@ -1231,380 +1132,228 @@ namespace MSH.Infrastructure.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Devices_RoomId",
+                schema: "db",
                 table: "Devices",
                 column: "RoomId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Devices_UpdatedById",
-                table: "Devices",
-                column: "UpdatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DeviceStates_CreatedById",
-                table: "DeviceStates",
-                column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_DeviceStates_DeviceId",
+                schema: "db",
                 table: "DeviceStates",
                 column: "DeviceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DeviceStates_UpdatedById",
-                table: "DeviceStates",
-                column: "UpdatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DeviceTypes_CreatedById",
+                name: "IX_DeviceTypes_DeviceGroupId",
+                schema: "db",
                 table: "DeviceTypes",
-                column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DeviceTypes_UpdatedById",
-                table: "DeviceTypes",
-                column: "UpdatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_EnvironmentalSettings_CreatedById",
-                table: "EnvironmentalSettings",
-                column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_EnvironmentalSettings_UpdatedById",
-                table: "EnvironmentalSettings",
-                column: "UpdatedById");
+                column: "DeviceGroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EnvironmentalSettings_UserId",
+                schema: "db",
                 table: "EnvironmentalSettings",
                 column: "UserId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_GroupMembers_CreatedById",
-                table: "GroupMembers",
-                column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_GroupMembers_DeviceId",
+                schema: "db",
                 table: "GroupMembers",
                 column: "DeviceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GroupMembers_DeviceId1",
-                table: "GroupMembers",
-                column: "DeviceId1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GroupMembers_GroupId1",
-                table: "GroupMembers",
-                column: "GroupId1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GroupMembers_UpdatedById",
-                table: "GroupMembers",
-                column: "UpdatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Groups_CreatedById",
-                table: "Groups",
-                column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Groups_UpdatedById",
-                table: "Groups",
-                column: "UpdatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GroupStateHistory_CreatedById",
-                table: "GroupStateHistory",
-                column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_GroupStateHistory_GroupId",
+                schema: "db",
                 table: "GroupStateHistory",
                 column: "GroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GroupStateHistory_GroupId1",
-                table: "GroupStateHistory",
-                column: "GroupId1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GroupStateHistory_UpdatedById",
-                table: "GroupStateHistory",
-                column: "UpdatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GroupStates_CreatedById",
-                table: "GroupStates",
-                column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GroupStates_UpdatedById",
-                table: "GroupStates",
-                column: "UpdatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notifications_CreatedById",
-                table: "Notifications",
-                column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notifications_UpdatedById",
-                table: "Notifications",
-                column: "UpdatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Rooms_CreatedById",
-                table: "Rooms",
-                column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Rooms_UpdatedById",
-                table: "Rooms",
-                column: "UpdatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RuleActions_CreatedById",
-                table: "RuleActions",
-                column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_RuleActions_RuleId",
+                schema: "db",
                 table: "RuleActions",
                 column: "RuleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RuleActions_RuleId1",
-                table: "RuleActions",
-                column: "RuleId1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RuleActions_UpdatedById",
-                table: "RuleActions",
-                column: "UpdatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RuleConditions_CreatedById",
-                table: "RuleConditions",
-                column: "CreatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RuleConditions_RuleId",
+                schema: "db",
                 table: "RuleConditions",
                 column: "RuleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RuleConditions_RuleId1",
-                table: "RuleConditions",
-                column: "RuleId1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RuleConditions_UpdatedById",
-                table: "RuleConditions",
-                column: "UpdatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RuleExecutionHistory_CreatedById",
-                table: "RuleExecutionHistory",
-                column: "CreatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RuleExecutionHistory_RuleId",
+                schema: "db",
                 table: "RuleExecutionHistory",
                 column: "RuleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RuleExecutionHistory_RuleId1",
-                table: "RuleExecutionHistory",
-                column: "RuleId1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RuleExecutionHistory_UpdatedById",
-                table: "RuleExecutionHistory",
-                column: "UpdatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Rules_CreatedById",
-                table: "Rules",
-                column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Rules_UpdatedById",
-                table: "Rules",
-                column: "UpdatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RuleTriggers_CreatedById",
-                table: "RuleTriggers",
-                column: "CreatedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RuleTriggers_RuleId",
+                schema: "db",
                 table: "RuleTriggers",
                 column: "RuleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RuleTriggers_RuleId1",
-                table: "RuleTriggers",
-                column: "RuleId1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RuleTriggers_UpdatedById",
-                table: "RuleTriggers",
-                column: "UpdatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserDevicePermissions_CreatedById",
-                table: "UserDevicePermissions",
-                column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UserDevicePermissions_DeviceId",
+                schema: "db",
                 table: "UserDevicePermissions",
                 column: "DeviceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserDevicePermissions_UpdatedById",
-                table: "UserDevicePermissions",
-                column: "UpdatedById");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UserDevicePermissions_UserId",
+                schema: "db",
                 table: "UserDevicePermissions",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserRoomPermissions_CreatedById",
-                table: "UserRoomPermissions",
-                column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UserRoomPermissions_RoomId",
+                schema: "db",
                 table: "UserRoomPermissions",
                 column: "RoomId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserRoomPermissions_UpdatedById",
-                table: "UserRoomPermissions",
-                column: "UpdatedById");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UserRoomPermissions_UserId",
+                schema: "db",
                 table: "UserRoomPermissions",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserSettings_CreatedById",
-                table: "UserSettings",
-                column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserSettings_UpdatedById",
-                table: "UserSettings",
-                column: "UpdatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserSettings_UserId1",
-                table: "UserSettings",
-                column: "UserId1");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AspNetRoleClaims");
+                name: "AspNetRoleClaims",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserClaims");
+                name: "AspNetUserClaims",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserLogins");
+                name: "AspNetUserLogins",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserRoles");
+                name: "AspNetUserRoles",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserTokens");
+                name: "AspNetUserTokens",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "DeviceDeviceGroup");
+                name: "DeviceDeviceGroup",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "DeviceEvents");
-
-
-
-            migrationBuilder.DropTable(
-                name: "DeviceHistory");
+                name: "DeviceEventLogs",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "DeviceStates");
+                name: "DeviceEvents",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "EnvironmentalSettings");
+                name: "DeviceFirmwareUpdate",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "GroupMembers");
+                name: "DeviceHistory",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "GroupStateHistory");
+                name: "DevicePropertyChange",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "GroupStates");
+                name: "DeviceStates",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "Notifications");
+                name: "EnvironmentalSettings",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "RuleActions");
+                name: "GroupMembers",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "RuleConditions");
+                name: "GroupStateHistory",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "RuleExecutionHistory");
+                name: "GroupStates",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "RuleTriggers");
+                name: "Notifications",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "UserDevicePermissions");
+                name: "RuleActions",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "UserRoomPermissions");
+                name: "RuleConditions",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "UserSettings");
+                name: "RuleExecutionHistory",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "RuleTriggers",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "UserDevicePermissions",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "DeviceGroups");
+                name: "UserRoomPermissions",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "Groups");
+                name: "UserSettings",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "Rules");
+                name: "AspNetRoles",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "Devices");
+                name: "AspNetUsers",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "DeviceTypes");
+                name: "FirmwareUpdate",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "Rooms");
+                name: "Groups",
+                schema: "db");
 
             migrationBuilder.DropTable(
-                name: "ApplicationUsers");
+                name: "Rules",
+                schema: "db");
+
+            migrationBuilder.DropTable(
+                name: "Devices",
+                schema: "db");
+
+            migrationBuilder.DropTable(
+                name: "ApplicationUsers",
+                schema: "db");
+
+            migrationBuilder.DropTable(
+                name: "DeviceTypes",
+                schema: "db");
+
+            migrationBuilder.DropTable(
+                name: "DeviceGroups",
+                schema: "db");
+
+            migrationBuilder.DropTable(
+                name: "Rooms",
+                schema: "db");
         }
     }
 }

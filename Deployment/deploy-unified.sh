@@ -1,5 +1,8 @@
 #!/bin/bash
-source ../config/environment.sh
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Source environment from project root
+source "$SCRIPT_DIR/../config/environment.sh"
 
 # Unified MSH Deployment Script
 # Builds locally and deploys to Raspberry Pi
@@ -25,7 +28,7 @@ NC='\033[0m'
 
 # Function to detect Pi IP automatically
 detect_pi_ip() {
-    echo -e "${YELLOW}🔍 Auto-detecting Pi IP address...${NC}"
+    echo -e "${YELLOW}🔍 Auto-detecting Pi IP address...${NC}" >&2
     
     # Try common Pi IP ranges
     local possible_ips=(
@@ -40,17 +43,17 @@ detect_pi_ip() {
     )
     
     for ip in "${possible_ips[@]}"; do
-        echo -e "  Testing $ip..."
+        echo -e "  Testing $ip..." >&2
         if ping -c 1 -W 1 "$ip" > /dev/null 2>&1; then
             if ssh -o ConnectTimeout=3 -o StrictHostKeyChecking=accept-new "$PI_USER@$ip" "echo 'SSH test'" > /dev/null 2>&1; then
-                echo -e "${GREEN}✅ Found Pi at $ip${NC}"
+                echo -e "${GREEN}✅ Found Pi at $ip${NC}" >&2
                 echo "$ip"
                 return 0
             fi
         fi
     done
     
-    echo -e "${RED}❌ Could not auto-detect Pi IP${NC}"
+    echo -e "${RED}❌ Could not auto-detect Pi IP${NC}" >&2
     return 1
 }
 
@@ -173,6 +176,7 @@ deploy_on_pi() {
             -e ConnectionStrings__DefaultConnection="Host=msh_db;Port=5432;Database=$DB_NAME;Username=postgres;Password=$DB_PASSWORD" \\
             -v msh_dataprotection:/root/.aspnet/DataProtection-Keys \\
             -v /var/run/docker.sock:/var/run/docker.sock \\
+            -v /home/chregg/msh/fast-chip-tool.sh:/usr/local/bin/fast-chip-tool.sh:ro \\
             $IMAGE_NAME || {
             echo "❌ Failed to start web application"
             exit 1

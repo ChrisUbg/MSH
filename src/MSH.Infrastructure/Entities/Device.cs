@@ -41,4 +41,12 @@ public class Device : BaseEntity
     public ICollection<DeviceState> States { get; set; } = new List<DeviceState>();
     public ICollection<DeviceEvent> Events { get; set; } = new List<DeviceEvent>();
     public ICollection<DeviceGroup> DeviceGroups { get; set; } = new List<DeviceGroup>();
+    public ICollection<GroupMember> GroupMembers { get; set; } = new List<GroupMember>();
+    
+    // New navigation properties for firmware updates and property changes
+    public ICollection<DevicePropertyChange> PropertyChanges { get; set; } = new List<DevicePropertyChange>();
+    public ICollection<DeviceFirmwareUpdate> FirmwareUpdates { get; set; } = new List<DeviceFirmwareUpdate>();
+    
+    // Event log navigation property
+    public ICollection<DeviceEventLog> EventLogs { get; set; } = new List<DeviceEventLog>();
 }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               

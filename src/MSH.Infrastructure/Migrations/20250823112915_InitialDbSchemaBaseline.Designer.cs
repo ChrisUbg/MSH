@@ -4,6 +4,7 @@ using System.Text.Json;
 using MSH.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,13 +13,14 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MSH.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250823112915_InitialDbSchemaBaseline")]
+    partial class InitialDbSchemaBaseline
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("db")
                 .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -37,71 +39,6 @@ namespace MSH.Infrastructure.Migrations
                     b.HasIndex("DevicesId");
 
                     b.ToTable("DeviceDeviceGroup", "db");
-                });
-
-            modelBuilder.Entity("MSH.Infrastructure.Entities.Cluster", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<JsonDocument>("Attributes")
-                        .HasColumnType("jsonb");
-
-                    b.Property<string>("Category")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<int>("ClusterId")
-                        .HasColumnType("integer");
-
-                    b.Property<JsonDocument>("Commands")
-                        .HasColumnType("jsonb");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CreatedById")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<JsonDocument>("Events")
-                        .HasColumnType("jsonb");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsOptional")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsRequired")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("MatterVersion")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClusterId")
-                        .IsUnique();
-
-                    b.ToTable("Clusters", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.Device", b =>
@@ -389,7 +326,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("FirmwareUpdateId");
 
-                    b.ToTable("DeviceFirmwareUpdates", "db");
+                    b.ToTable("DeviceFirmwareUpdate", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceGroup", b =>
@@ -561,7 +498,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("DeviceId");
 
-                    b.ToTable("DevicePropertyChanges", "db");
+                    b.ToTable("DevicePropertyChange", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceState", b =>
@@ -831,7 +768,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("FirmwareUpdates", "db");
+                    b.ToTable("FirmwareUpdate", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.Group", b =>

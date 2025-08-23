@@ -51,7 +51,10 @@ if (builder.Environment.IsDevelopment())
     // Register DbContext as Scoped (default) - Singleton causes thread-safety issues
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(devConnectionString, npgsqlOptions => 
-            npgsqlOptions.MigrationsAssembly("MSH.Infrastructure")));
+        {
+            npgsqlOptions.MigrationsAssembly("MSH.Infrastructure");
+            npgsqlOptions.MigrationsHistoryTable("__EFMigrationsHistory", "db");
+        }));
 }
 else
 {
@@ -63,7 +66,10 @@ else
     // Register DbContext as Scoped (default) - Singleton causes thread-safety issues
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(connectionString, npgsqlOptions => 
-            npgsqlOptions.MigrationsAssembly("MSH.Infrastructure")));
+        {
+            npgsqlOptions.MigrationsAssembly("MSH.Infrastructure");
+            npgsqlOptions.MigrationsHistoryTable("__EFMigrationsHistory", "db");
+        }));
 }
 
 // Register services

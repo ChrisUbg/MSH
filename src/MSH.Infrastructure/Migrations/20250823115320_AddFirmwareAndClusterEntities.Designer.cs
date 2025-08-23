@@ -13,14 +13,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MSH.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250620142356_FreshStartWithStringUserIds")]
-    partial class FreshStartWithStringUserIds
+    [Migration("20250823115320_AddFirmwareAndClusterEntities")]
+    partial class AddFirmwareAndClusterEntities
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasDefaultSchema("db")
                 .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -38,7 +39,72 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("DevicesId");
 
-                    b.ToTable("DeviceDeviceGroup");
+                    b.ToTable("DeviceDeviceGroup", "db");
+                });
+
+            modelBuilder.Entity("MSH.Infrastructure.Entities.Cluster", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<JsonDocument>("Attributes")
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("Category")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int>("ClusterId")
+                        .HasColumnType("integer");
+
+                    b.Property<JsonDocument>("Commands")
+                        .HasColumnType("jsonb");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<JsonDocument>("Events")
+                        .HasColumnType("jsonb");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsOptional")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsRequired")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("MatterVersion")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedById")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClusterId")
+                        .IsUnique();
+
+                    b.ToTable("Clusters", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.Device", b =>
@@ -58,7 +124,8 @@ namespace MSH.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<Guid>("DeviceTypeId")
                         .HasColumnType("uuid");
@@ -76,11 +143,13 @@ namespace MSH.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("MatterDeviceId")
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<JsonDocument>("Properties")
                         .IsRequired()
@@ -91,7 +160,8 @@ namespace MSH.Infrastructure.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -101,8 +171,6 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
-
                     b.HasIndex("DeviceTypeId");
 
                     b.HasIndex("MatterDeviceId")
@@ -111,9 +179,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("Devices");
+                    b.ToTable("Devices", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceEvent", b =>
@@ -137,7 +203,8 @@ namespace MSH.Infrastructure.Migrations
 
                     b.Property<string>("EventType")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -150,13 +217,182 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("DeviceId");
+
+                    b.ToTable("DeviceEvents", "db");
+                });
+
+            modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceEventLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid>("DeviceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Event")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<JsonDocument>("EventData")
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("EventType")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<JsonDocument>("NewState")
+                        .HasColumnType("jsonb");
+
+                    b.Property<JsonDocument>("OldState")
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("Severity")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Source")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedById")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("DeviceId");
 
-                    b.HasIndex("UpdatedById");
+                    b.HasIndex("EventType");
 
-                    b.ToTable("DeviceEvents");
+                    b.HasIndex("Timestamp");
+
+                    b.ToTable("DeviceEventLogs", "db");
+                });
+
+            modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceFirmwareUpdate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ConfirmedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ConfirmedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CurrentVersion")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<Guid>("DeviceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DownloadCompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DownloadStartedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid>("FirmwareUpdateId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("InstallationCompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("InstallationStartedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsRollbackAvailable")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("RollbackCompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("RollbackReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("TargetVersion")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime?>("TestCompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("TestPassed")
+                        .HasColumnType("boolean");
+
+                    b.Property<JsonDocument>("TestResults")
+                        .HasColumnType("jsonb");
+
+                    b.Property<JsonDocument>("UpdateLog")
+                        .HasColumnType("jsonb");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedById")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeviceId");
+
+                    b.HasIndex("FirmwareUpdateId");
+
+                    b.ToTable("DeviceFirmwareUpdates", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceGroup", b =>
@@ -172,18 +408,39 @@ namespace MSH.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<JsonDocument>("DefaultCapabilities")
+                        .HasColumnType("jsonb");
+
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("PreferredCommissioningMethod")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<Guid?>("RoomId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -193,16 +450,10 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
-
                     b.HasIndex("RoomId");
 
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("DeviceGroups");
+                    b.ToTable("DeviceGroups", "db");
                 });
-
-
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceHistory", b =>
                 {
@@ -218,14 +469,16 @@ namespace MSH.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<Guid>("DeviceId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("EventType")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -244,13 +497,74 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("DeviceId");
+
+                    b.ToTable("DeviceHistory", "db");
+                });
+
+            modelBuilder.Entity("MSH.Infrastructure.Entities.DevicePropertyChange", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ChangeTimestamp")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ChangeType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime?>("ConfirmedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ConfirmedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("DeviceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<JsonDocument>("NewValue")
+                        .HasColumnType("jsonb");
+
+                    b.Property<JsonDocument>("OldValue")
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("PropertyName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedById")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("DeviceId");
 
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("DeviceHistory");
+                    b.ToTable("DevicePropertyChanges", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceState", b =>
@@ -277,7 +591,8 @@ namespace MSH.Infrastructure.Migrations
 
                     b.Property<string>("StateType")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<JsonDocument>("StateValue")
                         .IsRequired()
@@ -291,13 +606,9 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
-
                     b.HasIndex("DeviceId");
 
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("DeviceStates");
+                    b.ToTable("DeviceStates", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceType", b =>
@@ -318,7 +629,16 @@ namespace MSH.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<Guid?>("DeviceGroupId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -328,7 +648,13 @@ namespace MSH.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("PreferredCommissioningMethod")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -338,11 +664,9 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
+                    b.HasIndex("DeviceGroupId");
 
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("DeviceTypes");
+                    b.ToTable("DeviceTypes", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.EnvironmentalSettings", b =>
@@ -398,22 +722,119 @@ namespace MSH.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<double>("VOCMax")
                         .HasColumnType("double precision");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("UpdatedById");
-
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("EnvironmentalSettings");
+                    b.ToTable("EnvironmentalSettings", "db");
+                });
+
+            modelBuilder.Entity("MSH.Infrastructure.Entities.FirmwareUpdate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Checksum")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime?>("ConfirmedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ConfirmedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CurrentVersion")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime?>("DownloadCompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DownloadStartedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DownloadUrl")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("FileName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<long?>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("InstallationCompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("InstallationStartedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsCompatible")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsConfirmed")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("RequiresConfirmation")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("TargetVersion")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<JsonDocument>("UpdateMetadata")
+                        .HasColumnType("jsonb");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedById")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FirmwareUpdates", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.Group", b =>
@@ -430,14 +851,16 @@ namespace MSH.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -447,11 +870,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("Groups");
+                    b.ToTable("Groups", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.GroupMember", b =>
@@ -469,12 +888,6 @@ namespace MSH.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("DeviceId1")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("GroupId1")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
@@ -489,17 +902,9 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasKey("GroupId", "DeviceId");
 
-                    b.HasIndex("CreatedById");
-
                     b.HasIndex("DeviceId");
 
-                    b.HasIndex("DeviceId1");
-
-                    b.HasIndex("GroupId1");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("GroupMembers");
+                    b.ToTable("GroupMembers", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.GroupState", b =>
@@ -535,11 +940,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasKey("GroupId");
 
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("GroupStates");
+                    b.ToTable("GroupStates", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.GroupStateHistory", b =>
@@ -556,12 +957,10 @@ namespace MSH.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<Guid>("GroupId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("GroupId1")
                         .HasColumnType("uuid");
 
                     b.Property<bool>("IsDeleted")
@@ -583,15 +982,9 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
-
                     b.HasIndex("GroupId");
 
-                    b.HasIndex("GroupId1");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("GroupStateHistory");
+                    b.ToTable("GroupStateHistory", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.Notification", b =>
@@ -615,7 +1008,8 @@ namespace MSH.Infrastructure.Migrations
 
                     b.Property<string>("Message")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime?>("ReadAt")
                         .HasColumnType("timestamp with time zone");
@@ -638,11 +1032,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.Room", b =>
@@ -659,7 +1049,8 @@ namespace MSH.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<int?>("Floor")
                         .HasColumnType("integer");
@@ -669,7 +1060,8 @@ namespace MSH.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -679,11 +1071,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("Rooms");
+                    b.ToTable("Rooms", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.Rule", b =>
@@ -708,7 +1096,8 @@ namespace MSH.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
@@ -718,7 +1107,8 @@ namespace MSH.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -728,11 +1118,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("Rules");
+                    b.ToTable("Rules", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.RuleAction", b =>
@@ -761,9 +1147,6 @@ namespace MSH.Infrastructure.Migrations
                     b.Property<Guid>("RuleId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("RuleId1")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -772,15 +1155,9 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
-
                     b.HasIndex("RuleId");
 
-                    b.HasIndex("RuleId1");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("RuleActions");
+                    b.ToTable("RuleActions", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.RuleCondition", b =>
@@ -809,9 +1186,6 @@ namespace MSH.Infrastructure.Migrations
                     b.Property<Guid>("RuleId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("RuleId1")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -820,15 +1194,9 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
-
                     b.HasIndex("RuleId");
 
-                    b.HasIndex("RuleId1");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("RuleConditions");
+                    b.ToTable("RuleConditions", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.RuleExecutionHistory", b =>
@@ -845,7 +1213,8 @@ namespace MSH.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("ErrorMessage")
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime>("ExecutionTime")
                         .HasColumnType("timestamp with time zone");
@@ -859,9 +1228,6 @@ namespace MSH.Infrastructure.Migrations
                     b.Property<Guid>("RuleId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("RuleId1")
-                        .HasColumnType("uuid");
-
                     b.Property<bool>("Success")
                         .HasColumnType("boolean");
 
@@ -873,15 +1239,9 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
-
                     b.HasIndex("RuleId");
 
-                    b.HasIndex("RuleId1");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("RuleExecutionHistory");
+                    b.ToTable("RuleExecutionHistory", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.RuleTrigger", b =>
@@ -909,16 +1269,14 @@ namespace MSH.Infrastructure.Migrations
                     b.Property<Guid>("RuleId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("RuleId1")
-                        .HasColumnType("uuid");
-
                     b.Property<JsonDocument>("Trigger")
                         .IsRequired()
                         .HasColumnType("jsonb");
 
                     b.Property<string>("TriggerType")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -928,34 +1286,32 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
-
                     b.HasIndex("RuleId");
 
-                    b.HasIndex("RuleId1");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("RuleTriggers");
+                    b.ToTable("RuleTriggers", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.User", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CreatedById")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<string>("Email")
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<string>("FirstName")
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
@@ -967,31 +1323,30 @@ namespace MSH.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LastName")
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UpdatedById")
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
-
                     b.HasIndex("Email")
                         .IsUnique();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
-                    b.HasIndex("UpdatedById");
 
                     b.HasIndex("UserName")
                         .IsUnique();
 
-                    b.ToTable("                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             s");
+                    b.ToTable("ApplicationUsers", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.UserDevicePermission", b =>
@@ -1015,7 +1370,8 @@ namespace MSH.Infrastructure.Migrations
 
                     b.Property<string>("PermissionLevel")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -1025,19 +1381,16 @@ namespace MSH.Infrastructure.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
-
                     b.HasIndex("DeviceId");
-
-                    b.HasIndex("UpdatedById");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserDevicePermissions");
+                    b.ToTable("UserDevicePermissions", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.UserRoomPermission", b =>
@@ -1058,7 +1411,8 @@ namespace MSH.Infrastructure.Migrations
 
                     b.Property<string>("Permission")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<Guid>("RoomId")
                         .HasColumnType("uuid");
@@ -1071,25 +1425,23 @@ namespace MSH.Infrastructure.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedById");
-
                     b.HasIndex("RoomId");
-
-                    b.HasIndex("UpdatedById");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRoomPermissions");
+                    b.ToTable("UserRoomPermissions", "db");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.UserSettings", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<JsonDocument>("AutomationPreferences")
                         .HasColumnType("jsonb");
@@ -1106,7 +1458,8 @@ namespace MSH.Infrastructure.Migrations
 
                     b.Property<string>("DefaultView")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<JsonDocument>("DeviceDisplayPreferences")
                         .HasColumnType("jsonb");
@@ -1125,7 +1478,8 @@ namespace MSH.Infrastructure.Migrations
 
                     b.Property<string>("Language")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<JsonDocument>("LastUsedDevices")
                         .HasColumnType("jsonb");
@@ -1153,7 +1507,8 @@ namespace MSH.Infrastructure.Migrations
 
                     b.Property<string>("Theme")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -1161,19 +1516,9 @@ namespace MSH.Infrastructure.Migrations
                     b.Property<string>("UpdatedById")
                         .HasColumnType("text");
 
-                    b.Property<string>("UserId1")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.HasKey("UserId");
 
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.HasIndex("UserId1");
-
-                    b.ToTable("UserSettings");
+                    b.ToTable("UserSettings", "db");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1199,7 +1544,7 @@ namespace MSH.Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("AspNetRoles", "db");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1224,7 +1569,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims", (string)null);
+                    b.ToTable("AspNetRoleClaims", "db");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
@@ -1288,7 +1633,7 @@ namespace MSH.Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("AspNetUsers", "db");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -1313,7 +1658,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", (string)null);
+                    b.ToTable("AspNetUserClaims", "db");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -1335,7 +1680,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins", (string)null);
+                    b.ToTable("AspNetUserLogins", "db");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -1350,7 +1695,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("AspNetUserRoles", "db");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -1369,7 +1714,7 @@ namespace MSH.Infrastructure.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens", (string)null);
+                    b.ToTable("AspNetUserTokens", "db");
                 });
 
             modelBuilder.Entity("DeviceDeviceGroup", b =>
@@ -1389,12 +1734,6 @@ namespace MSH.Infrastructure.Migrations
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.Device", b =>
                 {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MSH.Infrastructure.Entities.DeviceType", "DeviceType")
                         .WithMany("Devices")
                         .HasForeignKey("DeviceTypeId")
@@ -1406,536 +1745,219 @@ namespace MSH.Infrastructure.Migrations
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
                     b.Navigation("DeviceType");
 
                     b.Navigation("Room");
-
-                    b.Navigation("UpdatedBy");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceEvent", b =>
                 {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MSH.Infrastructure.Entities.Device", "Device")
                         .WithMany("Events")
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
+                    b.Navigation("Device");
+                });
 
-                    b.Navigation("CreatedBy");
+            modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceEventLog", b =>
+                {
+                    b.HasOne("MSH.Infrastructure.Entities.Device", "Device")
+                        .WithMany("EventLogs")
+                        .HasForeignKey("DeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Device");
+                });
+
+            modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceFirmwareUpdate", b =>
+                {
+                    b.HasOne("MSH.Infrastructure.Entities.Device", "Device")
+                        .WithMany("FirmwareUpdates")
+                        .HasForeignKey("DeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MSH.Infrastructure.Entities.FirmwareUpdate", "FirmwareUpdate")
+                        .WithMany("DeviceUpdates")
+                        .HasForeignKey("FirmwareUpdateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Device");
 
-                    b.Navigation("UpdatedBy");
+                    b.Navigation("FirmwareUpdate");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceGroup", b =>
                 {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MSH.Infrastructure.Entities.Room", null)
                         .WithMany("DeviceGroups")
                         .HasForeignKey("RoomId");
-
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("UpdatedBy");
                 });
-
-
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceHistory", b =>
                 {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MSH.Infrastructure.Entities.Device", null)
                         .WithMany()
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity("MSH.Infrastructure.Entities.DevicePropertyChange", b =>
+                {
+                    b.HasOne("MSH.Infrastructure.Entities.Device", "Device")
+                        .WithMany("PropertyChanges")
+                        .HasForeignKey("DeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("UpdatedBy");
+                    b.Navigation("Device");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceState", b =>
                 {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MSH.Infrastructure.Entities.Device", "Device")
                         .WithMany("States")
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
                     b.Navigation("Device");
-
-                    b.Navigation("UpdatedBy");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceType", b =>
                 {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
+                    b.HasOne("MSH.Infrastructure.Entities.DeviceGroup", "DeviceGroup")
+                        .WithMany("DeviceTypes")
+                        .HasForeignKey("DeviceGroupId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("UpdatedBy");
+                    b.Navigation("DeviceGroup");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.EnvironmentalSettings", b =>
                 {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("MSH.Infrastructure.Entities.User", null)
                         .WithOne()
                         .HasForeignKey("MSH.Infrastructure.Entities.EnvironmentalSettings", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("UpdatedBy");
-                });
-
-            modelBuilder.Entity("MSH.Infrastructure.Entities.Group", b =>
-                {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("UpdatedBy");
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.GroupMember", b =>
                 {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.Device", null)
-                        .WithMany()
-                        .HasForeignKey("DeviceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("MSH.Infrastructure.Entities.Device", "Device")
-                        .WithMany()
-                        .HasForeignKey("DeviceId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.Group", null)
-                        .WithMany()
-                        .HasForeignKey("GroupId")
+                        .WithMany("GroupMembers")
+                        .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MSH.Infrastructure.Entities.Group", "Group")
                         .WithMany("Members")
-                        .HasForeignKey("GroupId1")
+                        .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
 
                     b.Navigation("Device");
 
                     b.Navigation("Group");
-
-                    b.Navigation("UpdatedBy");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.GroupState", b =>
                 {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MSH.Infrastructure.Entities.Group", "Group")
                         .WithOne("State")
                         .HasForeignKey("MSH.Infrastructure.Entities.GroupState", "GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
                     b.Navigation("Group");
-
-                    b.Navigation("UpdatedBy");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.GroupStateHistory", b =>
                 {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.Group", null)
+                    b.HasOne("MSH.Infrastructure.Entities.Group", "Group")
                         .WithMany()
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MSH.Infrastructure.Entities.Group", "Group")
-                        .WithMany()
-                        .HasForeignKey("GroupId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
                     b.Navigation("Group");
-
-                    b.Navigation("UpdatedBy");
-                });
-
-            modelBuilder.Entity("MSH.Infrastructure.Entities.Notification", b =>
-                {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("UpdatedBy");
-                });
-
-            modelBuilder.Entity("MSH.Infrastructure.Entities.Room", b =>
-                {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("UpdatedBy");
-                });
-
-            modelBuilder.Entity("MSH.Infrastructure.Entities.Rule", b =>
-                {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("UpdatedBy");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.RuleAction", b =>
                 {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.Rule", null)
+                    b.HasOne("MSH.Infrastructure.Entities.Rule", "Rule")
                         .WithMany()
                         .HasForeignKey("RuleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MSH.Infrastructure.Entities.Rule", "Rule")
-                        .WithMany()
-                        .HasForeignKey("RuleId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
                     b.Navigation("Rule");
-
-                    b.Navigation("UpdatedBy");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.RuleCondition", b =>
                 {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.Rule", null)
+                    b.HasOne("MSH.Infrastructure.Entities.Rule", "Rule")
                         .WithMany()
                         .HasForeignKey("RuleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MSH.Infrastructure.Entities.Rule", "Rule")
-                        .WithMany()
-                        .HasForeignKey("RuleId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
                     b.Navigation("Rule");
-
-                    b.Navigation("UpdatedBy");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.RuleExecutionHistory", b =>
                 {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.Rule", null)
+                    b.HasOne("MSH.Infrastructure.Entities.Rule", "Rule")
                         .WithMany()
                         .HasForeignKey("RuleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MSH.Infrastructure.Entities.Rule", "Rule")
-                        .WithMany()
-                        .HasForeignKey("RuleId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
                     b.Navigation("Rule");
-
-                    b.Navigation("UpdatedBy");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.RuleTrigger", b =>
                 {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.Rule", null)
-                        .WithMany()
+                    b.HasOne("MSH.Infrastructure.Entities.Rule", "Rule")
+                        .WithMany("Triggers")
                         .HasForeignKey("RuleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MSH.Infrastructure.Entities.Rule", "Rule")
-                        .WithMany("Triggers")
-                        .HasForeignKey("RuleId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
                     b.Navigation("Rule");
-
-                    b.Navigation("UpdatedBy");
-                });
-
-            modelBuilder.Entity("MSH.Infrastructure.Entities.User", b =>
-                {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("UpdatedBy");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.UserDevicePermission", b =>
                 {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MSH.Infrastructure.Entities.Device", "Device")
                         .WithMany()
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("MSH.Infrastructure.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CreatedBy");
-
                     b.Navigation("Device");
-
-                    b.Navigation("UpdatedBy");
 
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.UserRoomPermission", b =>
                 {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MSH.Infrastructure.Entities.Room", "Room")
                         .WithMany()
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MSH.Infrastructure.Entities.User", "User")
                         .WithMany()
@@ -1943,43 +1965,18 @@ namespace MSH.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CreatedBy");
-
                     b.Navigation("Room");
-
-                    b.Navigation("UpdatedBy");
 
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.UserSettings", b =>
                 {
-                    b.HasOne("MSH.Infrastructure.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("MSH.Infrastructure.Entities.User", null)
+                    b.HasOne("MSH.Infrastructure.Entities.User", "User")
                         .WithOne()
                         .HasForeignKey("MSH.Infrastructure.Entities.UserSettings", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("MSH.Infrastructure.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("UpdatedBy");
 
                     b.Navigation("User");
                 });
@@ -2037,18 +2034,32 @@ namespace MSH.Infrastructure.Migrations
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.Device", b =>
                 {
+                    b.Navigation("EventLogs");
+
                     b.Navigation("Events");
+
+                    b.Navigation("FirmwareUpdates");
+
+                    b.Navigation("GroupMembers");
+
+                    b.Navigation("PropertyChanges");
 
                     b.Navigation("States");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceGroup", b =>
                 {
+                    b.Navigation("DeviceTypes");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.DeviceType", b =>
                 {
                     b.Navigation("Devices");
+                });
+
+            modelBuilder.Entity("MSH.Infrastructure.Entities.FirmwareUpdate", b =>
+                {
+                    b.Navigation("DeviceUpdates");
                 });
 
             modelBuilder.Entity("MSH.Infrastructure.Entities.Group", b =>

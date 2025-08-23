@@ -46,9 +46,19 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<RuleCondition> RuleConditions { get; set; } = null!;
     public DbSet<RuleAction> RuleActions { get; set; } = null!;
     public DbSet<RuleExecutionHistory> RuleExecutionHistory { get; set; } = null!;
+    
+    // New entities for firmware updates and clusters
+    public DbSet<Cluster> Clusters { get; set; } = null!;
+    public DbSet<DevicePropertyChange> DevicePropertyChanges { get; set; } = null!;
+    public DbSet<FirmwareUpdate> FirmwareUpdates { get; set; } = null!;
+    public DbSet<DeviceFirmwareUpdate> DeviceFirmwareUpdates { get; set; } = null!;
+    
+    // Event log entity
+    public DbSet<DeviceEventLog> DeviceEventLogs { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.HasDefaultSchema("db");
         base.OnModelCreating(modelBuilder);
 
         // Apply global query filter for soft delete
@@ -62,19 +72,6 @@ public class ApplicationDbContext : IdentityDbContext
                 var lambda = Expression.Lambda(Expression.Equal(property, falseConstant), parameter);
 
                 modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
-
-                // Configure user tracking relationships
-                modelBuilder.Entity(entityType.ClrType)
-                    .HasOne(typeof(User), nameof(BaseEntity.CreatedBy))
-                    .WithMany()
-                    .HasForeignKey(nameof(BaseEntity.CreatedById))
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                modelBuilder.Entity(entityType.ClrType)
-                    .HasOne(typeof(User), nameof(BaseEntity.UpdatedBy))
-                    .WithMany()
-                    .HasForeignKey(nameof(BaseEntity.UpdatedById))
-                    .OnDelete(DeleteBehavior.Restrict);
             }
         }
 
@@ -97,7 +94,7 @@ public class ApplicationDbContext : IdentityDbContext
             .HasKey(us => us.UserId);
 
         modelBuilder.Entity<UserSettings>()
-            .HasOne<User>()
+            .HasOne(us => us.User)
             .WithOne()
             .HasForeignKey<UserSettings>(us => us.UserId);
 
@@ -197,13 +194,13 @@ public class ApplicationDbContext : IdentityDbContext
             .HasKey(gm => new { gm.GroupId, gm.DeviceId });
 
         modelBuilder.Entity<GroupMember>()
-            .HasOne<Group>()
-            .WithMany()
+            .HasOne(gm => gm.Group)
+            .WithMany(g => g.Members)
             .HasForeignKey(gm => gm.GroupId);
 
         modelBuilder.Entity<GroupMember>()
-            .HasOne<Device>()
-            .WithMany()
+            .HasOne(gm => gm.Device)
+            .WithMany(d => d.GroupMembers)
             .HasForeignKey(gm => gm.DeviceId);
 
         // Configure GroupState
@@ -225,7 +222,7 @@ public class ApplicationDbContext : IdentityDbContext
             .HasKey(gsh => gsh.Id);
 
         modelBuilder.Entity<GroupStateHistory>()
-            .HasOne<Group>()
+            .HasOne(gsh => gsh.Group)
             .WithMany()
             .HasForeignKey(gsh => gsh.GroupId);
 
@@ -246,7 +243,7 @@ public class ApplicationDbContext : IdentityDbContext
             .HasKey(rc => rc.Id);
 
         modelBuilder.Entity<RuleCondition>()
-            .HasOne<Rule>()
+            .HasOne(rc => rc.Rule)
             .WithMany()
             .HasForeignKey(rc => rc.RuleId);
 
@@ -259,7 +256,7 @@ public class ApplicationDbContext : IdentityDbContext
             .HasKey(ra => ra.Id);
 
         modelBuilder.Entity<RuleAction>()
-            .HasOne<Rule>()
+            .HasOne(ra => ra.Rule)
             .WithMany()
             .HasForeignKey(ra => ra.RuleId);
 
@@ -271,10 +268,7 @@ public class ApplicationDbContext : IdentityDbContext
         modelBuilder.Entity<RuleTrigger>()
             .HasKey(rt => rt.Id);
 
-        modelBuilder.Entity<RuleTrigger>()
-            .HasOne<Rule>()
-            .WithMany()
-            .HasForeignKey(rt => rt.RuleId);
+        // RuleTrigger relationship is configured via [ForeignKey] attribute
 
         modelBuilder.Entity<RuleTrigger>()
             .Property(rt => rt.Trigger)
@@ -285,13 +279,114 @@ public class ApplicationDbContext : IdentityDbContext
             .HasKey(reh => reh.Id);
 
         modelBuilder.Entity<RuleExecutionHistory>()
-            .HasOne<Rule>()
+            .HasOne(reh => reh.Rule)
             .WithMany()
             .HasForeignKey(reh => reh.RuleId);
 
         modelBuilder.Entity<RuleExecutionHistory>()
             .Property(reh => reh.Result)
             .HasColumnType("jsonb");
+            
+        // Configure Cluster
+        modelBuilder.Entity<Cluster>()
+            .HasKey(c => c.Id);
+            
+        modelBuilder.Entity<Cluster>()
+            .HasIndex(c => c.ClusterId)
+            .IsUnique();
+            
+        modelBuilder.Entity<Cluster>()
+            .Property(c => c.Attributes)
+            .HasColumnType("jsonb");
+            
+        modelBuilder.Entity<Cluster>()
+            .Property(c => c.Commands)
+            .HasColumnType("jsonb");
+            
+        modelBuilder.Entity<Cluster>()
+            .Property(c => c.Events)
+            .HasColumnType("jsonb");
+            
+        // Configure DevicePropertyChange
+        modelBuilder.Entity<DevicePropertyChange>()
+            .HasKey(dpc => dpc.Id);
+            
+        modelBuilder.Entity<DevicePropertyChange>()
+            .HasOne(dpc => dpc.Device)
+            .WithMany(d => d.PropertyChanges)
+            .HasForeignKey(dpc => dpc.DeviceId)
+            .OnDelete(DeleteBehavior.Cascade);
+            
+        modelBuilder.Entity<DevicePropertyChange>()
+            .Property(dpc => dpc.OldValue)
+            .HasColumnType("jsonb");
+            
+        modelBuilder.Entity<DevicePropertyChange>()
+            .Property(dpc => dpc.NewValue)
+            .HasColumnType("jsonb");
+            
+        // Configure FirmwareUpdate
+        modelBuilder.Entity<FirmwareUpdate>()
+            .HasKey(fu => fu.Id);
+            
+        modelBuilder.Entity<FirmwareUpdate>()
+            .Property(fu => fu.UpdateMetadata)
+            .HasColumnType("jsonb");
+            
+        // Configure DeviceFirmwareUpdate
+        modelBuilder.Entity<DeviceFirmwareUpdate>()
+            .HasKey(dfu => dfu.Id);
+            
+        modelBuilder.Entity<DeviceFirmwareUpdate>()
+            .HasOne(dfu => dfu.Device)
+            .WithMany(d => d.FirmwareUpdates)
+            .HasForeignKey(dfu => dfu.DeviceId)
+            .OnDelete(DeleteBehavior.Cascade);
+            
+        modelBuilder.Entity<DeviceFirmwareUpdate>()
+            .HasOne(dfu => dfu.FirmwareUpdate)
+            .WithMany(fu => fu.DeviceUpdates)
+            .HasForeignKey(dfu => dfu.FirmwareUpdateId)
+            .OnDelete(DeleteBehavior.Cascade);
+            
+        modelBuilder.Entity<DeviceFirmwareUpdate>()
+            .Property(dfu => dfu.TestResults)
+            .HasColumnType("jsonb");
+            
+        modelBuilder.Entity<DeviceFirmwareUpdate>()
+            .Property(dfu => dfu.UpdateLog)
+            .HasColumnType("jsonb");
+            
+        // Configure DeviceEventLog
+        modelBuilder.Entity<DeviceEventLog>()
+            .HasKey(del => del.Id);
+            
+        modelBuilder.Entity<DeviceEventLog>()
+            .HasOne(del => del.Device)
+            .WithMany(d => d.EventLogs)
+            .HasForeignKey(del => del.DeviceId)
+            .OnDelete(DeleteBehavior.Cascade);
+            
+        modelBuilder.Entity<DeviceEventLog>()
+            .Property(del => del.EventData)
+            .HasColumnType("jsonb");
+            
+        modelBuilder.Entity<DeviceEventLog>()
+            .Property(del => del.OldState)
+            .HasColumnType("jsonb");
+            
+        modelBuilder.Entity<DeviceEventLog>()
+            .Property(del => del.NewState)
+            .HasColumnType("jsonb");
+            
+        modelBuilder.Entity<DeviceEventLog>()
+            .HasIndex(del => del.DeviceId);
+            
+        modelBuilder.Entity<DeviceEventLog>()
+            .HasIndex(del => del.Timestamp);
+            
+        modelBuilder.Entity<DeviceEventLog>()
+            .HasIndex(del => del.EventType);
     }
 
     public override int SaveChanges()
