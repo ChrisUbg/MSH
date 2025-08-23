@@ -1,0 +1,485 @@
+@page "/firmware"
+@using MSH.Infrastructure.Entities
+@using MSH.Infrastructure.Interfaces
+@using Microsoft.AspNetCore.Components
+@using System.Text.Json
+@inject IFirmwareUpdateService FirmwareUpdateService
+@inject IDeviceService DeviceService
+@inject NavigationManager Navigation
+@inject ILogger<FirmwareManagement> Logger
+
+<PageTitle>Firmware Management - MSH</PageTitle>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">
+                <i class="oi oi-arrow-circle-bottom"></i> Firmware Management
+            </h2>
+        </div>
+    </div>
+
+    <!-- Available Firmware Updates -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="oi oi-cloud-download"></i> Available Firmware Updates
+                    </h5>
+                    <button class="btn btn-primary btn-sm" @onclick="RefreshUpdates">
+                        <i class="oi oi-reload"></i> Refresh
+                    </button>
+                </div>
+                <div class="card-body">
+                    @if (availableUpdates == null)
+                    {
+                        <div class="text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    }
+                    else if (!availableUpdates.Any())
+                    {
+                        <div class="alert alert-info">
+                            <i class="oi oi-info"></i> No firmware updates available.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Current Version</th>
+                                        <th>Target Version</th>
+                                        <th>Status</th>
+                                        <th>File Size</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var update in availableUpdates)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@update.Name</strong>
+                                                @if (!string.IsNullOrEmpty(update.Description))
+                                                {
+                                                    <br><small class="text-muted">@update.Description</small>
+                                                }
+                                            </td>
+                                            <td><span class="badge bg-secondary">@update.CurrentVersion</span></td>
+                                            <td><span class="badge bg-success">@update.TargetVersion</span></td>
+                                            <td>
+                                                <span class="badge @GetStatusBadgeClass(update.Status)">
+                                                    @update.Status
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if (update.FileSize.HasValue)
+                                                {
+                                                    @FormatFileSize(update.FileSize.Value)
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">Unknown</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <button class="btn btn-outline-primary btn-sm" @onclick="() => ViewUpdateDetails(update)">
+                                                        <i class="oi oi-eye"></i> View
+                                                    </button>
+                                                    <button class="btn btn-outline-success btn-sm" @onclick="() => StartBatchUpdate(update)">
+                                                        <i class="oi oi-arrow-circle-bottom"></i> Deploy
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Device Updates -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="oi oi-monitor"></i> Device Firmware Updates
+                    </h5>
+                    <button class="btn btn-primary btn-sm" @onclick="RefreshDeviceUpdates">
+                        <i class="oi oi-reload"></i> Refresh
+                    </button>
+                </div>
+                <div class="card-body">
+                    @if (deviceUpdates == null)
+                    {
+                        <div class="text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    }
+                    else if (!deviceUpdates.Any())
+                    {
+                        <div class="alert alert-info">
+                            <i class="oi oi-info"></i> No device firmware updates found.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Device</th>
+                                        <th>Current Version</th>
+                                        <th>Target Version</th>
+                                        <th>Status</th>
+                                        <th>Progress</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var deviceUpdate in deviceUpdates)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@(deviceUpdate.Device?.Name ?? "Unknown Device")</strong>
+                                                <br><small class="text-muted">@deviceUpdate.DeviceId</small>
+                                            </td>
+                                            <td><span class="badge bg-secondary">@deviceUpdate.CurrentVersion</span></td>
+                                            <td><span class="badge bg-success">@deviceUpdate.TargetVersion</span></td>
+                                            <td>
+                                                <span class="badge @GetDeviceUpdateStatusBadgeClass(deviceUpdate.Status)">
+                                                    @deviceUpdate.Status
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if (deviceUpdate.Status == "downloading")
+                                                {
+                                                    <div class="progress" style="height: 20px;">
+                                                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                                             role="progressbar" style="width: 25%">
+                                                            Downloading...
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else if (deviceUpdate.Status == "installing")
+                                                {
+                                                    <div class="progress" style="height: 20px;">
+                                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" 
+                                                             role="progressbar" style="width: 50%">
+                                                            Installing...
+                                                        </div>
+                                                    </div>
+                                                }
+                                                else if (deviceUpdate.Status == "completed")
+                                                {
+                                                    <span class="text-success">
+                                                        <i class="oi oi-check"></i> Complete
+                                                    </span>
+                                                }
+                                                else if (deviceUpdate.Status == "failed")
+                                                {
+                                                    <span class="text-danger">
+                                                        <i class="oi oi-x"></i> Failed
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    @if (deviceUpdate.Status == "pending")
+                                                    {
+                                                        <button class="btn btn-outline-primary btn-sm" @onclick="() => StartDownload(deviceUpdate.Id)">
+                                                            <i class="oi oi-cloud-download"></i> Download
+                                                        </button>
+                                                    }
+                                                    else if (deviceUpdate.Status == "downloaded")
+                                                    {
+                                                        <button class="btn btn-outline-warning btn-sm" @onclick="() => StartInstallation(deviceUpdate.Id)">
+                                                            <i class="oi oi-arrow-circle-bottom"></i> Install
+                                                        </button>
+                                                    }
+                                                    else if (deviceUpdate.Status == "completed" && !deviceUpdate.IsConfirmed)
+                                                    {
+                                                        <button class="btn btn-outline-success btn-sm" @onclick="() => ConfirmInstallation(deviceUpdate.Id)">
+                                                            <i class="oi oi-check"></i> Confirm
+                                                        </button>
+                                                    }
+                                                    else if (deviceUpdate.Status == "failed")
+                                                    {
+                                                        <button class="btn btn-outline-danger btn-sm" @onclick="() => StartRollback(deviceUpdate.Id)">
+                                                            <i class="oi oi-action-undo"></i> Rollback
+                                                        </button>
+                                                    }
+                                                    
+                                                    <button class="btn btn-outline-info btn-sm" @onclick="() => ViewDeviceUpdateDetails(deviceUpdate)">
+                                                        <i class="oi oi-eye"></i> Details
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Updates -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="oi oi-clock"></i> Pending Updates
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (pendingUpdates == null)
+                    {
+                        <div class="text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    }
+                    else if (!pendingUpdates.Any())
+                    {
+                        <div class="alert alert-success">
+                            <i class="oi oi-check"></i> No pending updates.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            <i class="oi oi-warning"></i> 
+                            <strong>@pendingUpdates.Count()</strong> updates are pending.
+                            <button class="btn btn-warning btn-sm ms-2" @onclick="ProcessPendingUpdates">
+                                <i class="oi oi-play-circle"></i> Process All
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private IEnumerable<FirmwareUpdate>? availableUpdates;
+    private IEnumerable<DeviceFirmwareUpdate>? deviceUpdates;
+    private IEnumerable<DeviceFirmwareUpdate>? pendingUpdates;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            availableUpdates = await FirmwareUpdateService.GetAvailableUpdatesAsync();
+            pendingUpdates = await FirmwareUpdateService.GetPendingUpdatesAsync();
+            
+            // Load device updates for all devices (you might want to filter this)
+            var allDeviceUpdates = new List<DeviceFirmwareUpdate>();
+            var devices = await DeviceService.GetDevicesAsync();
+            
+            foreach (var device in devices)
+            {
+                var deviceUpdates = await FirmwareUpdateService.GetDeviceUpdatesAsync(device.Id);
+                allDeviceUpdates.AddRange(deviceUpdates);
+            }
+            
+            deviceUpdates = allDeviceUpdates.OrderByDescending(du => du.CreatedAt);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error loading firmware data");
+        }
+    }
+
+    private async Task RefreshUpdates()
+    {
+        availableUpdates = await FirmwareUpdateService.GetAvailableUpdatesAsync();
+        StateHasChanged();
+    }
+
+    private async Task RefreshDeviceUpdates()
+    {
+        var allDeviceUpdates = new List<DeviceFirmwareUpdate>();
+        var devices = await DeviceService.GetDevicesAsync();
+        
+        foreach (var device in devices)
+        {
+            var deviceUpdates = await FirmwareUpdateService.GetDeviceUpdatesAsync(device.Id);
+            allDeviceUpdates.AddRange(deviceUpdates);
+        }
+        
+        deviceUpdates = allDeviceUpdates.OrderByDescending(du => du.CreatedAt);
+        StateHasChanged();
+    }
+
+    private async Task StartDownload(Guid deviceUpdateId)
+    {
+        try
+        {
+            await FirmwareUpdateService.StartDownloadAsync(deviceUpdateId);
+            await RefreshDeviceUpdates();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error starting download for device update {Id}", deviceUpdateId);
+        }
+    }
+
+    private async Task StartInstallation(Guid deviceUpdateId)
+    {
+        try
+        {
+            await FirmwareUpdateService.StartInstallationAsync(deviceUpdateId);
+            await RefreshDeviceUpdates();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error starting installation for device update {Id}", deviceUpdateId);
+        }
+    }
+
+    private async Task ConfirmInstallation(Guid deviceUpdateId)
+    {
+        try
+        {
+            await FirmwareUpdateService.ConfirmInstallationAsync(deviceUpdateId, "User");
+            await RefreshDeviceUpdates();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error confirming installation for device update {Id}", deviceUpdateId);
+        }
+    }
+
+    private async Task StartRollback(Guid deviceUpdateId)
+    {
+        try
+        {
+            await FirmwareUpdateService.StartRollbackAsync(deviceUpdateId, "User requested rollback");
+            await RefreshDeviceUpdates();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error starting rollback for device update {Id}", deviceUpdateId);
+        }
+    }
+
+    private async Task StartBatchUpdate(FirmwareUpdate firmwareUpdate)
+    {
+        try
+        {
+            var devices = await DeviceService.GetDevicesAsync();
+            var deviceIds = devices.Select(d => d.Id).ToList();
+            
+            await FirmwareUpdateService.StartBatchUpdateAsync(deviceIds, firmwareUpdate.Id);
+            await LoadData();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error starting batch update for firmware {Id}", firmwareUpdate.Id);
+        }
+    }
+
+    private async Task ProcessPendingUpdates()
+    {
+        try
+        {
+            // Process all pending updates
+            foreach (var pendingUpdate in pendingUpdates ?? Enumerable.Empty<DeviceFirmwareUpdate>())
+            {
+                await FirmwareUpdateService.StartDownloadAsync(pendingUpdate.Id);
+            }
+            
+            await LoadData();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error processing pending updates");
+        }
+    }
+
+    private void ViewUpdateDetails(FirmwareUpdate update)
+    {
+        // Navigate to update details page
+        Navigation.NavigateTo($"/firmware/update/{update.Id}");
+    }
+
+    private void ViewDeviceUpdateDetails(DeviceFirmwareUpdate deviceUpdate)
+    {
+        // Navigate to device update details page
+        Navigation.NavigateTo($"/firmware/device-update/{deviceUpdate.Id}");
+    }
+
+    private string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "available" => "bg-success",
+            "downloading" => "bg-warning",
+            "downloaded" => "bg-info",
+            "installing" => "bg-warning",
+            "completed" => "bg-success",
+            "failed" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+
+    private string GetDeviceUpdateStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "pending" => "bg-secondary",
+            "downloading" => "bg-warning",
+            "downloaded" => "bg-info",
+            "installing" => "bg-warning",
+            "completed" => "bg-success",
+            "failed" => "bg-danger",
+            "rolled_back" => "bg-danger",
+            "cancelled" => "bg-secondary",
+            _ => "bg-secondary"
+        };
+    }
+
+    private string FormatFileSize(long bytes)
+    {
+        string[] sizes = { "B", "KB", "MB", "GB" };
+        double len = bytes;
+        int order = 0;
+        
+        while (len >= 1024 && order < sizes.Length - 1)
+        {
+            order++;
+            len = len / 1024;
+        }
+        
+        return $"{len:0.##} {sizes[order]}";
+    }
+}

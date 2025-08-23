@@ -186,6 +186,11 @@ Console.WriteLine("Registering IMatterDeviceControlService...");
 builder.Services.AddScoped<IMatterDeviceControlService, MatterDeviceControlService>();
 Console.WriteLine("IMatterDeviceControlService registered successfully");
 
+// Add Firmware Update service
+Console.WriteLine("Registering IFirmwareUpdateService...");
+builder.Services.AddScoped<IFirmwareUpdateService, FirmwareUpdateService>();
+Console.WriteLine("IFirmwareUpdateService registered successfully");
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
