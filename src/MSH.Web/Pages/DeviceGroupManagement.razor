@@ -32,6 +32,7 @@ else
                         <div class="btn-group">
                             <button class="btn btn-sm btn-secondary" @onclick="() => ShowEditGroupModal(group)">Edit</button>
                             <button class="btn btn-sm btn-info" @onclick="async () => await ShowAssignDevicesModal(group)">Assign Devices</button>
+                            <button class="btn btn-sm btn-warning" @onclick="() => ShowTimeDelayModal(group)">Time Delay</button>
                             <button class="btn btn-sm btn-danger" @onclick="() => ConfirmDeleteGroup(group.Id)">Delete</button>
                             @* @if (group.DeviceGroupMembers.Any(dgm => dgm.Device.DeviceType?.Name == "Light"))
                             {
@@ -45,13 +46,12 @@ else
                         <GroupHealthStatusCard GroupId="@group.Id" />
                         
                         <div class="mt-3">
-                            <h6>Devices</h6>
-                            @* @if (group.DeviceGroupMembers.Any())
+                            <h6>Devices (@group.Devices.Count)</h6>
+                            @if (group.Devices.Any())
                             {
                                 <ul class="list-unstyled mb-0">
-                                    @foreach (var deviceGroupMember in group.DeviceGroupMembers)
+                                    @foreach (var device in group.Devices)
                                     {
-                                        var device = deviceGroupMember.Device;
                                         <li>
                                             <strong>@device.Name</strong>
                                             (@device.DeviceType?.Name)
@@ -66,8 +66,7 @@ else
                             else
                             {
                                 <span>No devices</span>
-                            } *@
-                            <span>No devices</span>
+                            }
                         </div>
                     </div>
                 </div>
@@ -211,6 +210,76 @@ else
     </div>
 }
 
+<!-- Time Delay Modal -->
+@if (showTimeDelayModal)
+{
+    <div class="modal fade show" style="display: block;" tabindex="-1" @onclick:stopPropagation="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Schedule Time Delay Action: @selectedGroup?.Name</h5>
+                    <button type="button" class="btn-close" @onclick="HideTimeDelayModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Action Type</label>
+                        <select class="form-select" @bind="selectedActionType">
+                            <option value="on">Turn On</option>
+                            <option value="off">Turn Off</option>
+                            <option value="toggle">Toggle</option>
+                            <option value="brightness">Set Brightness</option>
+                            <option value="color">Set Color</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Delay (seconds)</label>
+                        <input type="number" class="form-control" @bind="delaySeconds" min="1" max="3600" />
+                        <div class="form-text">Delay before executing the action (1-3600 seconds)</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" @bind="isRecurring" />
+                            <label class="form-check-label">Recurring Action</label>
+                        </div>
+                    </div>
+                    
+                    @if (isRecurring)
+                    {
+                        <div class="mb-3">
+                            <label class="form-label">Recurrence Interval (seconds)</label>
+                            <input type="number" class="form-control" @bind="recurrenceIntervalSeconds" min="10" max="86400" />
+                            <div class="form-text">Interval between recurring executions (10-86400 seconds)</div>
+                        </div>
+                    }
+                    
+                    @if (selectedActionType == "brightness")
+                    {
+                        <div class="mb-3">
+                            <label class="form-label">Brightness Level</label>
+                            <input type="range" class="form-range" min="0" max="100" value="50" @onchange="OnBrightnessChange" />
+                            <div class="text-center">@brightnessLevel%</div>
+                        </div>
+                    }
+                    
+                    @if (selectedActionType == "color")
+                    {
+                        <div class="mb-3">
+                            <label class="form-label">Color</label>
+                            <input type="color" class="form-control form-control-color" value="#ffffff" @onchange="OnColorChange" />
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="HideTimeDelayModal">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="ScheduleTimeDelayAction">Schedule Action</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     private List<DeviceGroup> deviceGroups = new List<DeviceGroup>();
     private List<Device> availableDevices = new List<Device>();
@@ -222,7 +291,16 @@ else
     private bool showDeleteConfirm;
     private Guid groupIdToDelete;
     private bool showGroupControlModal;
+    private bool showTimeDelayModal;
     private Dictionary<string, object> groupState = new();
+    
+    // Time delay properties
+    private string selectedActionType = "on";
+    private int delaySeconds = 5;
+    private bool isRecurring = false;
+    private int recurrenceIntervalSeconds = 60;
+    private int brightnessLevel = 50;
+    private string selectedColor = "#ffffff";
 
     protected override async Task OnInitializedAsync()
     {
@@ -416,5 +494,74 @@ else
             await DeviceGroupService.SetGroupColorAsync(selectedGroup.Id, color);
             await LoadGroupState();
         }
+    }
+    
+    // Time delay methods
+    private void ShowTimeDelayModal(DeviceGroup group)
+    {
+        selectedGroup = group;
+        showTimeDelayModal = true;
+        
+        // Reset form values
+        selectedActionType = "on";
+        delaySeconds = 5;
+        isRecurring = false;
+        recurrenceIntervalSeconds = 60;
+        brightnessLevel = 50;
+        selectedColor = "#ffffff";
+    }
+    
+    private void HideTimeDelayModal()
+    {
+        showTimeDelayModal = false;
+    }
+    
+    private async Task ScheduleTimeDelayAction()
+    {
+        try
+        {
+            // Build parameters JSON
+            var parameters = new Dictionary<string, object>();
+            if (selectedActionType == "brightness")
+            {
+                parameters["brightness"] = brightnessLevel;
+            }
+            else if (selectedActionType == "color")
+            {
+                parameters["color"] = selectedColor;
+            }
+            
+            var parametersJson = System.Text.Json.JsonSerializer.Serialize(parameters);
+            
+            // TODO: Integrate with IDeviceActionDelayService
+            // await _deviceActionDelayService.ScheduleDeviceGroupActionAsync(
+            //     selectedGroup.Id, 
+            //     selectedActionType, 
+            //     delaySeconds, 
+            //     parametersJson);
+            
+            // For now, just show a success message
+            // You can add a toast notification here
+            Console.WriteLine($"Scheduled {selectedActionType} action for group {selectedGroup?.Name} with {delaySeconds}s delay");
+            
+            showTimeDelayModal = false;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error scheduling time delay action: {ex.Message}");
+        }
+    }
+    
+    private void OnBrightnessChange(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int value))
+        {
+            brightnessLevel = value;
+        }
+    }
+    
+    private void OnColorChange(ChangeEventArgs e)
+    {
+        selectedColor = e.Value?.ToString() ?? "#ffffff";
     }
 } 

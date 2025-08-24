@@ -14,16 +14,27 @@ public class MatterDeviceService
 
     public MatterDeviceService(IConfiguration config)
     {
-        _matterSdkPath = config["Matter:SdkPath"] ?? "/matter";
-        _chipToolPath = config["Matter:ChipToolPath"] ?? "/usr/local/bin/chip-tool";
+        // Get configuration with fallbacks
+        _matterSdkPath = Environment.GetEnvironmentVariable("MATTER_SDK_PATH") ?? 
+                        config["Matter:SdkPath"] ?? 
+                        "/matter";
+        _chipToolPath = Environment.GetEnvironmentVariable("CHIP_TOOL_PATH") ?? 
+                       config["Matter:ChipToolPath"] ?? 
+                       "/usr/local/bin/chip-tool";
 
-        // In Docker, we don't need to check for the SDK path as it's mounted
-        if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") != "true")
+        // Only validate paths in development and if not running in container
+        if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") != "true" && 
+            Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
         {
+            // Log warnings instead of throwing exceptions
             if (!Directory.Exists(_matterSdkPath))
-                throw new DirectoryNotFoundException($"Matter SDK path not found: {_matterSdkPath}");
+            {
+                Console.WriteLine($"Warning: Matter SDK path not found: {_matterSdkPath}");
+            }
             if (!File.Exists(_chipToolPath))
-                throw new FileNotFoundException($"chip-tool not found: {_chipToolPath}");
+            {
+                Console.WriteLine($"Warning: chip-tool not found: {_chipToolPath}");
+            }
         }
 
         Pin = "20202021"; // Default value

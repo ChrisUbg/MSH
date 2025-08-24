@@ -142,6 +142,11 @@ using (var scope = app.Services.CreateScope())
 - [x] `DeviceGroupId` column added to `Devices` table
 - [x] `Icon` column added to `DeviceTypes` table  
 - [x] `PreferredCommissioningMethod` column added to `DeviceTypes` table
+- [x] `DefaultCapabilities` column added to `DeviceGroups` table
+- [x] `Icon` column added to `DeviceGroups` table
+- [x] `PreferredCommissioningMethod` column added to `DeviceGroups` table
+- [x] `SortOrder` column added to `DeviceGroups` table
+- [x] `IsActive` column added to `DeviceGroups` table
 - [x] Many-to-many relationship properly configured
 - [x] Database backup created after fixes
 
@@ -196,6 +201,21 @@ UPDATE "DeviceTypes" SET "Icon" = 'oi-device-hdd';
 
 -- Fix 3: Add PreferredCommissioningMethod column
 ALTER TABLE "DeviceTypes" ADD COLUMN "PreferredCommissioningMethod" text;
+
+-- Fix 4: Add DefaultCapabilities column to DeviceGroups
+ALTER TABLE "DeviceGroups" ADD COLUMN "DefaultCapabilities" jsonb;
+
+-- Fix 5: Add Icon column to DeviceGroups
+ALTER TABLE "DeviceGroups" ADD COLUMN "Icon" text DEFAULT 'oi-device-hdd';
+
+-- Fix 6: Add PreferredCommissioningMethod column to DeviceGroups
+ALTER TABLE "DeviceGroups" ADD COLUMN "PreferredCommissioningMethod" text DEFAULT 'BLE_WiFi';
+
+-- Fix 7: Add SortOrder column to DeviceGroups
+ALTER TABLE "DeviceGroups" ADD COLUMN "SortOrder" integer DEFAULT 0;
+
+-- Fix 8: Add IsActive column to DeviceGroups
+ALTER TABLE "DeviceGroups" ADD COLUMN "IsActive" boolean DEFAULT true;
 ```
 
 ### **Backup Created**

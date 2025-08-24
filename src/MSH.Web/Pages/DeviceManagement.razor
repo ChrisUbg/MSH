@@ -9,6 +9,7 @@
 @inject IRoomService RoomService
 @inject NavigationManager NavigationManager
 @inject ApplicationDbContext _context
+@inject IDeviceActionDelayService DeviceActionDelayService
 
 <PageTitle>Device Management</PageTitle>
 
@@ -53,6 +54,7 @@
                             <button class="btn btn-primary" @onclick="() => NavigateToDeviceDetails(device.MatterDeviceId)">Details</button>
                             <button class="btn btn-sm btn-info" @onclick="() => ShowAssignRoomModal(device)">Assign</button>
                             <button class="btn btn-sm btn-warning" @onclick="async () => await RemoveDeviceFromRoom(device.Id)">Remove</button>
+                            <button class="btn btn-sm btn-success" @onclick="() => ShowTimeDelayModal(device)">Time Delay</button>
                             <button class="btn btn-sm btn-danger" @onclick="async () => await DeleteDevice(device.Id)">Delete</button>
                         </div>
                     </div>
@@ -140,6 +142,79 @@
     <div class="modal-backdrop fade show"></div>
 }
 
+@if (showTimeDelayModal)
+{
+    <div class="modal fade show" style="display: block;" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Schedule Time Delay Action - @selectedDeviceForDelay?.Name</h5>
+                    <button type="button" class="btn-close" @onclick="() => HideTimeDelayModal()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Action Type</label>
+                                <select class="form-select" @bind="selectedActionType">
+                                    <option value="">-- Select Action --</option>
+                                    <option value="on">Turn On</option>
+                                    <option value="off">Turn Off</option>
+                                    <option value="toggle">Toggle</option>
+                                    <option value="brightness">Set Brightness</option>
+                                    <option value="color">Set Color</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Delay (seconds)</label>
+                                <input type="number" class="form-control" @bind="delaySeconds" min="0" />
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" @bind="isRecurring" id="isRecurring">
+                                    <label class="form-check-label" for="isRecurring">
+                                        Recurring Action
+                                    </label>
+                                </div>
+                            </div>
+                            @if (isRecurring)
+                            {
+                                <div class="mb-3">
+                                    <label class="form-label">Recurrence Interval (seconds)</label>
+                                    <input type="number" class="form-control" @bind="recurrenceIntervalSeconds" min="1" />
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            @if (selectedActionType == "brightness")
+                            {
+                                <div class="mb-3">
+                                    <label class="form-label">Brightness Level (0-100%)</label>
+                                    <input type="range" class="form-range" @bind="brightnessLevel" min="0" max="100" />
+                                    <span class="badge bg-primary">@brightnessLevel%</span>
+                                </div>
+                            }
+                            @if (selectedActionType == "color")
+                            {
+                                <div class="mb-3">
+                                    <label class="form-label">Color</label>
+                                    <input type="color" class="form-control form-control-color" @bind="selectedColor" />
+                                    <span class="badge bg-primary">@selectedColor</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="() => HideTimeDelayModal()">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="async () => await ScheduleTimeDelayAction()">Schedule Action</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
 @code {
     private List<Device> _devices = new();
     private List<DeviceType> _deviceTypes = new();
@@ -147,8 +222,18 @@
     private Device newDevice = new() { DeviceTypeId = Guid.Empty, RoomId = null };
     private bool showAddDeviceModal;
     private bool showAssignRoomModal;
+    private bool showTimeDelayModal;
     private Device? selectedDevice;
+    private Device? selectedDeviceForDelay;
     private Guid? selectedRoomId;
+    
+    // Time delay properties
+    private string selectedActionType = "";
+    private int delaySeconds = 0;
+    private bool isRecurring = false;
+    private int recurrenceIntervalSeconds = 60;
+    private int brightnessLevel = 50;
+    private string selectedColor = "#ff0000";
 
     protected override async Task OnInitializedAsync()
     {
@@ -226,6 +311,84 @@
 
     private void NavigateToDeviceDetails(string deviceId)
     {
-        NavigationManager.NavigateTo($"/devices/{deviceId}");
+        NavigationManager.NavigateTo($"/device-details/{deviceId}");
     }
+    
+    // Time delay methods
+    private void ShowTimeDelayModal(Device device)
+    {
+        selectedDeviceForDelay = device;
+        showTimeDelayModal = true;
+    }
+    
+    private void HideTimeDelayModal()
+    {
+        showTimeDelayModal = false;
+        selectedDeviceForDelay = null;
+        // Reset form values
+        selectedActionType = "";
+        delaySeconds = 0;
+        isRecurring = false;
+        recurrenceIntervalSeconds = 60;
+        brightnessLevel = 50;
+        selectedColor = "#ff0000";
+    }
+    
+    private async Task ScheduleTimeDelayAction()
+    {
+        if (selectedDeviceForDelay == null || string.IsNullOrEmpty(selectedActionType))
+        {
+            return;
+        }
+        
+        try
+        {
+            // Build action parameters JSON
+            var parameters = new Dictionary<string, object>();
+            
+            if (selectedActionType == "brightness")
+            {
+                parameters["brightness"] = brightnessLevel;
+            }
+            else if (selectedActionType == "color")
+            {
+                parameters["color"] = selectedColor;
+            }
+            
+            var parametersJson = System.Text.Json.JsonSerializer.Serialize(parameters);
+            
+            // Create the action delay
+            var actionDelay = new DeviceActionDelay
+            {
+                DeviceId = selectedDeviceForDelay.Id,
+                ActionType = selectedActionType,
+                DelaySeconds = delaySeconds,
+                ActionParameters = parametersJson,
+                IsEnabled = true,
+                IsRecurring = isRecurring,
+                RecurrenceIntervalSeconds = isRecurring ? recurrenceIntervalSeconds : null,
+                Priority = 0,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                IsDeleted = false,
+                CreatedById = "bb1be326-f26e-4684-bbf5-5c3df450dc61", // Admin user ID
+                UpdatedById = "bb1be326-f26e-4684-bbf5-5c3df450dc61"
+            };
+            
+            // Calculate next execution time
+            actionDelay.NextScheduledExecution = DateTime.UtcNow.AddSeconds(delaySeconds);
+            
+            await DeviceActionDelayService.CreateActionDelayAsync(actionDelay);
+            
+            HideTimeDelayModal();
+            // You could add a success message here
+        }
+        catch (Exception ex)
+        {
+            // Handle error - you could add error handling here
+            Console.WriteLine($"Error scheduling time delay action: {ex.Message}");
+        }
+    }
+    
+
 } 

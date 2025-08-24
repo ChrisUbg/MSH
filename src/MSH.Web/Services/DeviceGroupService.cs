@@ -14,35 +14,30 @@ namespace MSH.Web.Services;
 public class DeviceGroupService : IDeviceGroupService
 {
     private readonly ApplicationDbContext _context;
-    private readonly MatterDeviceService _matterService;
     private readonly ILogger<DeviceGroupService> _logger;
     private static readonly string DEFAULT_USER_ID = "bb1be326-f26e-4684-bbf5-5c3df450dc61"; // system user
 
     public DeviceGroupService(
         ApplicationDbContext context, 
-        MatterDeviceService matterService,
         ILogger<DeviceGroupService> logger)
     {
         _context = context;
-        _matterService = matterService;
         _logger = logger;
     }
 
     public async Task<List<DeviceGroup>> GetDeviceGroupsAsync()
     {
         return await _context.DeviceGroups
-            // .Include(g => g.DeviceGroupMembers)
-            //     .ThenInclude(m => m.Device)
-            //         .ThenInclude(d => d.DeviceType)
+            .Include(g => g.Devices)
+                .ThenInclude(d => d.DeviceType)
             .ToListAsync();
     }
 
     public async Task<DeviceGroup?> GetDeviceGroupAsync(Guid groupId)
     {
         return await _context.DeviceGroups
-            // .Include(g => g.DeviceGroupMembers)
-            //     .ThenInclude(m => m.Device)
-            //         .ThenInclude(d => d.DeviceType)
+            .Include(g => g.Devices)
+                .ThenInclude(d => d.DeviceType)
             .FirstOrDefaultAsync(g => g.Id == groupId);
     }
 
@@ -103,27 +98,25 @@ public class DeviceGroupService : IDeviceGroupService
     public async Task<bool> SetDevicesForGroupAsync(Guid groupId, List<Guid> deviceIds)
     {
         var group = await _context.DeviceGroups
-            // .Include(g => g.DeviceGroupMembers)
+            .Include(g => g.Devices)
             .FirstOrDefaultAsync(g => g.Id == groupId);
         if (group == null) return false;
 
-        // Remove all current members from the database and save immediately
-        // var existingMembers = _context.DeviceGroupMembers.Where(m => m.DeviceGroupId == groupId);
-        // _context.DeviceGroupMembers.RemoveRange(existingMembers);
-        // await _context.SaveChangesAsync();
+        // Get the devices to add
+        var devicesToAdd = await _context.Devices
+            .Where(d => deviceIds.Contains(d.Id))
+            .ToListAsync();
 
-        // Add new members
-        // foreach (var deviceId in deviceIds)
-        // {
-        //     _context.DeviceGroupMembers.Add(new DeviceGroupMember
-        //     {
-        //         DeviceId = deviceId,
-        //         DeviceGroupId = groupId,
-        //         CreatedById = DEFAULT_USER_ID,
-        //         UpdatedById = DEFAULT_USER_ID
-        //     });
-        // }
-        // await _context.SaveChangesAsync();
+        // Clear existing devices and add new ones
+        group.Devices.Clear();
+        foreach (var device in devicesToAdd)
+        {
+            group.Devices.Add(device);
+        }
+
+        await _context.SaveChangesAsync();
+        
+        _logger.LogInformation("Updated device group {GroupId} with {DeviceCount} devices", groupId, devicesToAdd.Count);
         return true;
     }
 

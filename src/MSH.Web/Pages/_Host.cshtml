@@ -20,7 +20,7 @@
 </head>
 <body>
     <app>
-        <component type="typeof(App)" render-mode="ServerPrerendered" />
+        <component type="typeof(App)" render-mode="Server" />
     </app>
     <div id="blazor-error-ui">
         <environment include="Staging,Production">
@@ -34,9 +34,70 @@
     </div>
     <script src="_framework/blazor.server.js"></script>
     <script src="_content/Microsoft.AspNetCore.Components.Web.Extensions/script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
     <script>
         window.addEventListener('error', function (event) {
             console.error('Script error:', event);
+        });
+
+        // SignalR connection for real-time device state updates
+        let deviceStateConnection = null;
+
+        window.deviceStateHub = {
+            connect: async function () {
+                try {
+                    deviceStateConnection = new signalR.HubConnectionBuilder()
+                        .withUrl("/deviceStateHub")
+                        .withAutomaticReconnect()
+                        .build();
+
+                    // Handle device state changes
+                    deviceStateConnection.on("DeviceStateChanged", function (nodeId, deviceState) {
+                        console.log("Device state changed:", nodeId, deviceState);
+                        // Trigger Blazor component update
+                        DotNet.invokeMethodAsync('MSH.Web', 'OnDeviceStateChanged', nodeId, deviceState);
+                    });
+
+                    // Handle device errors
+                    deviceStateConnection.on("DeviceError", function (nodeId, error) {
+                        console.log("Device error:", nodeId, error);
+                        // Trigger Blazor component update
+                        DotNet.invokeMethodAsync('MSH.Web', 'OnDeviceError', nodeId, error);
+                    });
+
+                    await deviceStateConnection.start();
+                    console.log("Device state hub connected");
+                } catch (err) {
+                    console.error("Error connecting to device state hub:", err);
+                }
+            },
+
+            joinDeviceGroup: async function (nodeId) {
+                if (deviceStateConnection && deviceStateConnection.state === signalR.HubConnectionState.Connected) {
+                    try {
+                        await deviceStateConnection.invoke("JoinDeviceGroup", nodeId);
+                        console.log("Joined device group:", nodeId);
+                    } catch (err) {
+                        console.error("Error joining device group:", err);
+                    }
+                }
+            },
+
+            leaveDeviceGroup: async function (nodeId) {
+                if (deviceStateConnection && deviceStateConnection.state === signalR.HubConnectionState.Connected) {
+                    try {
+                        await deviceStateConnection.invoke("LeaveDeviceGroup", nodeId);
+                        console.log("Left device group:", nodeId);
+                    } catch (err) {
+                        console.error("Error leaving device group:", err);
+                    }
+                }
+            }
+        };
+
+        // Connect to SignalR when page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            window.deviceStateHub.connect();
         });
     </script>
 </body>

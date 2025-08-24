@@ -53,7 +53,6 @@ if (builder.Environment.IsDevelopment())
         options.UseNpgsql(devConnectionString, npgsqlOptions => 
         {
             npgsqlOptions.MigrationsAssembly("MSH.Infrastructure");
-            npgsqlOptions.MigrationsHistoryTable("__EFMigrationsHistory", "db");
         }));
 }
 else
@@ -68,7 +67,6 @@ else
         options.UseNpgsql(connectionString, npgsqlOptions => 
         {
             npgsqlOptions.MigrationsAssembly("MSH.Infrastructure");
-            npgsqlOptions.MigrationsHistoryTable("__EFMigrationsHistory", "db");
         }));
 }
 
@@ -183,13 +181,25 @@ builder.Services.AddScoped<IDeviceTypeService, DeviceTypeService>();
 
 // Add Matter device control service
 Console.WriteLine("Registering IMatterDeviceControlService...");
-builder.Services.AddScoped<IMatterDeviceControlService, MatterDeviceControlService>();
+builder.Services.AddScoped<MSH.Infrastructure.Interfaces.IMatterDeviceControlService, MatterDeviceControlService>();
 Console.WriteLine("IMatterDeviceControlService registered successfully");
 
-// Add Firmware Update service
-Console.WriteLine("Registering IFirmwareUpdateService...");
-builder.Services.AddScoped<IFirmwareUpdateService, FirmwareUpdateService>();
-Console.WriteLine("IFirmwareUpdateService registered successfully");
+        // Add Firmware Update service
+        Console.WriteLine("Registering IFirmwareUpdateService...");
+        builder.Services.AddScoped<IFirmwareUpdateService, FirmwareUpdateService>();
+        Console.WriteLine("IFirmwareUpdateService registered successfully");
+        
+        // Add Device Action Delay service
+        Console.WriteLine("Registering IDeviceActionDelayService...");
+        builder.Services.AddScoped<IDeviceActionDelayService, DeviceActionDelayService>();
+builder.Services.AddScoped<IDeviceEventDelayService, DeviceEventDelayService>();
+builder.Services.AddScoped<IEnhancedDeviceControlService, EnhancedDeviceControlService>();
+        Console.WriteLine("IDeviceActionDelayService registered successfully");
+        
+        // Add Device Action Delay Background Service
+        Console.WriteLine("Registering DeviceActionDelayBackgroundService...");
+        builder.Services.AddHostedService<DeviceActionDelayBackgroundService>();
+        Console.WriteLine("DeviceActionDelayBackgroundService registered successfully");
 
 var app = builder.Build();
 
@@ -264,7 +274,7 @@ app.MapGet("/test-service", (HttpContext context) =>
 {
     try
     {
-        var service = context.RequestServices.GetService<IMatterDeviceControlService>();
+        var service = context.RequestServices.GetService<MSH.Infrastructure.Interfaces.IMatterDeviceControlService>();
         if (service != null)
         {
             return "✅ IMatterDeviceControlService is registered and can be resolved";

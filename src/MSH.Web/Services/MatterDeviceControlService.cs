@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using System.Text.Json;
+using MSH.Infrastructure.Interfaces;
 
 namespace MSH.Web.Services
 {

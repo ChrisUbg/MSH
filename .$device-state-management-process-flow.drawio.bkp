@@ -1,0 +1,265 @@
+<mxfile host="app.diagrams.net" modified="2025-01-21T18:00:00.000Z" agent="5.0" etag="xxx" version="22.1.16" type="device">
+  <diagram name="Device State Management Process Flow" id="device-state-flow">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Swimlanes -->
+        <mxCell id="user-lane" value="User Interface" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1976d2;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="1089" height="200" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="unified-service-lane" value="Unified Device Control Service" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="240" width="1089" height="200" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="state-manager-lane" value="Device State Manager (Singleton)" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="440" width="1089" height="200" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="matter-service-lane" value="Matter Device Control Service" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#F8CECC;strokeColor=#d32f2f;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="40" y="640" width="1089" height="120" as="geometry" />
+        </mxCell>
+        
+        <!-- User Actions -->
+        <mxCell id="user-load-page" value="Load Device Details Page" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1976d2;" vertex="1" parent="user-lane">
+          <mxGeometry x="40" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="user-click-toggle" value="Click Toggle Button" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1976d2;" vertex="1" parent="user-lane">
+          <mxGeometry x="240" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="user-see-result" value="See Device Status" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1976d2;" vertex="1" parent="user-lane">
+          <mxGeometry x="440" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="user-refresh" value="Click Refresh" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1976d2;" vertex="1" parent="user-lane">
+          <mxGeometry x="640" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Unified Service Actions -->
+        <mxCell id="unified-get-status" value="Get Device Status" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1c4e9;strokeColor=#7b1fa2;" vertex="1" parent="unified-service-lane">
+          <mxGeometry x="40" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="unified-toggle" value="Toggle Device" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1c4e9;strokeColor=#7b1fa2;" vertex="1" parent="unified-service-lane">
+          <mxGeometry x="240" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="unified-refresh" value="Refresh Device State" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1c4e9;strokeColor=#7b1fa2;" vertex="1" parent="unified-service-lane">
+          <mxGeometry x="440" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="unified-validate" value="Validate Device Reachability" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1c4e9;strokeColor=#7b1fa2;" vertex="1" parent="unified-service-lane">
+          <mxGeometry x="640" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- State Manager Actions -->
+        <mxCell id="state-get" value="Get Managed State" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1c4e9;strokeColor=#7b1fa2;" vertex="1" parent="state-manager-lane">
+          <mxGeometry x="40" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="state-update" value="Update State" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1c4e9;strokeColor=#7b1fa2;" vertex="1" parent="state-manager-lane">
+          <mxGeometry x="240" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="state-validate" value="Validate State" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1c4e9;strokeColor=#7b1fa2;" vertex="1" parent="state-manager-lane">
+          <mxGeometry x="440" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="state-notify" value="Notify UI via SignalR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1c4e9;strokeColor=#7b1fa2;" vertex="1" parent="state-manager-lane">
+          <mxGeometry x="640" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="state-periodic" value="Periodic Validation (30s)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe082;strokeColor=#f57c00;" vertex="1" parent="state-manager-lane">
+          <mxGeometry x="840" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Matter Service Actions -->
+        <mxCell id="matter-execute" value="Execute chip-tool Command" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#d32f2f;" vertex="1" parent="matter-service-lane">
+          <mxGeometry x="40" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="matter-get-state" value="Get Device State" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#d32f2f;" vertex="1" parent="matter-service-lane">
+          <mxGeometry x="240" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="matter-check-online" value="Check Device Online" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#d32f2f;" vertex="1" parent="matter-service-lane">
+          <mxGeometry x="440" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Decisions -->
+        <mxCell id="device-reachable" value="Device Reachable?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffe082;strokeColor=#f57c00;" vertex="1" parent="unified-service-lane">
+          <mxGeometry x="240" y="120" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="toggle-success" value="Toggle Success?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffe082;strokeColor=#f57c00;" vertex="1" parent="unified-service-lane">
+          <mxGeometry x="440" y="120" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="state-consistent" value="State Consistent?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffe082;strokeColor=#f57c00;" vertex="1" parent="state-manager-lane">
+          <mxGeometry x="440" y="120" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- Error Handling -->
+        <mxCell id="error-handling" value="Error Handling &amp; Logging" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#d32f2f;" vertex="1" parent="unified-service-lane">
+          <mxGeometry x="840" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Connections -->
+        <!-- User to Unified Service -->
+        <mxCell id="edge1" edge="1" parent="1" source="user-load-page" target="unified-get-status">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="edge2" edge="1" parent="1" source="user-click-toggle" target="unified-toggle">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="edge3" edge="1" parent="1" source="user-refresh" target="unified-refresh">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- Unified Service to State Manager -->
+        <mxCell id="edge4" edge="1" parent="1" source="unified-get-status" target="state-get">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="edge5" edge="1" parent="1" source="unified-toggle" target="device-reachable">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="edge6" edge="1" parent="1" source="device-reachable" target="state-update">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="310" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- State Manager to Matter Service -->
+        <mxCell id="edge7" edge="1" parent="1" source="state-validate" target="matter-get-state">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="edge8" edge="1" parent="1" source="state-validate" target="matter-check-online">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="510" y="500" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Matter Service to State Manager -->
+        <mxCell id="edge9" edge="1" parent="1" source="matter-execute" target="state-update">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="110" y="500" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- State Manager to User (SignalR) -->
+        <mxCell id="edge10" edge="1" parent="1" source="state-notify" target="user-see-result">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="710" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Decision Flows -->
+        <mxCell id="edge11" edge="1" parent="1" source="device-reachable" target="error-handling">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="910" y="160" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="edge12" edge="1" parent="1" source="toggle-success" target="state-validate">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="510" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Periodic Validation -->
+        <mxCell id="edge13" edge="1" parent="1" source="state-periodic" target="state-validate">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="910" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Labels -->
+        <mxCell id="label1" value="Yes" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="390" y="160" width="40" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="label2" value="No" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="390" y="180" width="40" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="label3" value="Success" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="590" y="160" width="40" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="label4" value="Error" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="590" y="180" width="40" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Current Problems Section -->
+        <mxCell id="problems-title" value="CURRENT PROBLEMS" style="text;html=1;strokeColor=#d32f2f;fillColor=#ffcdd2;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=16;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="780" width="200" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="problem1" value="• Multiple conflicting status sources" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="820" width="250" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="problem2" value="• Toggle button disabled after operations" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="840" width="250" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="problem3" value="• Electrical measurement failures affect online status" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="860" width="300" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="problem4" value="• No single source of truth for device state" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="880" width="300" height="20" as="geometry" />
+        </mxCell>
+        
+        <!-- Solution Benefits Section -->
+        <mxCell id="benefits-title" value="SOLUTION BENEFITS" style="text;html=1;strokeColor=#388e3c;fillColor=#c8e6c9;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=16;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="780" width="200" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="benefit1" value="• Single source of truth (DeviceStateManager)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="400" y="820" width="300" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="benefit2" value="• Consistent state management" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="400" y="840" width="250" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="benefit3" value="• Real-time UI updates via SignalR" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="400" y="860" width="250" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="benefit4" value="• Periodic state validation prevents drift" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="400" y="880" width="300" height="20" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="benefit5" value="• Proper error isolation" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="400" y="900" width="200" height="20" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

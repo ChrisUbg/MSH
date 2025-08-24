@@ -1,0 +1,5 @@
+---
+alwaysApply: false
+---
+1. the migration or deployment to the Pi has to be based on the files located at the './Deployment' folder 
+2. if schema or db or data changes ask for running a backup: ./BackUpfiles look at .ms and sh files

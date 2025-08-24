@@ -1,0 +1,568 @@
+@page "/"
+@rendermode InteractiveServer
+@using MSH.Commissioning.App.Models
+@using MSH.Commissioning.App.Services
+@inject IBLEScannerService BLEScanner
+@inject ICommissioningService CommissioningService
+@inject ILogger<CommissioningWizard> Logger
+
+<PageTitle>MSH Commissioning Wizard</PageTitle>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h1>🔵 MSH Device Commissioning Wizard</h1>
+            <p class="lead">Commission Matter devices and transfer them to your Raspberry Pi</p>
+        </div>
+    </div>
+
+    <!-- Step Indicator -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="progress" style="height: 4px;">
+                <div class="progress-bar" role="progressbar" style="width: @(currentStep * 25)%" 
+                     aria-valuenow="@(currentStep * 25)" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div class="d-flex justify-content-between mt-2">
+                <span class="@(currentStep >= 1 ? "text-primary fw-bold" : "text-muted")">1. Hardware Check</span>
+                <span class="@(currentStep >= 2 ? "text-primary fw-bold" : "text-muted")">2. Device Discovery</span>
+                <span class="@(currentStep >= 3 ? "text-primary fw-bold" : "text-muted")">3. Network Setup</span>
+                <span class="@(currentStep >= 4 ? "text-primary fw-bold" : "text-muted")">4. Commissioning</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 1: Hardware Check -->
+    @if (currentStep == 1)
+    {
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Step 1: Hardware Check</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <strong>Bluetooth Status:</strong> 
+                            <span class="@(isBluetoothAvailable ? "text-success" : "text-danger")">
+                                @(isBluetoothAvailable ? "✅ Available" : "❌ Not Available")
+                            </span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>chip-tool Status:</strong> 
+                            <span class="@(isChipToolAvailable ? "text-success" : "text-danger")">
+                                @(isChipToolAvailable ? "✅ Available" : "❌ Not Available")
+                            </span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Network Connectivity:</strong> 
+                            <span class="@(isNetworkAvailable ? "text-success" : "text-danger")">
+                                @(isNetworkAvailable ? "✅ Available" : "❌ Not Available")
+                            </span>
+                        </div>
+                        
+                        <button class="btn btn-primary" @onclick="CheckHardware" disabled="@isChecking">
+                            @if (isChecking) { <span>Checking...</span> } else { <span>Check Hardware</span> }
+                        </button>
+                        
+                        <button class="btn btn-secondary ms-2" @onclick="TestButton">
+                            Test Button
+                        </button>
+                        
+                        @if (hardwareCheckComplete)
+                        {
+                            <button class="btn btn-success ms-2" @onclick="NextStep">
+                                Continue to Device Discovery
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h6>Hardware Requirements</h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li>✅ USB Bluetooth adapter</li>
+                            <li>✅ Matter SDK (chip-tool)</li>
+                            <li>✅ Network connection to Pi</li>
+                            <li>✅ Matter device ready for commissioning</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Step 2: Device Discovery -->
+    @if (currentStep == 2)
+    {
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Step 2: Device Discovery</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <strong>Scanning Status:</strong> 
+                            <span class="@(isScanning ? "text-warning" : "text-secondary")">
+                                @(isScanning ? "🔍 Scanning..." : "⏸️ Not Scanning")
+                            </span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <button class="btn btn-info" @onclick="StartScanning" disabled="@isScanning">
+                                Start Scanning
+                            </button>
+                            <button class="btn btn-warning ms-2" @onclick="StopScanning" disabled="@(!isScanning)">
+                                Stop Scanning
+                            </button>
+                        </div>
+
+                        @if (discoveredDevices.Count > 0)
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Address</th>
+                                            <th>Type</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var device in discoveredDevices)
+                                        {
+                                            <tr>
+                                                <td>@device.Name</td>
+                                                <td><code>@device.Address</code></td>
+                                                <td>
+                                                    @if (device.IsMatterDevice)
+                                                    {
+                                                        <span class="badge bg-success">Matter</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-secondary">BLE</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-primary" @onclick="() => SelectDevice(device)">
+                                                        Select
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-muted">No devices discovered yet. Start scanning to find Bluetooth devices.</p>
+                        }
+                        
+                        <div class="mt-3">
+                            <button class="btn btn-secondary" @onclick="PreviousStep">Back</button>
+                            @if (selectedDevice != null)
+                            {
+                                <button class="btn btn-success ms-2" @onclick="NextStep">
+                                    Continue with @selectedDevice.Name
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h6>Selected Device</h6>
+                    </div>
+                    <div class="card-body">
+                        @if (selectedDevice != null)
+                        {
+                            <p><strong>Name:</strong> @selectedDevice.Name</p>
+                            <p><strong>Address:</strong> <code>@selectedDevice.Address</code></p>
+                            <p><strong>Type:</strong> @selectedDevice.Type</p>
+                        }
+                        else
+                        {
+                            <p class="text-muted">No device selected</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Step 3: Network Setup -->
+    @if (currentStep == 3)
+    {
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Step 3: Network Setup</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="networkSSID" class="form-label">WiFi Network Name (SSID)</label>
+                            <input type="text" class="form-control" id="networkSSID" @bind="networkSSID" placeholder="Your WiFi network name">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="networkPassword" class="form-label">WiFi Password</label>
+                            <input type="password" class="form-control" id="networkPassword" @bind="networkPassword" placeholder="Your WiFi password">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="piIP" class="form-label">Raspberry Pi IP Address</label>
+                            <input type="text" class="form-control" id="piIP" @bind="piIP" placeholder="192.168.0.107">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="piUser" class="form-label">Pi Username</label>
+                            <input type="text" class="form-control" id="piUser" @bind="piUser" placeholder="chregg">
+                        </div>
+                        
+                        <div class="mt-3">
+                            <button class="btn btn-secondary" @onclick="PreviousStep">Back</button>
+                            <button class="btn btn-success ms-2" @onclick="NextStep" disabled="@(string.IsNullOrEmpty(networkSSID) || string.IsNullOrEmpty(networkPassword))">
+                                Continue to Commissioning
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h6>Device Information</h6>
+                    </div>
+                    <div class="card-body">
+                        @if (selectedDevice != null)
+                        {
+                            <p><strong>Device:</strong> @selectedDevice.Name</p>
+                            <p><strong>Address:</strong> <code>@selectedDevice.Address</code></p>
+                            <p><strong>Network:</strong> @networkSSID</p>
+                            <p><strong>Pi IP:</strong> @piIP</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Step 4: Commissioning -->
+    @if (currentStep == 4)
+    {
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Step 4: Commissioning</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (commissioningProgress != null)
+                        {
+                            <div class="mb-3">
+                                <div class="progress mb-2">
+                                    <div class="progress-bar @(commissioningProgress.HasError ? "bg-danger" : "")" 
+                                         role="progressbar" style="width: @(commissioningProgress.Percentage)%" 
+                                         aria-valuenow="@commissioningProgress.Percentage" aria-valuemin="0" aria-valuemax="100">
+                                        @commissioningProgress.Percentage%
+                                    </div>
+                                </div>
+                                <p class="mb-2">@commissioningProgress.Message</p>
+                                @if (commissioningProgress.HasError && !string.IsNullOrEmpty(commissioningProgress.ErrorMessage))
+                                {
+                                    <div class="alert alert-danger">
+                                        <strong>Error:</strong> @commissioningProgress.ErrorMessage
+                                    </div>
+                                }
+                            </div>
+                        }
+                        
+                        @if (commissioningResult != null)
+                        {
+                            <div class="alert @(commissioningResult.Success ? "alert-success" : "alert-danger")">
+                                <h6>@(commissioningResult.Success ? "✅ Commissioning Successful" : "❌ Commissioning Failed")</h6>
+                                <p>@commissioningResult.Message</p>
+                                @if (!string.IsNullOrEmpty(commissioningResult.NodeId))
+                                {
+                                    <p><strong>Node ID:</strong> <code>@commissioningResult.NodeId</code></p>
+                                }
+                                @if (!string.IsNullOrEmpty(commissioningResult.ErrorDetails))
+                                {
+                                    <p><strong>Error Details:</strong> @commissioningResult.ErrorDetails</p>
+                                }
+                            </div>
+                        }
+                        
+                        <div class="mt-3">
+                            <button class="btn btn-secondary" @onclick="PreviousStep" disabled="@isCommissioning">Back</button>
+                            <button class="btn btn-primary ms-2" @onclick="StartCommissioning" disabled="@isCommissioning">
+                                @if (isCommissioning) { <span>Commissioning...</span> } else { <span>Start Commissioning</span> }
+                            </button>
+                            @if (commissioningResult?.Success == true)
+                            {
+                                <button class="btn btn-success ms-2" @onclick="FinishCommissioning">
+                                    Finish
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h6>Commissioning Summary</h6>
+                    </div>
+                    <div class="card-body">
+                        @if (selectedDevice != null)
+                        {
+                            <p><strong>Device:</strong> @selectedDevice.Name</p>
+                            <p><strong>Network:</strong> @networkSSID</p>
+                            <p><strong>Pi IP:</strong> @piIP</p>
+                            @if (commissioningResult?.Success == true)
+                            {
+                                <p><strong>Node ID:</strong> <code>@commissioningResult.NodeId</code></p>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private int currentStep = 1;
+    private bool isChecking = false;
+    private bool isScanning = false;
+    private bool isCommissioning = false;
+    
+    private bool isBluetoothAvailable = false;
+    private bool isChipToolAvailable = false;
+    private bool isNetworkAvailable = false;
+    private bool hardwareCheckComplete = false;
+    
+    private List<BLEDevice> discoveredDevices = new();
+    private BLEDevice? selectedDevice;
+    
+    private string networkSSID = "";
+    private string networkPassword = "";
+    private string piIP = "192.168.0.107";
+    private string piUser = "chregg";
+    
+    private CommissioningProgress? commissioningProgress;
+    private CommissioningResult? commissioningResult;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Subscribe to commissioning progress updates
+        CommissioningService.ProgressUpdated += OnProgressUpdated;
+        
+        // Subscribe to device discovery events
+        BLEScanner.DeviceDiscovered += OnDeviceDiscovered;
+        BLEScanner.ScanError += OnScanError;
+    }
+
+    private async Task CheckHardware()
+    {
+        Console.WriteLine("CheckHardware button clicked!");
+        Logger.LogInformation("CheckHardware started");
+        isChecking = true;
+        StateHasChanged();
+        
+        try
+        {
+            Logger.LogInformation("Checking Bluetooth availability...");
+            // Check Bluetooth availability
+            isBluetoothAvailable = await BLEScanner.IsBluetoothAvailableAsync();
+            Logger.LogInformation("Bluetooth available: {Available}", isBluetoothAvailable);
+            
+            // Check chip-tool availability - look for chip-tool command
+            Logger.LogInformation("Checking chip-tool availability...");
+            try
+            {
+                var testResult = await CommissioningService.TestDeviceConnectionAsync("test");
+                // If we get here, chip-tool is available (even if test fails)
+                isChipToolAvailable = true;
+                Logger.LogInformation("chip-tool available: true");
+            }
+            catch (Exception ex)
+            {
+                // Check if the error indicates chip-tool is not found
+                isChipToolAvailable = !ex.Message.Contains("chip-tool") && !ex.Message.Contains("command not found");
+                Logger.LogInformation("chip-tool available: {Available} (error: {Error})", isChipToolAvailable, ex.Message);
+            }
+            
+            // Check network connectivity (simplified)
+            isNetworkAvailable = true; // For now, assume network is available
+            Logger.LogInformation("Network available: true");
+            
+            hardwareCheckComplete = true;
+            Logger.LogInformation("Hardware check completed successfully");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error checking hardware");
+        }
+        
+        isChecking = false;
+        StateHasChanged();
+        Logger.LogInformation("CheckHardware finished");
+    }
+
+    private void TestButton()
+    {
+        Console.WriteLine("Test button clicked!");
+        Logger.LogInformation("Test button clicked!");
+        // Just toggle a simple state to see if UI updates work
+        isBluetoothAvailable = !isBluetoothAvailable;
+        StateHasChanged();
+    }
+
+    private async Task StartScanning()
+    {
+        isScanning = true;
+        discoveredDevices.Clear();
+        StateHasChanged();
+        
+        try
+        {
+            var devices = await BLEScanner.ScanForDevicesAsync(30);
+            discoveredDevices.AddRange(devices);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error starting scan");
+        }
+        
+        isScanning = false;
+        StateHasChanged();
+    }
+
+    private void StopScanning()
+    {
+        isScanning = false;
+        StateHasChanged();
+    }
+
+    private void SelectDevice(BLEDevice device)
+    {
+        selectedDevice = device;
+        StateHasChanged();
+    }
+
+    private void NextStep()
+    {
+        if (currentStep < 4)
+        {
+            currentStep++;
+        }
+        StateHasChanged();
+    }
+
+    private void PreviousStep()
+    {
+        if (currentStep > 1)
+        {
+            currentStep--;
+        }
+        StateHasChanged();
+    }
+
+    private async Task StartCommissioning()
+    {
+        if (selectedDevice == null) return;
+        
+        isCommissioning = true;
+        commissioningProgress = null;
+        commissioningResult = null;
+        
+        try
+        {
+            var request = new CommissioningRequest
+            {
+                DeviceName = selectedDevice.Name,
+                DeviceAddress = selectedDevice.Address,
+                NetworkSSID = networkSSID,
+                NetworkPassword = networkPassword,
+                PiIP = piIP,
+                PiUser = piUser,
+                // These would be extracted from QR code or manual input
+                Passcode = "85064361", // Example passcode
+                Discriminator = "97"   // Example discriminator
+            };
+            
+            var sessionId = Guid.NewGuid().ToString();
+            commissioningResult = await CommissioningService.StartCommissioningAsync(request, sessionId);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error during commissioning");
+            commissioningResult = new CommissioningResult
+            {
+                Success = false,
+                Message = "Commissioning failed",
+                ErrorDetails = ex.Message
+            };
+        }
+        
+        isCommissioning = false;
+    }
+
+    private void FinishCommissioning()
+    {
+        // Reset to step 1 for next device
+        currentStep = 1;
+        selectedDevice = null;
+        discoveredDevices.Clear();
+        commissioningProgress = null;
+        commissioningResult = null;
+        networkSSID = "";
+        networkPassword = "";
+        StateHasChanged();
+    }
+
+    private void OnProgressUpdated(CommissioningProgress progress)
+    {
+        commissioningProgress = progress;
+        StateHasChanged();
+    }
+
+    private void OnDeviceDiscovered(BLEDevice device)
+    {
+        if (!discoveredDevices.Any(d => d.Address == device.Address))
+        {
+            discoveredDevices.Add(device);
+            StateHasChanged();
+        }
+    }
+
+    private void OnScanError(string error)
+    {
+        Logger.LogError("Scan error: {Error}", error);
+        isScanning = false;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        CommissioningService.ProgressUpdated -= OnProgressUpdated;
+        BLEScanner.DeviceDiscovered -= OnDeviceDiscovered;
+        BLEScanner.ScanError -= OnScanError;
+    }
+}

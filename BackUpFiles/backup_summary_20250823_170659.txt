@@ -1,0 +1,43 @@
+MSH Database Backup Summary
+==========================
+Timestamp: Sat Aug 23 05:07:01 PM CEST 2025
+Database: matter_dev
+Pi IP: 192.168.0.107
+
+Backup Files Created:
+- matter_dev_full_20250823_170659.sql.gz (Full backup - compressed)
+- matter_dev_schema_20250823_170659.sql (Schema only)
+- matter_dev_data_20250823_170659.sql (Data only)
+
+Database Statistics:
+ ?column? 
+----------
+ Users: 2
+(1 row)
+
+ ?column? 
+----------
+ Rooms: 5
+(1 row)
+
+  ?column?  
+------------
+ Devices: 2
+(1 row)
+
+     ?column?     
+------------------
+ Device Types: 12
+(1 row)
+
+     ?column?     
+------------------
+ Device Groups: 5
+(1 row)
+
+Restore Commands:
+- Full restore: gunzip -c matter_dev_full_20250823_170659.sql.gz | ssh chregg@192.168.0.107 "docker exec -i msh_db psql -U postgres -d matter_dev"
+- Schema only: ssh chregg@192.168.0.107 "docker exec -i msh_db psql -U postgres -d matter_dev" < matter_dev_schema_20250823_170659.sql
+- Data only: ssh chregg@192.168.0.107 "docker exec -i msh_db psql -U postgres -d matter_dev" < matter_dev_data_20250823_170659.sql
+
+Note: Data-only restore may require --disable-triggers due to circular foreign key constraints.

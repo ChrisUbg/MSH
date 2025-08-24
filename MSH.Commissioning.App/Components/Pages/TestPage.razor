@@ -1,0 +1,46 @@
+@page "/test"
+
+<PageTitle>Test Page</PageTitle>
+
+<div class="container mt-4">
+    <h1>Test Page</h1>
+    
+    <div class="mb-3">
+        <strong>Counter:</strong> @counter
+    </div>
+    
+    <button class="btn btn-primary" @onclick="IncrementCounter">
+        Increment Counter
+    </button>
+    
+    <button class="btn btn-secondary ms-2" @onclick="TestAsync">
+        Test Async
+    </button>
+    
+    <div class="mt-3">
+        <strong>Message:</strong> @message
+    </div>
+</div>
+
+@code {
+    private int counter = 0;
+    private string message = "No message yet";
+    
+    private void IncrementCounter()
+    {
+        counter++;
+        message = $"Counter incremented to {counter} at {DateTime.Now}";
+        StateHasChanged();
+    }
+    
+    private async Task TestAsync()
+    {
+        message = "Async test started...";
+        StateHasChanged();
+        
+        await Task.Delay(1000);
+        
+        message = $"Async test completed at {DateTime.Now}";
+        StateHasChanged();
+    }
+}

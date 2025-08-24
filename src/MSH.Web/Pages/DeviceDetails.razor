@@ -8,7 +8,9 @@
 @using System.Text.Json
 @using Microsoft.Extensions.Configuration
 @inject IDeviceService DeviceService
-@inject IMatterDeviceControlService MatterDeviceControlService
+@inject IEnhancedDeviceControlService EnhancedDeviceControlService
+@inject IDeviceActionDelayService DeviceActionDelayService
+@inject IDeviceEventDelayService DeviceEventDelayService
 @inject NavigationManager NavigationManager
 @inject IHubContext<DeviceHub> HubContext
 @inject IConfiguration Configuration
@@ -71,17 +73,17 @@
                 </div>
 
                 <!-- Device Controls Card -->
-                @if (IsSocketDevice())
-                {
-                    <div class="card mt-4">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">Device Controls</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <label class="form-label mb-0">Power Control</label>
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Device Controls</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <!-- Power Control - Available for any device with Matter control -->
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <label class="form-label mb-0">Power Control</label>
+                                    <div class="d-flex align-items-center gap-2">
                                         <div class="form-check form-switch">
                                             <input class="form-check-input" type="checkbox" id="powerSwitch" 
                                                    checked="@isPowerOn" @onclick="TogglePower" disabled="@isControlsDisabled">
@@ -89,19 +91,110 @@
                                                 @(isPowerOn ? "ON" : "OFF")
                                             </label>
                                         </div>
+                                        <button class="btn btn-sm btn-outline-secondary" @onclick="RefreshDeviceState" disabled="@isControlsDisabled">
+                                            <i class="fas fa-sync-alt"></i> Refresh
+                                        </button>
                                     </div>
-                                    @if (!string.IsNullOrEmpty(controlMessage))
-                                    {
-                                        <div class="alert alert-info alert-dismissible fade show" role="alert">
-                                            @controlMessage
-                                            <button type="button" class="btn-close" @onclick="() => controlMessage = string.Empty"></button>
-                                        </div>
-                                    }
                                 </div>
+                                
+                                @if (!string.IsNullOrEmpty(controlMessage))
+                                {
+                                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                        @controlMessage
+                                        <button type="button" class="btn-close" @onclick="() => controlMessage = string.Empty"></button>
+                                    </div>
+                                }
+                                
+                                <!-- Time Delay Controls -->
+                                <hr class="my-3">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <label class="form-label mb-0">Time Delay Actions</label>
+                                    <button class="btn btn-sm btn-success" @onclick="ShowTimeDelayModal">
+                                        <i class="fas fa-clock"></i> Schedule Action
+                                    </button>
+                                </div>
+                                
+                                <!-- Display existing scheduled actions -->
+                                @if (scheduledActions != null && scheduledActions.Any())
+                                {
+                                    <div class="mb-3">
+                                        <h6>Scheduled Actions:</h6>
+                                        <div class="list-group">
+                                            @foreach (var action in scheduledActions)
+                                            {
+                                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <strong>@action.ActionType</strong>
+                                                        <br>
+                                                        <small class="text-muted">
+                                                            Next: @(action.NextScheduledExecution?.ToString("g") ?? "Not scheduled")
+                                                            @if (action.IsRecurring)
+                                                            {
+                                                                <span class="badge bg-info ms-2">Recurring</span>
+                                                            }
+                                                        </small>
+                                                    </div>
+                                                    <button class="btn btn-sm btn-danger" @onclick="async () => await DeleteScheduledAction(action.Id)">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                                
+                                <!-- Event Delay Controls -->
+                                <hr class="my-3">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <label class="form-label mb-0">Event-Based Delays</label>
+                                    <button class="btn btn-sm btn-warning" @onclick="ShowEventDelayModal">
+                                        <i class="fas fa-clock"></i> Configure Event Delay
+                                    </button>
+                                </div>
+                                
+                                <!-- Display existing event delays -->
+                                @if (eventDelays != null && eventDelays.Any())
+                                {
+                                    <div class="mb-3">
+                                        <h6>Event Delays:</h6>
+                                        <div class="list-group">
+                                            @foreach (var eventDelay in eventDelays)
+                                            {
+                                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <strong>@eventDelay.EventType</strong>
+                                                        <br>
+                                                        <small class="text-muted">
+                                                            Delay: @eventDelay.DelaySeconds seconds
+                                                            @if (!string.IsNullOrEmpty(eventDelay.Description))
+                                                            {
+                                                                <span> - @eventDelay.Description</span>
+                                                            }
+                                                            @if (eventDelay.Priority > 0)
+                                                            {
+                                                                <span class="badge bg-secondary ms-2">Priority: @eventDelay.Priority</span>
+                                                            }
+                                                        </small>
+                                                    </div>
+                                                    <div class="d-flex gap-2">
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input" type="checkbox" 
+                                                                   checked="@eventDelay.IsEnabled" 
+                                                                   @onchange="async (e) => await ToggleEventDelay(eventDelay.Id, e.Value)" />
+                                                        </div>
+                                                        <button class="btn btn-sm btn-danger" @onclick="async () => await DeleteEventDelay(eventDelay.Id)">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
-                }
+                </div>
             </div>
 
             <div class="col-md-6">
@@ -133,7 +226,7 @@
                 </div>
 
                 <!-- Power Consumption Card -->
-                @if (IsSocketDevice())
+                @if (device?.MatterDeviceId != null)
                 {
                     <div class="card mt-4">
                         <div class="card-header d-flex justify-content-between align-items-center">
@@ -249,6 +342,137 @@
     }
 </div>
 
+<!-- Time Delay Modal -->
+@if (showTimeDelayModal)
+{
+    <div class="modal fade show" style="display: block;" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Schedule Time Delay Action - @device?.Name</h5>
+                    <button type="button" class="btn-close" @onclick="() => HideTimeDelayModal()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Action Type</label>
+                                <select class="form-select" @bind="selectedActionType">
+                                    <option value="">-- Select Action --</option>
+                                    <option value="on">Turn On</option>
+                                    <option value="off">Turn Off</option>
+                                    <option value="toggle">Toggle</option>
+                                    <option value="brightness">Set Brightness</option>
+                                    <option value="color">Set Color</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Delay (seconds)</label>
+                                <input type="number" class="form-control" @bind="delaySeconds" min="0" />
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" @bind="isRecurring" id="isRecurring">
+                                    <label class="form-check-label" for="isRecurring">
+                                        Recurring Action
+                                    </label>
+                                </div>
+                            </div>
+                            @if (isRecurring)
+                            {
+                                <div class="mb-3">
+                                    <label class="form-label">Recurrence Interval (seconds)</label>
+                                    <input type="number" class="form-control" @bind="recurrenceIntervalSeconds" min="1" />
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            @if (selectedActionType == "brightness")
+                            {
+                                <div class="mb-3">
+                                    <label class="form-label">Brightness Level (0-100%)</label>
+                                    <input type="range" class="form-range" @bind="brightnessLevel" min="0" max="100" />
+                                    <span class="badge bg-primary">@brightnessLevel%</span>
+                                </div>
+                            }
+                            @if (selectedActionType == "color")
+                            {
+                                <div class="mb-3">
+                                    <label class="form-label">Color</label>
+                                    <input type="color" class="form-control form-control-color" @bind="selectedColor" />
+                                    <span class="badge bg-primary">@selectedColor</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="() => HideTimeDelayModal()">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="async () => await ScheduleTimeDelayAction()">Schedule Action</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+<!-- Event Delay Modal -->
+@if (showEventDelayModal)
+{
+    <div class="modal fade show" style="display: block;" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Configure Event Delay - @device?.Name</h5>
+                    <button type="button" class="btn-close" @onclick="() => HideEventDelayModal()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Event Type</label>
+                                <select class="form-select" @bind="selectedEventType">
+                                    <option value="">-- Select Event --</option>
+                                    <option value="turn_on">Turn On</option>
+                                    <option value="turn_off">Turn Off</option>
+                                    <option value="toggle">Toggle</option>
+                                    <option value="brightness_change">Brightness Change</option>
+                                    <option value="color_change">Color Change</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Delay (seconds)</label>
+                                <input type="number" class="form-control" @bind="eventDelaySeconds" min="0" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Description (optional)</label>
+                                <input type="text" class="form-control" @bind="eventDelayDescription" placeholder="e.g., Prevent accidental turn off" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Priority</label>
+                                <input type="number" class="form-control" @bind="eventDelayPriority" min="0" />
+                                <small class="form-text text-muted">Higher priority delays are processed first</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Event Delays:</strong> These delays will be applied every time the specified event occurs. 
+                        The action will be delayed by the specified number of seconds before execution.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="() => HideEventDelayModal()">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="async () => await CreateEventDelay()">Create Event Delay</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
 @code {
     [Parameter]
     public Guid DeviceId { get; set; }
@@ -265,31 +489,63 @@
     // Power metrics properties
     private PowerMetrics? powerMetrics;
     private bool isLoadingPowerMetrics = false;
+    
+    // Time delay properties
+    private bool showTimeDelayModal = false;
+    private string selectedActionType = "";
+    private int delaySeconds = 0;
+    private bool isRecurring = false;
+    private int recurrenceIntervalSeconds = 60;
+    private int brightnessLevel = 50;
+    private string selectedColor = "#ff0000";
+    private IEnumerable<DeviceActionDelay>? scheduledActions;
+    
+    // Event delay properties
+    private bool showEventDelayModal = false;
+    private string selectedEventType = "";
+    private int eventDelaySeconds = 0;
+    private string eventDelayDescription = "";
+    private int eventDelayPriority = 0;
+    private IEnumerable<DeviceEventDelay>? eventDelays;
 
     protected override async Task OnInitializedAsync()
     {
+        LoggingConfig.LogUI("DeviceDetails.OnInitializedAsync called");
+        LoggingConfig.LogUI($"DeviceId parameter: {DeviceId}");
+        
         try
         {
             await LoadDeviceDetails();
+            LoggingConfig.LogUI($"Device loaded: {device?.Name}, MatterDeviceId: {device?.MatterDeviceId}");
             
-            // Load initial power state and metrics for socket devices
-            if (IsSocketDevice())
+            // Load scheduled actions for the device
+            await LoadScheduledActions();
+            
+            // Load event delays for the device
+            await LoadEventDelays();
+            
+            // Load initial power state and metrics for any device with Matter control
+            if (device?.MatterDeviceId != null)
             {
                 await LoadPowerState();
                 await RefreshPowerMetrics();
+                LoggingConfig.LogUI("Power state and metrics loaded for Matter device");
+            }
+            else
+            {
+                LoggingConfig.LogUI("Device has no MatterDeviceId, skipping power state loading");
             }
         }
         catch (Exception ex)
         {
             controlMessage = $"Error initializing device details: {ex.Message}";
+            LoggingConfig.LogUI($"Error in OnInitializedAsync: {ex}");
         }
+        
+        LoggingConfig.LogUI("DeviceDetails.OnInitializedAsync completed");
     }
 
-    private bool IsSocketDevice()
-    {
-        return device?.DeviceType?.Name?.ToLower().Contains("socket") == true || 
-               device?.DeviceType?.Name?.ToLower().Contains("plug") == true;
-    }
+
 
     private async Task LoadDeviceDetails()
     {
@@ -341,35 +597,104 @@
 
     private async Task TogglePower()
     {
+        LoggingConfig.LogUI($"TogglePower called for device {device?.Id} with MatterDeviceId: {device?.MatterDeviceId}");
+        LoggingConfig.LogUI($"Device type: {device?.DeviceType?.Name}, Device name: {device?.Name}");
+        
         if (device?.MatterDeviceId == null)
         {
             controlMessage = "Device not configured for Matter control";
+            LoggingConfig.LogUI("Device not configured for Matter control");
             return;
         }
 
         try
         {
+            LoggingConfig.LogUI($"Starting toggle for device {device.Id} with MatterDeviceId {device.MatterDeviceId}");
             isControlsDisabled = true;
             
-            // Use the Matter device control service to toggle the device
-            var success = await MatterDeviceControlService.ToggleDeviceAsync(device.MatterDeviceId);
+            // Use the enhanced device control service to toggle the device (with event delay support)
+            LoggingConfig.LogUI($"Calling EnhancedDeviceControlService.ToggleDeviceAsync for device {device.Id}");
+            var (success, wasDelayed) = await EnhancedDeviceControlService.ToggleDeviceAsync(device.MatterDeviceId, device.Id);
+            LoggingConfig.LogUI($"EnhancedDeviceControlService.ToggleDeviceAsync returned: success={success}, wasDelayed={wasDelayed}");
             
             if (success)
             {
-                isPowerOn = !isPowerOn; // Toggle the state
-                controlMessage = $"Device turned {(isPowerOn ? "ON" : "OFF")} successfully";
-                
-                // Refresh power metrics after state change
-                await RefreshPowerMetrics();
+                if (wasDelayed)
+                {
+                    controlMessage = "Device command scheduled for delayed execution";
+                    LoggingConfig.LogUI("Device command was delayed");
+                    
+                    // Start polling for state changes after delay
+                    _ = Task.Run(async () => await PollDeviceStateAfterDelay());
+                }
+                else
+                {
+                    isPowerOn = !isPowerOn; // Toggle the state only if executed immediately
+                    controlMessage = $"Device turned {(isPowerOn ? "ON" : "OFF")} successfully";
+                    LoggingConfig.LogUI($"Toggle successful, new state: {(isPowerOn ? "ON" : "OFF")}");
+                    
+                    // Refresh power metrics after state change
+                    await RefreshPowerMetrics();
+                }
             }
             else
             {
                 controlMessage = "Failed to toggle device. Check if device is online and accessible.";
+                LoggingConfig.LogUI("Toggle failed");
             }
         }
         catch (Exception ex)
         {
             controlMessage = $"Error controlling device: {ex.Message}";
+            LoggingConfig.LogUI($"Exception in TogglePower: {ex}");
+        }
+        finally
+        {
+            isControlsDisabled = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task RefreshDeviceState()
+    {
+        if (device?.MatterDeviceId == null) return;
+
+        try
+        {
+            isControlsDisabled = true;
+            LoggingConfig.LogUI($"Manual refresh of device state for device {device.Id}");
+            
+            // Get current device state
+            var state = await EnhancedDeviceControlService.GetDeviceStateAsync(device.MatterDeviceId);
+            LoggingConfig.LogUI($"Current device state: {state}");
+            
+            if (!string.IsNullOrEmpty(state))
+            {
+                var newPowerState = state.ToLower() == "on";
+                
+                if (newPowerState != isPowerOn)
+                {
+                    LoggingConfig.LogUI($"Device state changed from {isPowerOn} to {newPowerState}");
+                    isPowerOn = newPowerState;
+                    controlMessage = $"Device state refreshed: {(isPowerOn ? "ON" : "OFF")}";
+                }
+                else
+                {
+                    controlMessage = $"Device state confirmed: {(isPowerOn ? "ON" : "OFF")}";
+                }
+                
+                // Refresh power metrics
+                await RefreshPowerMetrics();
+            }
+            else
+            {
+                controlMessage = "Unable to get device state";
+            }
+        }
+        catch (Exception ex)
+        {
+            controlMessage = $"Error refreshing device state: {ex.Message}";
+            LoggingConfig.LogUI($"Error in RefreshDeviceState: {ex}");
         }
         finally
         {
@@ -386,8 +711,8 @@
         {
             isLoadingPowerMetrics = true;
             
-            // Use the Matter device control service to get device state
-            var state = await MatterDeviceControlService.GetDeviceStateAsync(device.MatterDeviceId);
+            // Use the enhanced device control service to get device state
+            var state = await EnhancedDeviceControlService.GetDeviceStateAsync(device.MatterDeviceId);
             
             if (!string.IsNullOrEmpty(state))
             {
@@ -421,6 +746,60 @@
         }
     }
 
+    private async Task PollDeviceStateAfterDelay()
+    {
+        if (device?.MatterDeviceId == null) return;
+
+        LoggingConfig.LogUI($"Starting device state polling for delayed command on device {device.Id}");
+        
+        // Wait for the delay to complete (assuming 60+ seconds for typical delays)
+        await Task.Delay(TimeSpan.FromSeconds(70));
+        
+        try
+        {
+            // Poll the device state multiple times to catch the change
+            for (int i = 0; i < 10; i++)
+            {
+                LoggingConfig.LogUI($"Polling device state attempt {i + 1} for device {device.Id}");
+                
+                var state = await EnhancedDeviceControlService.GetDeviceStateAsync(device.MatterDeviceId);
+                LoggingConfig.LogUI($"Device state poll result: {state}");
+                
+                if (!string.IsNullOrEmpty(state))
+                {
+                    var newPowerState = state.ToLower() == "on";
+                    
+                    // Update UI state if it changed
+                    if (newPowerState != isPowerOn)
+                    {
+                        LoggingConfig.LogUI($"Device state changed from {isPowerOn} to {newPowerState}");
+                        isPowerOn = newPowerState;
+                        
+                        // Update UI on main thread
+                        await InvokeAsync(() =>
+                        {
+                            controlMessage = $"Device state updated: {(isPowerOn ? "ON" : "OFF")}";
+                            StateHasChanged();
+                        });
+                        
+                        // Refresh power metrics
+                        await RefreshPowerMetrics();
+                        break; // Exit polling loop
+                    }
+                }
+                
+                // Wait before next poll
+                await Task.Delay(TimeSpan.FromSeconds(5));
+            }
+        }
+        catch (Exception ex)
+        {
+            LoggingConfig.LogUI($"Error during device state polling: {ex.Message}");
+        }
+        
+        LoggingConfig.LogUI($"Completed device state polling for device {device.Id}");
+    }
+
     // Data models for API responses
     public class PowerControlResponse
     {
@@ -447,4 +826,207 @@
         public decimal? Current { get; set; }
         public string? LastUpdated { get; set; }
     }
+    
+    // Time delay methods
+    private async Task LoadScheduledActions()
+    {
+        if (device?.Id == null) return;
+        
+        try
+        {
+            scheduledActions = await DeviceActionDelayService.GetActionDelaysForDeviceAsync(device.Id);
+        }
+        catch (Exception ex)
+        {
+            controlMessage = $"Error loading scheduled actions: {ex.Message}";
+        }
+    }
+    
+    private void ShowTimeDelayModal()
+    {
+        showTimeDelayModal = true;
+    }
+    
+    private void HideTimeDelayModal()
+    {
+        showTimeDelayModal = false;
+        // Reset form values
+        selectedActionType = "";
+        delaySeconds = 0;
+        isRecurring = false;
+        recurrenceIntervalSeconds = 60;
+        brightnessLevel = 50;
+        selectedColor = "#ff0000";
+    }
+    
+    private async Task ScheduleTimeDelayAction()
+    {
+        if (device?.Id == null || string.IsNullOrEmpty(selectedActionType))
+        {
+            return;
+        }
+        
+        try
+        {
+            // Build action parameters JSON
+            var parameters = new Dictionary<string, object>();
+            
+            if (selectedActionType == "brightness")
+            {
+                parameters["brightness"] = brightnessLevel;
+            }
+            else if (selectedActionType == "color")
+            {
+                parameters["color"] = selectedColor;
+            }
+            
+            var parametersJson = System.Text.Json.JsonSerializer.Serialize(parameters);
+            
+            // Create the action delay
+            var actionDelay = new DeviceActionDelay
+            {
+                DeviceId = device.Id,
+                ActionType = selectedActionType,
+                DelaySeconds = delaySeconds,
+                ActionParameters = parametersJson,
+                IsEnabled = true,
+                IsRecurring = isRecurring,
+                RecurrenceIntervalSeconds = isRecurring ? recurrenceIntervalSeconds : null,
+                Priority = 0,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                IsDeleted = false,
+                CreatedById = "bb1be326-f26e-4684-bbf5-5c3df450dc61", // Admin user ID
+                UpdatedById = "bb1be326-f26e-4684-bbf5-5c3df450dc61"
+            };
+            
+            // Calculate next execution time
+            actionDelay.NextScheduledExecution = DateTime.UtcNow.AddSeconds(delaySeconds);
+            
+            await DeviceActionDelayService.CreateActionDelayAsync(actionDelay);
+            
+            HideTimeDelayModal();
+            await LoadScheduledActions(); // Refresh the list
+            controlMessage = "Time delay action scheduled successfully!";
+        }
+        catch (Exception ex)
+        {
+            controlMessage = $"Error scheduling time delay action: {ex.Message}";
+        }
+    }
+    
+    private async Task DeleteScheduledAction(Guid actionId)
+    {
+        try
+        {
+            await DeviceActionDelayService.DeleteActionDelayAsync(actionId);
+            await LoadScheduledActions(); // Refresh the list
+            controlMessage = "Scheduled action deleted successfully!";
+        }
+        catch (Exception ex)
+        {
+            controlMessage = $"Error deleting scheduled action: {ex.Message}";
+        }
+    }
+    
+    // Event delay methods
+    private async Task LoadEventDelays()
+    {
+        if (device?.Id == null) return;
+        
+        try
+        {
+            eventDelays = await DeviceEventDelayService.GetEventDelaysForDeviceAsync(device.Id);
+        }
+        catch (Exception ex)
+        {
+            controlMessage = $"Error loading event delays: {ex.Message}";
+        }
+    }
+    
+    private void ShowEventDelayModal()
+    {
+        showEventDelayModal = true;
+    }
+    
+    private void HideEventDelayModal()
+    {
+        showEventDelayModal = false;
+        // Reset form values
+        selectedEventType = "";
+        eventDelaySeconds = 0;
+        eventDelayDescription = "";
+        eventDelayPriority = 0;
+    }
+    
+    private async Task CreateEventDelay()
+    {
+        if (device?.Id == null || string.IsNullOrEmpty(selectedEventType))
+        {
+            return;
+        }
+        
+        try
+        {
+            var eventDelay = new DeviceEventDelay
+            {
+                DeviceId = device.Id,
+                EventType = selectedEventType,
+                DelaySeconds = eventDelaySeconds,
+                Description = eventDelayDescription,
+                Priority = eventDelayPriority,
+                IsEnabled = true,
+                CreatedById = "bb1be326-f26e-4684-bbf5-5c3df450dc61", // Admin user ID
+                UpdatedById = "bb1be326-f26e-4684-bbf5-5c3df450dc61"
+            };
+            
+            await DeviceEventDelayService.CreateEventDelayAsync(eventDelay);
+            
+            HideEventDelayModal();
+            await LoadEventDelays(); // Refresh the list
+            controlMessage = "Event delay created successfully!";
+        }
+        catch (Exception ex)
+        {
+            controlMessage = $"Error creating event delay: {ex.Message}";
+        }
+    }
+    
+    private async Task DeleteEventDelay(Guid eventDelayId)
+    {
+        try
+        {
+            await DeviceEventDelayService.DeleteEventDelayAsync(eventDelayId);
+            await LoadEventDelays(); // Refresh the list
+            controlMessage = "Event delay deleted successfully!";
+        }
+        catch (Exception ex)
+        {
+            controlMessage = $"Error deleting event delay: {ex.Message}";
+        }
+    }
+    
+    private async Task ToggleEventDelay(Guid eventDelayId, object? isEnabled)
+    {
+        try
+        {
+            var eventDelay = await DeviceEventDelayService.GetEventDelayByIdAsync(eventDelayId);
+            if (eventDelay != null)
+            {
+                eventDelay.IsEnabled = isEnabled is bool enabled && enabled;
+                eventDelay.UpdatedAt = DateTime.UtcNow;
+                eventDelay.UpdatedById = "bb1be326-f26e-4684-bbf5-5c3df450dc61";
+                
+                await DeviceEventDelayService.UpdateEventDelayAsync(eventDelay);
+                await LoadEventDelays(); // Refresh the list
+                controlMessage = $"Event delay {(eventDelay.IsEnabled ? "enabled" : "disabled")} successfully!";
+            }
+        }
+        catch (Exception ex)
+        {
+            controlMessage = $"Error toggling event delay: {ex.Message}";
+        }
+    }
+    
+
 } 

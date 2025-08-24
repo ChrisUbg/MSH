@@ -1,0 +1,233 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.0.6 Chrome/138.0.7204.100 Electron/37.2.3 Safari/537.36" version="28.0.6">
+  <diagram name="Device State Management - Sequential Flow" id="device-state-flow-v2">
+    <mxGraphModel dx="1908" dy="796" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="user-lane" value="User Interface" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#e3f2fd;strokeColor=#1976d2;fontStyle=1;fontSize=14;" parent="1" vertex="1">
+          <mxGeometry x="40" y="40" width="1320" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="start" value="START" style="ellipse;whiteSpace=wrap;html=1;fillColor=#4caf50;strokeColor=#2e7d32;fontColor=#ffffff;fontStyle=1;" parent="user-lane" vertex="1">
+          <mxGeometry x="40" y="40" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="user-click-toggle" value="User clicks toggle button" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1976d2;" parent="user-lane" vertex="1">
+          <mxGeometry x="160" y="30" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="user-wait" value="User waits for result" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1976d2;" parent="user-lane" vertex="1">
+          <mxGeometry x="340" y="30" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="user-see-result" value="User sees updated status" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1976d2;" parent="user-lane" vertex="1">
+          <mxGeometry x="520" y="30" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="end" value="END" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f44336;strokeColor=#d32f2f;fontColor=#ffffff;fontStyle=1;" parent="user-lane" vertex="1">
+          <mxGeometry x="1200" y="40" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="unified-service-lane" value="Unified Device Control Service" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontStyle=1;fontSize=14;" parent="1" vertex="1">
+          <mxGeometry x="40" y="160" width="1320" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="unified-receive-toggle" value="Receive toggle request" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1c4e9;strokeColor=#7b1fa2;" parent="unified-service-lane" vertex="1">
+          <mxGeometry x="160" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="unified-check-reachable" value="Check device reachability" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1c4e9;strokeColor=#7b1fa2;" parent="unified-service-lane" vertex="1">
+          <mxGeometry x="340" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="unified-call-toggle" value="Call state manager toggle" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1c4e9;strokeColor=#7b1fa2;" parent="unified-service-lane" vertex="1">
+          <mxGeometry x="520" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="unified-return-result" value="Return result to UI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1c4e9;strokeColor=#7b1fa2;" parent="unified-service-lane" vertex="1">
+          <mxGeometry x="700" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="state-manager-lane" value="Device State Manager (Singleton)" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#f3e5f5;strokeColor=#7b1fa2;fontStyle=1;fontSize=14;" parent="1" vertex="1">
+          <mxGeometry x="40" y="282" width="1320" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="state-receive-toggle" value="Receive toggle request" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1c4e9;strokeColor=#7b1fa2;" parent="state-manager-lane" vertex="1">
+          <mxGeometry x="634" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="state-call-matter" value="Call Matter service toggle" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1c4e9;strokeColor=#7b1fa2;" parent="state-manager-lane" vertex="1">
+          <mxGeometry x="814" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="state-update-cache" value="Update cached state" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1c4e9;strokeColor=#7b1fa2;" parent="state-manager-lane" vertex="1">
+          <mxGeometry x="994" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="state-notify-ui" value="Notify UI via SignalR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d1c4e9;strokeColor=#7b1fa2;" parent="state-manager-lane" vertex="1">
+          <mxGeometry x="1174" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="error-handling" value="Error: Device Unreachable" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#d32f2f;" parent="state-manager-lane" vertex="1">
+          <mxGeometry x="120" y="10" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="device-reachable-decision" value="Device Reachable?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffe082;strokeColor=#f57c00;" parent="state-manager-lane" vertex="1">
+          <mxGeometry x="330" y="10" width="140" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="edge6" parent="state-manager-lane" source="device-reachable-decision" target="error-handling" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NdgvBW2JWhnIB4cNKjE5-1" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="edge6">
+          <mxGeometry x="0.0185" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="matter-service-lane" value="Matter Device Control Service" style="swimlane;horizontal=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=14;" parent="1" vertex="1">
+          <mxGeometry x="40" y="400" width="1320" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="matter-execute-toggle" value="Execute chip-tool toggle" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="matter-service-lane" vertex="1">
+          <mxGeometry x="814" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="matter-return-result" value="Return toggle result" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="matter-service-lane" vertex="1">
+          <mxGeometry x="994" y="40" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="toggle-success-decision" value="Toggle Success?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffe082;strokeColor=#f57c00;" parent="matter-service-lane" vertex="1">
+          <mxGeometry x="814" y="120" width="140" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="toggle-error" value="Error: Toggle Failed" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#d32f2f;" parent="matter-service-lane" vertex="1">
+          <mxGeometry x="994" y="120" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="edge1" parent="1" source="start" target="user-click-toggle" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge2" parent="1" source="user-click-toggle" target="unified-receive-toggle" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge3" parent="1" source="unified-receive-toggle" target="unified-check-reachable" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge4" parent="1" source="unified-check-reachable" target="device-reachable-decision" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge5" parent="1" source="device-reachable-decision" target="unified-call-toggle" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NdgvBW2JWhnIB4cNKjE5-2" value="yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="edge5">
+          <mxGeometry x="-0.1444" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge7" parent="1" source="unified-call-toggle" target="state-receive-toggle" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge8" parent="1" source="state-receive-toggle" target="state-call-matter" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge9" parent="1" source="state-call-matter" target="matter-execute-toggle" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge10" parent="1" source="matter-execute-toggle" target="toggle-success-decision" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge11" parent="1" source="toggle-success-decision" target="matter-return-result" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NdgvBW2JWhnIB4cNKjE5-3" value="yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="edge11">
+          <mxGeometry x="-0.3065" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge12" parent="1" source="toggle-success-decision" target="toggle-error" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="NdgvBW2JWhnIB4cNKjE5-4" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="edge12">
+          <mxGeometry x="-0.1199" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge13" parent="1" source="matter-return-result" target="state-update-cache" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge14" parent="1" source="state-update-cache" target="state-notify-ui" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge15" parent="1" source="state-notify-ui" target="unified-return-result" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge16" style="entryX=1;entryY=0.75;entryDx=0;entryDy=0;exitX=0.629;exitY=-0.017;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="unified-return-result" target="user-see-result" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="830" y="140" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="780" y="130" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge17" parent="1" source="user-wait" target="user-see-result" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge18" parent="1" source="user-see-result" target="end" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge19" parent="1" source="error-handling" target="unified-return-result" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="150" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge20" parent="1" source="toggle-error" target="state-update-cache" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1210" y="490" />
+              <mxPoint x="1230" y="420" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label1" value="Yes" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="490" y="160" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="label2" value="No" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="490" y="180" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="label3" value="Success" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="850" y="160" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="label4" value="Error" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="850" y="180" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="step1" value="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#2196f3;strokeColor=#1976d2;fontColor=#ffffff;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="20" y="50" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="step2" value="2" style="ellipse;whiteSpace=wrap;html=1;fillColor=#2196f3;strokeColor=#1976d2;fontColor=#ffffff;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="20" y="170" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="step3" value="3" style="ellipse;whiteSpace=wrap;html=1;fillColor=#2196f3;strokeColor=#1976d2;fontColor=#ffffff;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="20" y="290" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="step4" value="4" style="ellipse;whiteSpace=wrap;html=1;fillColor=#2196f3;strokeColor=#1976d2;fontColor=#ffffff;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="20" y="410" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="process-title" value="SEQUENTIAL PROCESS FLOW" style="text;html=1;strokeColor=#1976d2;fillColor=#e3f2fd;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=16;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="622" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="process1" value="Step 1: User clicks toggle button" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="40" y="662" width="250" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="process2" value="Step 2: Unified Service checks device reachability" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="40" y="682" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="process3" value="Step 3: State Manager calls Matter service" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="40" y="702" width="280" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="process4" value="Step 4: Matter service executes chip-tool command" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="40" y="722" width="320" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="process5" value="Step 5: State Manager updates cached state" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="40" y="742" width="280" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="process6" value="Step 6: SignalR notifies UI of state change" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="40" y="762" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="process7" value="Step 7: User sees updated device status" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="40" y="782" width="280" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="error-title" value="ERROR HANDLING" style="text;html=1;strokeColor=#d32f2f;fillColor=#ffcdd2;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=16;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="400" y="622" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="error1" value="• Device unreachable → Return error to UI" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="400" y="662" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="error2" value="• Toggle command fails → Update state as failed" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="400" y="682" width="320" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="error3" value="• Electrical measurement fails → Don&#39;t affect online status" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="400" y="702" width="350" height="20" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

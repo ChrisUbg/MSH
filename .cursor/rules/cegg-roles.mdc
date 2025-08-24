@@ -6,4 +6,4 @@ alwaysApply: true
 
 # Your rule content
 
-if questions starting with ##, then the answer should only return two toppics at a time.
+if questions or requests starting with ##, then the answer should only return two toppics at a time. And the request response should focus on analyze the request sorowly and then return implementing proposals. 

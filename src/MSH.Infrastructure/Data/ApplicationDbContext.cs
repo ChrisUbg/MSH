@@ -55,10 +55,13 @@ public class ApplicationDbContext : IdentityDbContext
     
     // Event log entity
     public DbSet<DeviceEventLog> DeviceEventLogs { get; set; } = null!;
+    
+    // Device action delay entity
+    public DbSet<DeviceActionDelay> DeviceActionDelays { get; set; } = null!;
+    public DbSet<DeviceEventDelay> DeviceEventDelays { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema("db");
         base.OnModelCreating(modelBuilder);
 
         // Apply global query filter for soft delete

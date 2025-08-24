@@ -1,5 +1,5 @@
 <CascadingAuthenticationState>
-    <Router AppAssembly="typeof(Program).Assembly">
+    <Router AppAssembly="typeof(Program).Assembly" OnNavigateAsync="OnNavigateAsync">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)">
                 <NotAuthorized>
@@ -13,8 +13,28 @@
         </Found>
         <NotFound>
             <LayoutView Layout="typeof(MainLayout)">
-                <p>Sorry, there's nothing at this address.</p>
+                <div class="container mt-4">
+                    <div class="alert alert-warning">
+                        <h4>Page Not Found</h4>
+                        <p>Sorry, there's nothing at this address.</p>
+                        <a href="/" class="btn btn-primary">Go to Home</a>
+                    </div>
+                </div>
             </LayoutView>
         </NotFound>
     </Router>
-</CascadingAuthenticationState> 
+</CascadingAuthenticationState>
+
+@code {
+    private async Task OnNavigateAsync(NavigationContext args)
+    {
+        // Log navigation for debugging
+        Console.WriteLine($"Navigating to: {args.Path}");
+        
+        // Add some additional debugging for routing issues
+        if (args.Path.Contains("device-details"))
+        {
+            Console.WriteLine($"Device details route detected: {args.Path}");
+        }
+    }
+} 

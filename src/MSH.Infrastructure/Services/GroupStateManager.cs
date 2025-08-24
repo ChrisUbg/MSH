@@ -14,16 +14,13 @@ public class GroupStateManager : IGroupStateManager
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogger<GroupStateManager> _logger;
-    private readonly MatterDeviceService _matterService;
 
     public GroupStateManager(
         ApplicationDbContext context,
-        ILogger<GroupStateManager> logger,
-        MatterDeviceService matterService)
+        ILogger<GroupStateManager> logger)
     {
         _context = context;
         _logger = logger;
-        _matterService = matterService;
     }
 
     public async Task<bool> SynchronizeGroupStateAsync(Guid groupId)
